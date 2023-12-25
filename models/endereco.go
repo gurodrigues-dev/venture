@@ -1,9 +1,8 @@
 package models
 
 type Endereco struct {
-	CPF         string
 	Rua         string
-	Numero      int
+	Numero      string
 	Complemento string
 	Cidade      string
 	Estado      string

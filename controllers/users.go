@@ -35,7 +35,14 @@ func CreateUser(c *gin.Context) {
 		URL:   respOfAws,
 	}
 
-	endereco := models.Endereco{}
+	endereco := models.Endereco{
+		Rua:         c.PostForm("rua"),
+		Numero:      c.PostForm("numero"),
+		Complemento: c.PostForm("complemento"),
+		Cidade:      c.PostForm("cidade"),
+		Estado:      c.PostForm("estado"),
+		CEP:         c.PostForm("cep"),
+	}
 
 	validateDocs, documentError := utils.ValidateDocsDriver(user, endereco)
 
