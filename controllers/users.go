@@ -23,7 +23,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, endereco := utils.GetUserAndAdressFromRequest(c)
+	user, endereco := utils.GetUserAndAdressFromRequest(c, respOfAws)
 
 	validateDocs, documentError := utils.ValidateDocsDriver(user, endereco)
 

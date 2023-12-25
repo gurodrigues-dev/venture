@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetUserAndAdressFromRequest(c *gin.Context) (*models.User, *models.Endereco) {
+func GetUserAndAdressFromRequest(c *gin.Context, url string) (*models.User, *models.Endereco) {
 
 	user := &models.User{
 		Name:  c.PostForm("name"),
@@ -16,6 +16,7 @@ func GetUserAndAdressFromRequest(c *gin.Context) (*models.User, *models.Endereco
 		CNH:   c.PostForm("cnh"),
 		ID:    uuid.New(),
 		Email: c.PostForm("email"),
+		URL:   url,
 	}
 
 	endereco := &models.Endereco{
