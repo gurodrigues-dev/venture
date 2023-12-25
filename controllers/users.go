@@ -1,13 +1,11 @@
 package controllers
 
 import (
-	"gin/models"
 	"gin/repository"
 	"gin/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func CreateUser(c *gin.Context) {
@@ -25,24 +23,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	user := models.User{
-		Name:  c.PostForm("name"),
-		CPF:   c.PostForm("cpf"),
-		RG:    c.PostForm("rg"),
-		CNH:   c.PostForm("cnh"),
-		ID:    uuid.New(),
-		Email: c.PostForm("email"),
-		URL:   respOfAws,
-	}
-
-	endereco := models.Endereco{
-		Rua:         c.PostForm("rua"),
-		Numero:      c.PostForm("numero"),
-		Complemento: c.PostForm("complemento"),
-		Cidade:      c.PostForm("cidade"),
-		Estado:      c.PostForm("estado"),
-		CEP:         c.PostForm("cep"),
-	}
+	user, endereco := utils.GetUserAndAdressFromRequest(c)
 
 	validateDocs, documentError := utils.ValidateDocsDriver(user, endereco)
 

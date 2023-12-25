@@ -11,7 +11,7 @@ import (
 
 var db *sql.DB
 
-func InsertNewUser(user models.User, endereco models.Endereco) (bool, error) {
+func InsertNewUser(user *models.User, endereco *models.Endereco) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 

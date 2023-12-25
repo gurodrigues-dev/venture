@@ -19,7 +19,7 @@ func allDigit(doc string) bool {
 	return true
 }
 
-func ValidateDocsDriver(user models.User, endereco models.Endereco) (bool, string) {
+func ValidateDocsDriver(user *models.User, endereco *models.Endereco) (bool, string) {
 
 	validateCPF := IsCPF(user.CPF)
 
