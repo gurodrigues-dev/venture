@@ -113,5 +113,53 @@ func UpdateUser(cpf string, dataToUpdate *models.UpdateUser) (bool, error) {
 }
 
 func DeleteUser(cpf string) (bool, error) {
+
+	_, err := config.LoadEnvironmentVariables()
+
+	if err != nil {
+		return false, err
+	}
+
+	var (
+		userdb   = config.GetUserDatabase()
+		port     = config.GetPortDatabase()
+		host     = config.GetHostDatabase()
+		password = config.GetPasswordDatabase()
+		dbname   = config.GetNameDatabase()
+	)
+
+	conn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, userdb, password, dbname)
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		return false, err
+	}
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		return false, err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	_, err = tx.Exec("DELETE FROM endereco WHERE cpf = $1", cpf)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = tx.Exec("DELETE FROM users WHERE cpf = $1", cpf)
+	if err != nil {
+		return false, err
+	}
 	return true, nil
 }

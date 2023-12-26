@@ -95,4 +95,25 @@ func UpdateUser(c *gin.Context) {
 
 func DeleteUser(c *gin.Context) {
 
+	requestID, _ := c.Get("RequestID")
+
+	cpf := c.Param("cpf")
+
+	_, err := repository.DeleteUser(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error while deleting in database",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"requestID": requestID,
+		"message":   "User deleted w/ success",
+	})
+
 }
