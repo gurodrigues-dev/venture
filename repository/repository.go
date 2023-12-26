@@ -53,10 +53,6 @@ func GetUser(id int64) (bool, error) {
 	return true, nil
 }
 
-func GetAllUsers() (bool, error) {
-	return true, nil
-}
-
 func UpdateUser(id int64) (bool, error) {
 	return true, nil
 }
