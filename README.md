@@ -126,7 +126,7 @@ Em desenvolvimento...
 
 ### DELETE /users/\<cpf>
 
-Deleta um usuário, consequentemente seu usuário e seu qrcode.
+Deleta um usuário, consequentemente seu endereço e seu qrcode.
 
 **Parâmetros**
 
