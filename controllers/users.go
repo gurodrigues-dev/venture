@@ -66,6 +66,27 @@ func CreateUser(c *gin.Context) {
 
 func GetUser(c *gin.Context) {
 
+	requestID, _ := c.Get("RequestID")
+
+	cpf := c.Param("cpf")
+
+	user, err := repository.GetUser(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error while searching in database",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"requestID": requestID,
+		"userData":  user,
+	})
+
 }
 
 func UpdateUser(c *gin.Context) {

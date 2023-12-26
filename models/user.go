@@ -11,3 +11,32 @@ type User struct {
 	Email string
 	URL   string
 }
+
+type UpdateUser struct {
+	Email    string
+	Endereco struct {
+		Rua         string
+		Numero      string
+		Complemento string
+		Cidade      string
+		Estado      string
+		CEP         string
+	}
+}
+
+type GetUser struct {
+	CPF      string
+	RG       string
+	Name     string
+	CNH      string
+	Email    string
+	URL      string
+	Endereco struct {
+		Rua         string
+		Numero      string
+		Complemento string
+		Cidade      string
+		Estado      string
+		CEP         string
+	}
+}

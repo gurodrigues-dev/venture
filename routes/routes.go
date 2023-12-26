@@ -31,11 +31,11 @@ func HandleRequests() {
 
 	r.POST("api/v1/users", controllers.CreateUser)
 
-	r.GET("api/v1/users", controllers.GetUser)
+	r.GET("api/v1/users/:cpf", controllers.GetUser)
 
-	r.PUT("api/v1/users", controllers.UpdateUser)
+	r.PUT("api/v1/users/:cpf", controllers.UpdateUser)
 
-	r.DELETE("api/v1/users", controllers.DeleteUser)
+	r.DELETE("api/v1/users/:cpf", controllers.DeleteUser)
 
 	r.Run()
 
