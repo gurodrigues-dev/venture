@@ -37,8 +37,8 @@ func InsertNewUser(user *models.User, endereco *models.Endereco) (bool, error) {
 	}
 	defer db.Close()
 
-	_, err = db.Exec("INSERT INTO users (id, cpf, rg, name, cnh, email, qrcode) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		user.ID, user.CPF, user.RG, user.Name, user.CNH, user.Email, user.URL)
+	_, err = db.Exec("INSERT INTO users (id, cpf, rg, name, cnh, email, qrcode, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+		user.ID, user.CPF, user.RG, user.Name, user.CNH, user.Email, user.URL, user.Password)
 
 	if err != nil {
 		return false, err

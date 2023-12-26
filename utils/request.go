@@ -9,14 +9,17 @@ import (
 
 func GetUserAndAdressFromRequest(c *gin.Context, url string) (*models.User, *models.Endereco) {
 
+	hashedPassword := hashPassword(c.PostForm("password"))
+
 	user := &models.User{
-		Name:  c.PostForm("name"),
-		CPF:   c.PostForm("cpf"),
-		RG:    c.PostForm("rg"),
-		CNH:   c.PostForm("cnh"),
-		ID:    uuid.New(),
-		Email: c.PostForm("email"),
-		URL:   url,
+		Name:     c.PostForm("name"),
+		Password: hashedPassword,
+		CPF:      c.PostForm("cpf"),
+		RG:       c.PostForm("rg"),
+		CNH:      c.PostForm("cnh"),
+		ID:       uuid.New(),
+		Email:    c.PostForm("email"),
+		URL:      url,
 	}
 
 	endereco := &models.Endereco{

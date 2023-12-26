@@ -117,3 +117,9 @@ func DeleteUser(c *gin.Context) {
 	})
 
 }
+
+func AuthenticateUser(c *gin.Context) {
+
+	return
+
+}

@@ -49,6 +49,7 @@ Criando um novo usuário.
 |-------------:|:--------:|:-------:| --- |
 | `nome`       | form | string  | Nome do usuário. |
 | `email`      | form | string  | E-mail do usuário. |
+| `senha`      | form | string  | Senha do usuário. |
 | `cpf`        | form | string  | CPF do usuário. |
 | `rg`         | form | string  | RG do usuário. | 
 | `cnh`        | form | string  | CNH do usuário. |  
@@ -125,7 +126,22 @@ Em desenvolvimento...
 
 ### DELETE /users/\<cpf>
 
-Em desenvolvimento...
+Deleta um usuário, consequentemente seu usuário e seu qrcode.
+
+**Parâmetros**
+
+| Nome | Local | Tipo | Descrição
+|-------------:|:--------:|:-------:| --- |
+| `cpf`        | body | string  | CPF do usuário. |
+
+**Resposta**
+
+```json
+{
+    "message": "User deleted w/ success",
+    "requestID": "d4920f0f-6433-4726-a014-21cdb4aed024"
+}
+```
 
 ---
 

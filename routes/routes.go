@@ -37,6 +37,8 @@ func HandleRequests() {
 
 	r.DELETE("api/v1/users/:cpf", controllers.DeleteUser)
 
+	r.POST("api/v1/users/login", controllers.AuthenticateUser)
+
 	r.Run()
 
 }
