@@ -38,7 +38,7 @@ func CreateUser(c *gin.Context) {
 
 	}
 
-	resp, err := repository.InsertNewUser(user, endereco)
+	resp, err := repository.SaveClient(user, endereco)
 
 	if err != nil {
 
@@ -70,7 +70,7 @@ func GetUser(c *gin.Context) {
 
 	cpf := c.Param("cpf")
 
-	user, err := repository.GetUser(cpf)
+	user, err := repository.FindByCpf(cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -99,7 +99,7 @@ func DeleteUser(c *gin.Context) {
 
 	cpf := c.Param("cpf")
 
-	_, err := repository.DeleteUser(cpf)
+	_, err := repository.DeleteByCpf(cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{

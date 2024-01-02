@@ -12,7 +12,7 @@ import (
 
 var db *sql.DB
 
-func InsertNewUser(user *models.User, endereco *models.Endereco) (bool, error) {
+func SaveClient(user *models.User, endereco *models.Endereco) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -50,7 +50,7 @@ func InsertNewUser(user *models.User, endereco *models.Endereco) (bool, error) {
 	return true, nil
 }
 
-func GetUser(cpf string) (models.GetUser, error) {
+func FindByCpf(cpf string) (models.GetUser, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -112,7 +112,7 @@ func UpdateUser(cpf string, dataToUpdate *models.UpdateUser) (bool, error) {
 	return true, nil
 }
 
-func DeleteUser(cpf string) (bool, error) {
+func DeleteByCpf(cpf string) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
