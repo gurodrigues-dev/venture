@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"gin/models"
 	"gin/repository"
 
@@ -46,4 +47,21 @@ func VerifyUserAndPassword(c *gin.Context) (bool, error) {
 
 	return match, err
 
+}
+
+func VerifyCpf(c *gin.Context) (bool, error) {
+
+	cpfJwtToken, found := c.Get("cpf")
+
+	fmt.Println(cpfJwtToken)
+
+	if !found {
+		return false, fmt.Errorf("Erro ao encontrar Token")
+	}
+
+	cpfRequest := c.Param("cpf")
+
+	cpfMatch := cpfJwtToken == cpfRequest
+
+	return cpfMatch, nil
 }

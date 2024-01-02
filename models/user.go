@@ -42,3 +42,7 @@ type GetUser struct {
 		CEP         string
 	}
 }
+
+type AuthUser struct {
+	CPF string
+}

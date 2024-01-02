@@ -59,3 +59,7 @@ func GetAwsSecretKey() string {
 func GetAwsTokenKey() string {
 	return os.Getenv("tokenkeyaws")
 }
+
+func GetSecretKeyApi() string {
+	return os.Getenv("secretkeyapi")
+}

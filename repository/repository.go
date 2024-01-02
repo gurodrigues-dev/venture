@@ -198,8 +198,6 @@ func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
 		return false, err
 	}
 
-	fmt.Println(storedHashedPassword)
-
 	passwordMatch := storedHashedPassword == hash
 
 	return passwordMatch, nil

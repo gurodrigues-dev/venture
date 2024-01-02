@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/repository"
 	"gin/utils"
 	"net/http"
@@ -91,11 +92,43 @@ func GetUser(c *gin.Context) {
 
 func UpdateUser(c *gin.Context) {
 
+	requestID, _ := c.Get("RequestID")
+
+	resp, ok := utils.VerifyCpf(c)
+
+	fmt.Println(resp, ok)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     "Security breach, intruder account trying to delete account.",
+			"message":   "Invalid Cpf",
+		})
+
+		return
+
+	}
+
 }
 
 func DeleteUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
+
+	resp, ok := utils.VerifyCpf(c)
+
+	fmt.Println(resp, ok)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     "Security breach, intruder account trying to delete account.",
+			"message":   "Invalid Cpf",
+		})
+
+		return
+
+	}
 
 	cpf := c.Param("cpf")
 
@@ -134,9 +167,22 @@ func AuthenticateUser(c *gin.Context) {
 		return
 	}
 
+	tokenJwt, err := utils.CreateJwtToken(c.PostForm("cpf"))
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"requestID": requestID,
+			"message":   "Error while creating JWToken",
+			"error":     err.Error(),
+		})
+
+		return
+	}
+
 	c.JSON(http.StatusAccepted, gin.H{
 		"message":   "login accepted",
 		"requestID": requestID,
+		"token":     tokenJwt,
 	})
 
 }
