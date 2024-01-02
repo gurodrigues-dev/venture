@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"gin/models"
 	"gin/repository"
 	"gin/utils"
 	"net/http"
@@ -108,6 +109,33 @@ func UpdateUser(c *gin.Context) {
 		return
 
 	}
+
+	var update models.UpdateUser
+
+	update.Email = c.PostForm("email")
+	update.Endereco.Rua = c.PostForm("rua")
+	update.Endereco.Numero = c.PostForm("numero")
+	update.Endereco.Complemento = c.PostForm("complemento")
+	update.Endereco.Cidade = c.PostForm("cidade")
+	update.Endereco.Estado = c.PostForm("estado")
+	update.Endereco.CEP = c.PostForm("CEP")
+
+	resp, err := repository.UpdateUser(c, &update)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error whiling update client",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"requestID": requestID,
+		"message":   "user updated success.",
+	})
 
 }
 

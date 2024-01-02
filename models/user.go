@@ -15,7 +15,6 @@ type User struct {
 
 type UpdateUser struct {
 	Email    string
-	Password string
 	Endereco struct {
 		Rua         string
 		Numero      string

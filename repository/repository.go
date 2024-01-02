@@ -7,6 +7,7 @@ import (
 	"gin/models"
 	"log"
 
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
@@ -108,7 +109,34 @@ func FindByCpf(cpf string) (models.GetUser, error) {
 
 }
 
-func UpdateUser(cpf string, dataToUpdate *models.UpdateUser) (bool, error) {
+func UpdateUser(c *gin.Context, dataToUpdate *models.UpdateUser) (bool, error) {
+
+	query := `
+		UPDATE users
+		SET email = $1,
+		    rua = $2,
+		    numero = $3,
+		    complemento = $4,
+		    cidade = $5,
+		    estado = $6,
+		    cep = $7
+		WHERE cpf = $8
+	`
+
+	_, err := db.Exec(query,
+		dataToUpdate.Email,
+		dataToUpdate.Endereco.Rua,
+		dataToUpdate.Endereco.Numero,
+		dataToUpdate.Endereco.Complemento,
+		dataToUpdate.Endereco.Cidade,
+		dataToUpdate.Endereco.Estado,
+		dataToUpdate.Endereco.CEP,
+	)
+
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
