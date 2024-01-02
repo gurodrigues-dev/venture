@@ -120,6 +120,23 @@ func DeleteUser(c *gin.Context) {
 
 func AuthenticateUser(c *gin.Context) {
 
-	return
+	requestID, _ := c.Get("RequestID")
+
+	resp, err := utils.VerifyUserAndPassword(c)
+
+	if !resp {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"requestID": requestID,
+			"message":   "Login error",
+			"error":     err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{
+		"message":   "login accepted",
+		"requestID": requestID,
+	})
 
 }

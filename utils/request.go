@@ -2,6 +2,7 @@ package utils
 
 import (
 	"gin/models"
+	"gin/repository"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -9,7 +10,7 @@ import (
 
 func GetUserAndAdressFromRequest(c *gin.Context, url string) (*models.User, *models.Endereco) {
 
-	hashedPassword := hashPassword(c.PostForm("password"))
+	hashedPassword := HashPassword(c.PostForm("password"))
 
 	user := &models.User{
 		Name:     c.PostForm("name"),
@@ -32,5 +33,17 @@ func GetUserAndAdressFromRequest(c *gin.Context, url string) (*models.User, *mod
 	}
 
 	return user, endereco
+
+}
+
+func VerifyUserAndPassword(c *gin.Context) (bool, error) {
+
+	cpf := c.PostForm("cpf")
+
+	hashedPassword := HashPassword(c.PostForm("password"))
+
+	match, err := repository.VerifyPasswordByCpf(cpf, hashedPassword)
+
+	return match, err
 
 }
