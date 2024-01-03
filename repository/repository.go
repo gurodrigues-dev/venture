@@ -231,3 +231,42 @@ func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
 	return passwordMatch, nil
 
 }
+
+func CheckExistsEmail(email string) (bool, error) {
+
+	_, err := config.LoadEnvironmentVariables()
+
+	if err != nil {
+		return false, err
+	}
+
+	var (
+		userdb   = config.GetUserDatabase()
+		port     = config.GetPortDatabase()
+		host     = config.GetHostDatabase()
+		password = config.GetPasswordDatabase()
+		dbname   = config.GetNameDatabase()
+	)
+
+	conn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, userdb, password, dbname)
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		return false, err
+	}
+	defer db.Close()
+
+	var emailDatabase string
+
+	query := "SELECT email FROM users WHERE email = $1"
+
+	err = db.QueryRow(query, email).Scan(emailDatabase)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+
+}

@@ -63,3 +63,11 @@ func GetAwsTokenKey() string {
 func GetSecretKeyApi() string {
 	return os.Getenv("secretkeyapi")
 }
+
+func GetRedisAddress() string {
+	return os.Getenv("redisaddress")
+}
+
+func GetRedisPassword() string {
+	return os.Getenv("redispassword")
+}
