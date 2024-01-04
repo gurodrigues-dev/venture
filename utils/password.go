@@ -3,8 +3,8 @@ package utils
 import (
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/base64"
 	"encoding/hex"
+	"math/big"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -24,14 +24,22 @@ func checkPasswordHash(password, hash string) bool {
 }
 
 func GenerateRandomToken() (string, error) {
-	tokenBytes := make([]byte, 3)
-	_, err := rand.Read(tokenBytes)
-	if err != nil {
-		return "", err
+	tokenLength := 6
+
+	allowedChars := "0123456789"
+
+	tokenBytes := make([]byte, tokenLength)
+	for i := 0; i < tokenLength; i++ {
+		randomIndex, err := rand.Int(rand.Reader, big.NewInt(int64(len(allowedChars))))
+		if err != nil {
+			return "", err
+		}
+		tokenBytes[i] = allowedChars[randomIndex.Int64()]
 	}
 
-	token := base64.URLEncoding.EncodeToString(tokenBytes)
-	return token[:6], nil
+	token := string(tokenBytes)
+
+	return token, nil
 }
 
 func enviarEmail(destinatario, mensagem string) error {

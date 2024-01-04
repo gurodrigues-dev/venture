@@ -261,7 +261,7 @@ func CheckExistsEmail(email string) (bool, error) {
 
 	query := "SELECT email FROM users WHERE email = $1"
 
-	err = db.QueryRow(query, email).Scan(emailDatabase)
+	err = db.QueryRow(query, email).Scan(&emailDatabase)
 
 	if err != nil {
 		return false, err
