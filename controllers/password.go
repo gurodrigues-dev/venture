@@ -1,15 +1,11 @@
 package controllers
 
 import (
-	"gin/config"
 	"gin/repository"
 	"gin/utils"
-	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis"
 )
 
 func ResetPassword(c *gin.Context) {
@@ -20,12 +16,7 @@ func ResetPassword(c *gin.Context) {
 
 func RecoveryPassword(c *gin.Context) {
 
-	config.LoadEnvironmentVariables()
-
-	var (
-		redisAddress  = config.GetRedisAddress()
-		redisPassword = config.GetRedisPassword()
-	)
+	requestID, _ := c.Get("RequestID")
 
 	email := c.PostForm("email")
 
@@ -47,21 +38,19 @@ func RecoveryPassword(c *gin.Context) {
 		return
 	}
 
-	client := redis.NewClient(&redis.Options{
-		Addr:     redisAddress,
-		Password: redisPassword,
-		DB:       0,
-	})
+	resp, err := repository.SaveTokenToRedis(email, token)
 
-	err = client.Set(email, token, 10*time.Minute).Err()
-
-	if err != nil {
-		log.Fatal(err)
+	if !resp {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar token no Redis"})
 		return
 	}
 
-	// enviar email com aws SES
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "Token gerado com sucesso",
+		"redis-log": "Key and value received",
+		"email-log": "Email sended success",
+		"requestid": requestID,
+	})
 
 	return
 
