@@ -2,18 +2,13 @@ package controllers
 
 import (
 	"fmt"
+	"gin/models"
 	"gin/repository"
 	"gin/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
-
-func ResetPassword(c *gin.Context) {
-
-	return
-
-}
 
 func RecoveryPassword(c *gin.Context) {
 
@@ -63,6 +58,40 @@ func RecoveryPassword(c *gin.Context) {
 		"email-log": "Email sended success",
 		"requestid": requestID,
 	})
+
+	return
+
+}
+
+func VerifyIdentityToChangePassword(c *gin.Context) {
+
+	requestID, _ := c.Get("requestID")
+
+	user := models.UserResetPassword{
+		Token: c.PostForm("token"),
+		Email: c.PostForm("email"),
+	}
+
+	validate, err := repository.VerifyMatchTokensToResetPassword(user.Email, user.Token)
+
+	if !validate {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":   err.Error(),
+			"requestID": requestID,
+			"status":    "Token incorreto.",
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "Token validado com sucesso",
+		"requestid": requestID,
+	})
+
+	return
+
+}
+
+func ChangePassword(c *gin.Context) {
 
 	return
 

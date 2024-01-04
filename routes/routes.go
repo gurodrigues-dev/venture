@@ -83,9 +83,11 @@ func HandleRequests() {
 
 	// password
 
-	r.POST("api/v1/password/reset", controllers.ResetPassword)
-
 	r.POST("api/v1/password/recovery", controllers.RecoveryPassword)
+
+	r.POST("api/v1/password/verify", controllers.VerifyIdentityToChangePassword)
+
+	r.POST("api/v1/password/change", controllers.ChangePassword)
 
 	r.Run()
 

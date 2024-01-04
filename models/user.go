@@ -45,3 +45,8 @@ type GetUser struct {
 type AuthUser struct {
 	CPF string
 }
+
+type UserResetPassword struct {
+	Token string
+	Email string
+}
