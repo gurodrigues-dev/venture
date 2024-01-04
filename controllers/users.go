@@ -14,18 +14,31 @@ func CreateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	respOfAws, err := utils.SaveQRCodeOfUser(c.PostForm("cpf"))
+	respOfEmailConfirmInAwsSes, err := utils.VeryifyEmailInAwsSes(c.PostForm("email"))
+
+	if !respOfEmailConfirmInAwsSes {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Erro ao encontrar email.",
+			"error":   err.Error(),
+		})
+
+		return
+
+	}
+
+	respOfAwsBucket, err := utils.SaveQRCodeOfUser(c.PostForm("cpf"))
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": respOfAws,
+			"message": respOfAwsBucket,
 			"error":   err.Error(),
 		})
 
 		return
 	}
 
-	user, endereco := utils.GetUserAndAdressFromRequest(c, respOfAws)
+	user, endereco := utils.GetUserAndAdressFromRequest(c, respOfAwsBucket)
 
 	validateDocs, documentError := utils.ValidateDocsDriver(user, endereco)
 
@@ -58,7 +71,8 @@ func CreateUser(c *gin.Context) {
 		c.JSON(http.StatusCreated, gin.H{
 			"requestID":   requestID,
 			"status":      "user created successfully",
-			"s3bucketurl": respOfAws,
+			"s3bucketurl": respOfAwsBucket,
+			"email":       "Por favor, confirme o email.",
 		})
 	}
 

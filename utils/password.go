@@ -4,9 +4,11 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
+	"gin/config"
 	"math/big"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
 )
@@ -42,33 +44,50 @@ func GenerateRandomToken() (string, error) {
 	return token, nil
 }
 
-func enviarEmail(destinatario, mensagem string) error {
+func SendEmailAwsSes(subject, body, recipient string) error {
+
+	config.LoadEnvironmentVariables()
+
+	var (
+		region       = config.GetRegionAws()
+		awsAccessKey = config.GetAwsAccessKey()
+		awsSecretKey = config.GetAwsSecretKey()
+		awsTokenKey  = config.GetAwsTokenKey()
+		emailSource  = config.GetAwsEmailSource()
+	)
+
 	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("us-east-1"),
+		Region: aws.String(region),
+		Credentials: credentials.NewStaticCredentials(
+			awsAccessKey,
+			awsSecretKey,
+			awsTokenKey),
 	})
+
 	if err != nil {
 		return err
 	}
 
-	sesClient := ses.New(sess)
+	svc := ses.New(sess)
 
-	input := &ses.SendEmailInput{
+	emailInput := &ses.SendEmailInput{
 		Destination: &ses.Destination{
-			ToAddresses: []*string{aws.String(destinatario)},
+			ToAddresses: []*string{aws.String(recipient)},
 		},
 		Message: &ses.Message{
 			Body: &ses.Body{
 				Text: &ses.Content{
-					Data: aws.String(mensagem),
+					Data: aws.String(body),
 				},
 			},
 			Subject: &ses.Content{
-				Data: aws.String("Recuperação de Senha"),
+				Data: aws.String(subject),
 			},
 		},
-		Source: aws.String("seu-email@dominio.com"),
+		Source: aws.String(emailSource),
 	}
 
-	_, err = sesClient.SendEmail(input)
+	_, err = svc.SendEmail(emailInput)
+
 	return err
 }

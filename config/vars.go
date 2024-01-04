@@ -71,3 +71,7 @@ func GetRedisAddress() string {
 func GetRedisPassword() string {
 	return os.Getenv("redispassword")
 }
+
+func GetAwsEmailSource() string {
+	return os.Getenv("emailawssource")
+}

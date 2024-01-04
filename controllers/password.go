@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/repository"
 	"gin/utils"
 	"net/http"
@@ -43,6 +44,17 @@ func RecoveryPassword(c *gin.Context) {
 	if !resp {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao salvar token no Redis"})
 		return
+	}
+
+	body := fmt.Sprintf("Este é seu token de recuperação: %s, você tem 10 minutos para recuperar sua senha com ele. Caso, o tempo seja ultrapassado, por gentileza. Gere um novo token.", token)
+
+	err = utils.SendEmailAwsSes("Token para recuperação de senha", body, email)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message":   err.Error(),
+			"requestid": requestID,
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{
