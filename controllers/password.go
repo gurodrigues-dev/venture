@@ -67,7 +67,7 @@ func VerifyIdentityToChangePassword(c *gin.Context) {
 
 	requestID, _ := c.Get("requestID")
 
-	user := models.UserResetPassword{
+	user := models.UserInfoToResetPassword{
 		Token: c.PostForm("token"),
 		Email: c.PostForm("email"),
 	}
@@ -92,6 +92,31 @@ func VerifyIdentityToChangePassword(c *gin.Context) {
 }
 
 func ChangePassword(c *gin.Context) {
+
+	requestID, _ := c.Get("requestID")
+
+	hashedPassword := utils.HashPassword(c.PostForm("password"))
+
+	user := models.UserResetPassword{
+		Email:           c.PostForm("email"),
+		NewHashPassword: hashedPassword,
+	}
+
+	resp, err := repository.ChangePasswordByEmailIdentification(user)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   err.Error(),
+			"message": "Erro ao salvar nova senha no banco",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":   "Senha alterada com sucesso",
+		"requestid": requestID,
+	})
 
 	return
 

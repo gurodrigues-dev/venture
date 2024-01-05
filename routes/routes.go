@@ -87,7 +87,7 @@ func HandleRequests() {
 
 	r.POST("api/v1/password/verify", controllers.VerifyIdentityToChangePassword)
 
-	r.POST("api/v1/password/change", controllers.ChangePassword)
+	r.PUT("api/v1/password/change", controllers.ChangePassword)
 
 	r.Run()
 

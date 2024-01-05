@@ -270,3 +270,38 @@ func CheckExistsEmail(email string) (bool, error) {
 	return true, nil
 
 }
+
+func ChangePasswordByEmailIdentification(user models.UserResetPassword) (bool, error) {
+
+	_, err := config.LoadEnvironmentVariables()
+
+	if err != nil {
+		return false, err
+	}
+
+	var (
+		userdb   = config.GetUserDatabase()
+		port     = config.GetPortDatabase()
+		host     = config.GetHostDatabase()
+		password = config.GetPasswordDatabase()
+		dbname   = config.GetNameDatabase()
+	)
+
+	conn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, userdb, password, dbname)
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		return false, err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("UPDATE users SET password = $1 WHERE email = $2", user.NewHashPassword, user.Email)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+
+}

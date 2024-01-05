@@ -46,7 +46,12 @@ type AuthUser struct {
 	CPF string
 }
 
-type UserResetPassword struct {
+type UserInfoToResetPassword struct {
 	Token string
 	Email string
+}
+
+type UserResetPassword struct {
+	Email           string
+	NewHashPassword string
 }
