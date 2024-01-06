@@ -49,7 +49,7 @@ Criando um novo usuário.
 |-------------:|:--------:|:-------:| --- |
 | `nome`       | form | string  | Nome do usuário. |
 | `email`      | form | string  | E-mail do usuário. |
-| `senha`      | form | string  | Senha do usuário. |
+| `password`      | form | string  | Senha do usuário. |
 | `cpf`        | form | string  | CPF do usuário. |
 | `rg`         | form | string  | RG do usuário. | 
 | `cnh`        | form | string  | CNH do usuário. |  
@@ -120,7 +120,28 @@ Busca um usuário e todos seus dados.
 
 ### PUT /users/\<cpf>
 
-Em desenvolvimento...
+Altere as informações do usuário.
+
+**Parâmetros**
+
+| Nome | Local | Tipo | Descrição
+|-------------:|:--------:|:-------:| --- |
+| `email`        | body | string  | Email do usuário |
+| `rua`        | body | string  | Logradouro do usuário |
+| `numero`        | body | string  | Número do logradouro |
+| `complemento`        | body | string  | Complemento do logradouro |
+| `cidade`        | body | string  | Cidade do logradouro |
+| `estado`        | body | string  | Estado do logradouro |
+| `CEP`        | body | string  | CEP do logradouro |
+
+**Resposta**
+
+```json
+{
+    "message": "User updated success",
+    "requestID": "d4920f0f-6433-4726-a014-21cdb4aed024"
+}
+```
 
 ---
 
@@ -147,4 +168,91 @@ Deleta um usuário, consequentemente seu endereço e seu qrcode.
 
 ### POST /users/login
 
-Em desenvolvimento...
+Se autentique através do login.
+
+**Parâmetros**
+
+| Nome | Local | Tipo | Descrição
+|-------------:|:--------:|:-------:| --- |
+| `cpf`        | form | string  | CPF do usuário. |
+| `password`    | form | string  | Senha do usuário. |
+
+**Resposta**
+
+```json
+{
+    "message": "User deleted w/ success",
+    "requestID": "d4920f0f-6433-4726-a014-21cdb4aed024",
+    "tokenJwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT"
+}
+```
+
+---
+
+### POST /password/recovery
+
+Recuperação de senha.
+
+**Parâmetros**
+
+| Nome | Local | Tipo | Descrição
+|-------------:|:--------:|:-------:| --- |
+| `email`        | form | string  |  do usuário. |
+
+**Resposta**
+
+```json
+{
+    "message":   "Token generated successfully",
+		"redis-log": "key and value received",
+		"email-log": "email sended success",
+		"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
+}
+```
+
+---
+
+### POST /password/verify
+
+Verificando identidade da recuperação de senha.
+
+**Parâmetros**
+
+| Nome | Local | Tipo | Descrição
+|-------------:|:--------:|:-------:| --- |
+| `email`        | body | string  |  do usuário. |
+| `token`    | form | string  | Senha do usuário. |
+
+**Resposta**
+
+```json
+{
+    "message":   "redis authenticated token",
+		"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
+}
+```
+
+---
+
+### POST /password/change
+
+Alterando senha pós comprovação e recuperação de senha.
+
+**Parâmetros**
+
+| Nome | Local | Tipo | Descrição
+|-------------:|:--------:|:-------:| --- |
+| `email`        | body | string  |  Email do usuário. |
+| `hashpassword`    | form | string  | Hash da Senha do usuário. |
+
+**Resposta**
+
+```json
+{
+    "message":   "password updated w/ sucess",
+		"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
+}
+```
+
+---
+
