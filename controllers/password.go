@@ -53,9 +53,9 @@ func RecoveryPassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":   "Token gerado com sucesso",
-		"redis-log": "Key and value received",
-		"email-log": "Email sended success",
+		"message":   "token generated successfully",
+		"redis-log": "key and value received",
+		"email-log": "email sended success",
 		"requestid": requestID,
 	})
 
@@ -83,7 +83,7 @@ func VerifyIdentityToChangePassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":   "Token validado com sucesso",
+		"message":   "redis authenticated token ",
 		"requestid": requestID,
 	})
 
@@ -114,7 +114,7 @@ func ChangePassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":   "Senha alterada com sucesso",
+		"message":   "password updated w/ sucess",
 		"requestid": requestID,
 	})
 
