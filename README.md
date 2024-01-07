@@ -203,10 +203,10 @@ Recuperação de senha.
 
 ```json
 {
-    		"message":   "Token generated successfully",
-		"redis-log": "key and value received",
-		"email-log": "email sended success",
-		"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
+	"message":   "Token generated successfully",
+	"redis-log": "key and value received",
+	"email-log": "email sended success",
+	"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
 }
 ```
 
@@ -227,8 +227,8 @@ Verificando identidade da recuperação de senha.
 
 ```json
 {
-    		"message":   "redis authenticated token",
-		"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
+	"message":   "redis authenticated token",
+	"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
 }
 ```
 
@@ -249,8 +249,8 @@ Alterando senha pós comprovação e recuperação de senha.
 
 ```json
 {
-    		"message":   "password updated w/ sucess",
-		"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
+	"message":   "password updated w/ sucess",
+	"requestid": "d4920f0f-6433-4726-a014-21cdb4aed024"
 }
 ```
 
