@@ -14,6 +14,19 @@ func CreateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
+	verifyEmailExist, err := repository.CheckExistsEmail(c.PostForm("email"))
+
+	if verifyEmailExist {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Este email já existe.",
+			"error":   err.Error(),
+		})
+
+		return
+
+	}
+
 	respOfEmailConfirmInAwsSes, err := utils.VeryifyEmailInAwsSes(c.PostForm("email"))
 
 	if !respOfEmailConfirmInAwsSes {

@@ -234,6 +234,8 @@ func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
 
 func CheckExistsEmail(email string) (bool, error) {
 
+	// false -> email not found | true -> email found
+
 	_, err := config.LoadEnvironmentVariables()
 
 	if err != nil {
