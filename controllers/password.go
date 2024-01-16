@@ -20,7 +20,7 @@ func RecoveryPassword(c *gin.Context) {
 
 	if !emailExists {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "email not exist found.",
+			"message": "email not found.",
 			"error":   err.Error(),
 		})
 
