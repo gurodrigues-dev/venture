@@ -12,9 +12,9 @@ Summary:
 - [ ] Escrever stories and tasks 
 - [ ] Refactor de ponteirs and issues
     - [X] Refactor of pointers
-    - [ ] Issues
-        - [ ] Email bug
-        - [ ] Qrcode bug
+    - [X] Issues
+        - [X] Email bug
+        - [X] Qrcode bug
 - [ ] Entregar arquitetura do backend 
     - Estudar uma api de mapas e que forme rotas.
     - Formas de pagamento.
