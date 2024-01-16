@@ -9,7 +9,7 @@ Summary:
 
 # S1 - Project and future
 
-- [ ] Escrever stories and tasks 
+- [X] Escrever stories and tasks 
 - [X] Refactor de ponteirs and issues
     - [X] Refactor of pointers
     - [X] Issues
