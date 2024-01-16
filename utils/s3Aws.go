@@ -61,3 +61,41 @@ func SaveQRCodeOfUser(cpf string) (string, error) {
 	return qrCodeURL, nil
 
 }
+
+func DeleteQRCodeOfUser(cpf string) (bool, error) {
+
+	config.LoadEnvironmentVariables()
+
+	var (
+		region       = config.GetRegionAws()
+		bucketName   = config.GetS3BucketAws()
+		awsAccessKey = config.GetAwsAccessKey()
+		awsSecretKey = config.GetAwsSecretKey()
+		awsTokenKey  = config.GetAwsTokenKey()
+	)
+
+	sess, err := session.NewSession(&aws.Config{
+		Region:      aws.String(region),
+		Credentials: credentials.NewStaticCredentials(awsAccessKey, awsSecretKey, awsTokenKey),
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	svc := s3.New(sess)
+
+	filename := fmt.Sprintf("qrcodes/%s.png", cpf)
+
+	_, err = svc.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(filename),
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+
+}

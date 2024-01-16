@@ -187,13 +187,37 @@ func DeleteUser(c *gin.Context) {
 
 	cpf := c.Param("cpf")
 
-	_, err := repository.DeleteByCpf(cpf)
+	emailOfUserToDeleteInAwsSes, err := repository.DeleteByCpf(cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"requestID": requestID,
 			"error":     err.Error(),
 			"message":   "Error while deleting in database",
+		})
+
+		return
+	}
+
+	_, err = utils.DeleteQRCodeOfUser(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error when deleting qrcode of user",
+		})
+
+		return
+	}
+
+	_, err = utils.DeleteEmailFromAwsSes(emailOfUserToDeleteInAwsSes)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error when deleting user email of SES",
 		})
 
 		return

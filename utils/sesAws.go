@@ -42,3 +42,40 @@ func VeryifyEmailInAwsSes(emailAddress string) (bool, error) {
 
 	return true, nil
 }
+
+func DeleteEmailFromAwsSes(emailAddress string) (bool, error) {
+
+	config.LoadEnvironmentVariables()
+
+	var (
+		region       = config.GetRegionAws()
+		awsAccessKey = config.GetAwsAccessKey()
+		awsSecretKey = config.GetAwsSecretKey()
+		awsTokenKey  = config.GetAwsTokenKey()
+	)
+
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region),
+		Credentials: credentials.NewStaticCredentials(
+			awsAccessKey,
+			awsSecretKey,
+			awsTokenKey),
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	svc := ses.New(sess)
+
+	_, err = svc.DeleteVerifiedEmailAddress(&ses.DeleteVerifiedEmailAddressInput{
+		EmailAddress: aws.String(emailAddress),
+	})
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+
+}

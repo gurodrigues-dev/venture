@@ -140,12 +140,12 @@ func UpdateUser(c *gin.Context, dataToUpdate *models.UpdateUser) (bool, error) {
 	return true, nil
 }
 
-func DeleteByCpf(cpf string) (bool, error) {
+func DeleteByCpf(cpf string) (string, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
 	if err != nil {
-		return false, err
+		return "", err
 	}
 
 	var (
@@ -161,13 +161,13 @@ func DeleteByCpf(cpf string) (bool, error) {
 
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
-		return false, err
+		return "", err
 	}
 	defer db.Close()
 
 	tx, err := db.Begin()
 	if err != nil {
-		return false, err
+		return "", err
 	}
 	defer func() {
 		if p := recover(); p != nil {
@@ -180,16 +180,24 @@ func DeleteByCpf(cpf string) (bool, error) {
 		}
 	}()
 
+	// Obtenha o e-mail antes de excluir o usuário
+	var userEmail string
+	err = tx.QueryRow("SELECT email FROM users WHERE cpf = $1", cpf).Scan(&userEmail)
+	if err != nil {
+		return "", err
+	}
+
 	_, err = tx.Exec("DELETE FROM endereco WHERE cpf = $1", cpf)
 	if err != nil {
-		return false, err
+		return "", err
 	}
 
 	_, err = tx.Exec("DELETE FROM users WHERE cpf = $1", cpf)
 	if err != nil {
-		return false, err
+		return "", err
 	}
-	return true, nil
+
+	return userEmail, nil
 }
 
 func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
