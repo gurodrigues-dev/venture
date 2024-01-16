@@ -10,7 +10,7 @@ Summary:
 # S1 - Project and future
 
 - [ ] Escrever stories and tasks 
-- [ ] Refactor de ponteirs and issues
+- [X] Refactor de ponteirs and issues
     - [X] Refactor of pointers
     - [X] Issues
         - [X] Email bug
