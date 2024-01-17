@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateUser(c *gin.Context) {
+func CreateDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
@@ -93,7 +93,7 @@ func CreateUser(c *gin.Context) {
 
 }
 
-func GetUser(c *gin.Context) {
+func GetDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
@@ -118,7 +118,7 @@ func GetUser(c *gin.Context) {
 
 }
 
-func UpdateUser(c *gin.Context) {
+func UpdateDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
@@ -263,5 +263,17 @@ func AuthenticateUser(c *gin.Context) {
 		"requestID": requestID,
 		"token":     tokenJwt,
 	})
+
+}
+
+func CreateUser(c *gin.Context) {
+
+}
+
+func GetUser(c *gin.Context) {
+
+}
+
+func UpdateUser(c *gin.Context) {
 
 }
