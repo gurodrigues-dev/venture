@@ -39,7 +39,7 @@ Retorna o status de saúde da API e seu uso de recursos.
 ```
 ---
 
-### POST /users
+### POST /drivers
 
 Criando um novo usuário.
 
@@ -72,7 +72,7 @@ Criando um novo usuário.
 
 ---
 
-### GET /users/\<cpf>
+### GET /drivers/\<cpf>
 
 Busca um usuário e todos seus dados.
 
@@ -118,7 +118,7 @@ Busca um usuário e todos seus dados.
 ```
 ---
 
-### PUT /users/\<cpf>
+### PUT /drivers/\<cpf>
 
 Altere as informações do usuário.
 
@@ -145,7 +145,7 @@ Altere as informações do usuário.
 
 ---
 
-### DELETE /users/\<cpf>
+### DELETE /drivers/\<cpf>
 
 Deleta um usuário, consequentemente seu endereço e seu qrcode.
 
@@ -166,7 +166,7 @@ Deleta um usuário, consequentemente seu endereço e seu qrcode.
 
 ---
 
-### POST /users/login
+### POST /drivers/login
 
 Se autentique através do login.
 

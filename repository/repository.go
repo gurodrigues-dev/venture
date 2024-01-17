@@ -38,7 +38,7 @@ func SaveClient(user *models.User, endereco *models.Endereco) (bool, error) {
 	}
 	defer db.Close()
 
-	_, err = db.Exec("INSERT INTO users (id, cpf, rg, name, cnh, email, qrcode, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+	_, err = db.Exec("INSERT INTO drivers (id, cpf, rg, name, cnh, email, qrcode, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
 		user.ID, user.CPF, user.RG, user.Name, user.CNH, user.Email, user.URL, user.Password)
 
 	if err != nil {
@@ -79,7 +79,7 @@ func FindByCpf(cpf string) (models.GetUser, error) {
 	rows, err := db.Query(`
 		SELECT u.name, u.email, u.rg, u.cpf, u.cnh, u.qrcode,
 		       e.rua, e.numero, e.cep, e.estado, e.cidade, e.complemento
-		FROM users u
+		FROM drivers u
 		INNER JOIN endereco e ON u.cpf = e.cpf
 		WHERE u.cpf = $1
 	`, cpf)
@@ -112,7 +112,7 @@ func FindByCpf(cpf string) (models.GetUser, error) {
 func UpdateUser(c *gin.Context, dataToUpdate *models.UpdateUser) (bool, error) {
 
 	query := `
-		UPDATE users
+		UPDATE drivers
 		SET email = $1,
 		    rua = $2,
 		    numero = $3,
@@ -182,7 +182,7 @@ func DeleteByCpf(cpf string) (string, error) {
 
 	// Obtenha o e-mail antes de excluir o usuário
 	var userEmail string
-	err = tx.QueryRow("SELECT email FROM users WHERE cpf = $1", cpf).Scan(&userEmail)
+	err = tx.QueryRow("SELECT email FROM drivers WHERE cpf = $1", cpf).Scan(&userEmail)
 	if err != nil {
 		return "", err
 	}
@@ -192,7 +192,7 @@ func DeleteByCpf(cpf string) (string, error) {
 		return "", err
 	}
 
-	_, err = tx.Exec("DELETE FROM users WHERE cpf = $1", cpf)
+	_, err = tx.Exec("DELETE FROM drivers WHERE cpf = $1", cpf)
 	if err != nil {
 		return "", err
 	}
@@ -227,7 +227,7 @@ func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
 
 	var storedHashedPassword string
 
-	query := "SELECT password FROM users WHERE cpf = $1"
+	query := "SELECT password FROM drivers WHERE cpf = $1"
 
 	err = db.QueryRow(query, cpf).Scan(&storedHashedPassword)
 	if err != nil {
@@ -269,7 +269,7 @@ func CheckExistsEmail(email string) (bool, error) {
 
 	var emailDatabase string
 
-	query := "SELECT email FROM users WHERE email = $1"
+	query := "SELECT email FROM drivers WHERE email = $1"
 
 	err = db.QueryRow(query, email).Scan(&emailDatabase)
 
@@ -306,7 +306,7 @@ func ChangePasswordByEmailIdentification(user models.UserResetPassword) (bool, e
 	}
 	defer db.Close()
 
-	_, err = db.Exec("UPDATE users SET password = $1 WHERE email = $2", user.NewHashPassword, user.Email)
+	_, err = db.Exec("UPDATE drivers SET password = $1 WHERE email = $2", user.NewHashPassword, user.Email)
 
 	if err != nil {
 		return false, err

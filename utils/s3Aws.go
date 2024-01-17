@@ -24,7 +24,7 @@ func SaveQRCodeOfUser(cpf string) (string, error) {
 		awsTokenKey  = config.GetAwsTokenKey()
 	)
 
-	qrCodeData := fmt.Sprintf("http://localhost:8080/api/v1/users/%s", cpf)
+	qrCodeData := fmt.Sprintf("http://localhost:8080/api/v1/drivers/%s", cpf)
 	qrCode, err := qrcode.Encode(qrCodeData, qrcode.Medium, 256)
 
 	if err != nil {
