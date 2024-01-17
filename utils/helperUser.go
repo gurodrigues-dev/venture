@@ -9,19 +9,17 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetUserAndAdressFromRequest(c *gin.Context, url string) (*models.User, *models.Endereco) {
+func GetUserAndAdressFromRequest(c *gin.Context) (*models.CreateUser, *models.Endereco) {
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
-	user := &models.User{
+	user := &models.CreateUser{
 		Name:     c.PostForm("name"),
 		Password: hashedPassword,
 		CPF:      c.PostForm("cpf"),
 		RG:       c.PostForm("rg"),
-		CNH:      c.PostForm("cnh"),
 		ID:       uuid.New(),
 		Email:    c.PostForm("email"),
-		URL:      url,
 	}
 
 	endereco := &models.Endereco{
@@ -64,4 +62,25 @@ func VerifyCpf(c *gin.Context) (bool, error) {
 	cpfMatch := cpfJwtToken == cpfRequest
 
 	return cpfMatch, nil
+}
+
+func ValidateDocsUser(user *models.CreateUser, endereco *models.Endereco) (bool, string) {
+
+	validateCPF := IsCPF(user.CPF)
+
+	if !validateCPF {
+
+		return false, "cpf invalid, type and try again."
+
+	}
+
+	validateCEP := IsCEP(endereco.CEP)
+
+	if !validateCEP {
+
+		return false, "cep invalid, type and try again."
+	}
+
+	return true, "Ok!"
+
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
-func SaveQRCodeOfUser(cpf string) (string, error) {
+func SaveQRCodeOfDriver(cpf string) (string, error) {
 
 	config.LoadEnvironmentVariables()
 

@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateDriver(c *gin.Context) {
+func CreateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	verifyEmailExist, err := repository.CheckExistsEmail(c.PostForm("email"))
+	_, err := repository.CheckExistsEmail(c.PostForm("email"))
 
-	if verifyEmailExist {
+	if err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Este email já existe.",
@@ -24,12 +24,11 @@ func CreateDriver(c *gin.Context) {
 		})
 
 		return
-
 	}
 
-	respOfEmailConfirmInAwsSes, err := utils.VeryifyEmailInAwsSes(c.PostForm("email"))
+	_, err = utils.SendMessageOfVerifyToEmailInAwsSes(c.PostForm("email"))
 
-	if !respOfEmailConfirmInAwsSes {
+	if err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Erro ao encontrar email.",
@@ -40,22 +39,11 @@ func CreateDriver(c *gin.Context) {
 
 	}
 
-	respOfAwsBucket, err := utils.SaveQRCodeOfUser(c.PostForm("cpf"))
+	user, endereco := utils.GetUserAndAdressFromRequest(c)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": respOfAwsBucket,
-			"error":   err.Error(),
-		})
+	resOfValidateDocs, documentError := utils.ValidateDocsUser(user, endereco)
 
-		return
-	}
-
-	user, endereco := utils.GetUserAndAdressFromRequest(c, respOfAwsBucket)
-
-	validateDocs, documentError := utils.ValidateDocsDriver(user, endereco)
-
-	if !validateDocs {
+	if !resOfValidateDocs {
 
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "type and try insert your documents again, please.",
@@ -66,7 +54,7 @@ func CreateDriver(c *gin.Context) {
 
 	}
 
-	resp, err := repository.SaveClient(user, endereco)
+	_, err = repository.SaveUser(user, endereco)
 
 	if err != nil {
 
@@ -79,27 +67,23 @@ func CreateDriver(c *gin.Context) {
 
 	}
 
-	if resp == true {
-
-		c.JSON(http.StatusCreated, gin.H{
-			"requestID":   requestID,
-			"status":      "user created successfully",
-			"s3bucketurl": respOfAwsBucket,
-			"email":       "Por favor, confirme o email.",
-		})
-	}
+	c.JSON(http.StatusCreated, gin.H{
+		"requestID": requestID,
+		"status":    "user created successfully",
+		"email":     "Por favor, confirme o email.",
+	})
 
 	return
 
 }
 
-func GetDriver(c *gin.Context) {
+func GetUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
 	cpf := c.Param("cpf")
 
-	user, err := repository.FindByCpf(cpf)
+	user, err := repository.FindUserByCpf(cpf)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -112,13 +96,13 @@ func GetDriver(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"requestID": requestID,
-		"userData":  user,
+		"requestID":  requestID,
+		"dataOfUser": user,
 	})
 
 }
 
-func UpdateDriver(c *gin.Context) {
+func UpdateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
@@ -266,14 +250,17 @@ func AuthenticateUser(c *gin.Context) {
 
 }
 
-func CreateUser(c *gin.Context) {
+func UserToDriver(c *gin.Context) {
 
-}
+	// 1. somente estando logado
+	// 2. não é necessário verificar o email deste.
+	// 3. criar qrcode
+	// 4. inserir na tabela de motoristas
 
-func GetUser(c *gin.Context) {
+	requestID, _ := c.Get("RequestID")
 
-}
-
-func UpdateUser(c *gin.Context) {
+	c.JSON(http.StatusAccepted, gin.H{
+		"requestID": requestID,
+	})
 
 }

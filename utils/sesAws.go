@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ses"
 )
 
-func VeryifyEmailInAwsSes(emailAddress string) (bool, error) {
+func SendMessageOfVerifyToEmailInAwsSes(emailAddress string) (bool, error) {
 
 	config.LoadEnvironmentVariables()
 
