@@ -14,7 +14,7 @@ func CreateDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	_, err := repository.CheckExistsEmail(c.PostForm("email"))
+	_, err := repository.CheckExistsEmailInDrivers(c.PostForm("email"))
 
 	if err != nil {
 

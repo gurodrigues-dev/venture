@@ -14,7 +14,7 @@ func CreateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	_, err := repository.CheckExistsEmail(c.PostForm("email"))
+	_, err := repository.CheckExistsEmailInUsers(c.PostForm("email"))
 
 	if err != nil {
 
@@ -252,15 +252,84 @@ func AuthenticateUser(c *gin.Context) {
 
 func UserToDriver(c *gin.Context) {
 
-	// 1. somente estando logado
-	// 2. não é necessário verificar o email deste.
-	// 3. criar qrcode
-	// 4. inserir na tabela de motoristas
-
 	requestID, _ := c.Get("RequestID")
 
-	c.JSON(http.StatusAccepted, gin.H{
-		"requestID": requestID,
+	resp, _ := utils.VerifyCpf(c)
+
+	if !resp {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     "Security breach, intruder account trying to changing account.",
+			"message":   "Invalid Cpf",
+		})
+
+		return
+
+	}
+
+	cpf := c.Param("cpf")
+
+	respOfAwsBucket, err := utils.SaveQRCodeOfDriver(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": respOfAwsBucket,
+			"error":   err.Error(),
+		})
+
+		return
+	}
+
+	user, err := repository.FindUserByCpf(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error while searching in database",
+		})
+
+		return
+	}
+
+	dataChangedUserToDriver := models.InfoUserToDriver{
+		URL:  respOfAwsBucket,
+		Info: user,
+	}
+
+	driver, endereco := utils.GettingNowInfoFromUserAndRequestInfos(c, &dataChangedUserToDriver)
+
+	validateDocs, documentError := utils.ValidateDocsDriver(driver, endereco)
+
+	if !validateDocs {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "type and try insert your documents again, please.",
+			"error":   documentError,
+		})
+
+		return
+
+	}
+
+	_, err = repository.SaveDriver(driver, endereco)
+
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "error when inserting into database",
+			"error":   err.Error(),
+		})
+
+		return
+
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"requestID":   requestID,
+		"status":      "driver created successfully",
+		"s3bucketurl": respOfAwsBucket,
 	})
 
 }

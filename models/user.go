@@ -26,6 +26,11 @@ type GetUser struct {
 	}
 }
 
+type InfoUserToDriver struct {
+	URL  string
+	Info GetUser
+}
+
 type UpdateUser struct {
 	Email    string
 	Endereco struct {

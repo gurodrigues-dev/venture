@@ -16,9 +16,11 @@ func RecoveryPassword(c *gin.Context) {
 
 	email := c.PostForm("email")
 
-	emailExists, err := repository.CheckExistsEmail(email)
+	emailExistsUsers, err := repository.CheckExistsEmailInUsers(email)
 
-	if !emailExists {
+	emailExistsDrivers, err := repository.CheckExistsEmailInDrivers(email)
+
+	if !emailExistsUsers && !emailExistsDrivers {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "email not found.",
 			"error":   err.Error(),
