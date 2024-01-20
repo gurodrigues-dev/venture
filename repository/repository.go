@@ -124,7 +124,7 @@ func FindDriverByCpf(cpf string) (models.GetDriver, error) {
 		SELECT u.name, u.email, u.rg, u.cpf, u.cnh, u.qrcode,
 		       e.rua, e.numero, e.cep, e.estado, e.cidade, e.complemento
 		FROM drivers u
-		INNER JOIN endereco e ON u.cpf = e.cpf
+		INNER JOIN endereco_drivers e ON u.cpf = e.cpf
 		WHERE u.cpf = $1
 	`, cpf)
 
@@ -182,7 +182,7 @@ func FindUserByCpf(cpf string) (models.GetUser, error) {
 		SELECT u.name, u.email, u.rg, u.cpf,
 		       e.rua, e.numero, e.cep, e.estado, e.cidade, e.complemento
 		FROM users u
-		INNER JOIN endereco e ON u.cpf = e.cpf
+		INNER JOIN endereco_users e ON u.cpf = e.cpf
 		WHERE u.cpf = $1
 	`, cpf)
 
@@ -319,7 +319,7 @@ func DeleteDriverByCpf(cpf string) (string, error) {
 		return "", err
 	}
 
-	_, err = tx.Exec("DELETE FROM endereco WHERE cpf = $1", cpf)
+	_, err = tx.Exec("DELETE FROM endereco_drivers WHERE cpf = $1", cpf)
 	if err != nil {
 		return "", err
 	}
@@ -378,7 +378,7 @@ func DeleteUserByCpf(cpf string) (string, error) {
 		return "", err
 	}
 
-	_, err = tx.Exec("DELETE FROM endereco WHERE cpf = $1", cpf)
+	_, err = tx.Exec("DELETE FROM endereco_users WHERE cpf = $1", cpf)
 	if err != nil {
 		return "", err
 	}
