@@ -27,6 +27,9 @@ type GetUser struct {
 }
 
 type InfoUserToDriver struct {
+
+	// cnh is being provided by context gin in the function "utils.GettingNowInfoFromUserAndRequestInfos(c)"
+
 	URL  string
 	Info GetUser
 }

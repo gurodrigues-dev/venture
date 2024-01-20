@@ -60,6 +60,8 @@ func VerifyCpf(c *gin.Context) (bool, error) {
 
 	cpfRequest := c.Param("cpf")
 
+	fmt.Println(cpfRequest)
+
 	cpfMatch := cpfJwtToken == cpfRequest
 
 	return cpfMatch, nil

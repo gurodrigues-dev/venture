@@ -89,7 +89,7 @@ func HandleRequests() {
 
 	r.DELETE("api/v1/users/:cpf", authMiddleware, controllers.DeleteUser)
 
-	r.POST("api/v1/users/driver", authMiddleware, controllers.UserToDriver)
+	r.POST("api/v1/users/drivers/:cpf", authMiddleware, controllers.UserToDriver)
 
 	//middleware
 
