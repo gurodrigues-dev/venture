@@ -45,7 +45,7 @@ func SaveDriver(driver *models.CreateDriver, endereco *models.Endereco) (bool, e
 		return false, err
 	}
 
-	_, err = db.Exec("INSERT INTO endereco (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+	_, err = db.Exec("INSERT INTO endereco_drivers (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		endereco.Rua, driver.CPF, endereco.Numero, endereco.Complemento, endereco.Cidade, endereco.Estado, endereco.CEP)
 
 	return true, nil
@@ -391,7 +391,7 @@ func DeleteUserByCpf(cpf string) (string, error) {
 	return userEmail, nil
 }
 
-func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
+func VerifyPasswordByCpf(cpf, table, hash string) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -418,7 +418,7 @@ func VerifyPasswordByCpf(cpf, hash string) (bool, error) {
 
 	var storedHashedPassword string
 
-	query := "SELECT password FROM drivers WHERE cpf = $1"
+	query := "SELECT password FROM " + table + " WHERE cpf = $1"
 
 	err = db.QueryRow(query, cpf).Scan(&storedHashedPassword)
 	if err != nil {

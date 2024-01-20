@@ -38,10 +38,11 @@ func GetUserAndAdressFromRequest(c *gin.Context) (*models.CreateUser, *models.En
 func VerifyUserAndPassword(c *gin.Context) (bool, error) {
 
 	cpf := c.PostForm("cpf")
+	table := c.PostForm("table")
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
-	match, err := repository.VerifyPasswordByCpf(cpf, hashedPassword)
+	match, err := repository.VerifyPasswordByCpf(cpf, table, hashedPassword)
 
 	return match, err
 
