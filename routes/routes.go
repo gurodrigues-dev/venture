@@ -67,6 +67,8 @@ func HandleRequests() {
 
 	// health
 
+	r.GET("api/v1/ping", controllers.PingPong)
+
 	r.GET("api/v1/health", controllers.Health)
 
 	// drivers
