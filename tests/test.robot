@@ -27,8 +27,18 @@ Testing route Health
     Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
-Testing route Login
-    Log To Console    Teste da Rota Login... 
+Testing route Login Users
+    Log To Console    Teste da Rota Login para Users... 
+    Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+    Log To Console   [OK] ✔️
+
+Testing route Login Drivers
+    Log To Console    Teste da Rota Login para Drivers... 
     Sleep    1
     Create Session    api_session    ${BASE_URL}
     ${response}    GET On Session    api_session    /ping
@@ -127,18 +137,55 @@ Testing route user to driver
     Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
+Testing route password recovery
+    Log To Console    Teste da Rota Recuperação de Senha... 
+    Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+    Log To Console   [OK] ✔️
+
+Testing route password verify
+    Log To Console    Teste da Rota Recuperação de Senha... 
+    Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+    Log To Console   [OK] ✔️
+
+Testing route password change
+        Log To Console    Teste da Rota Recuperação de Senha... 
+    Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+    Log To Console   [OK] ✔️
+
 *** Test Cases ***
 Unitary Tests
     Testing route pong
     Testing route health
-    Testing route login
+
     Testing route Post users
+    Testing route Login Users
     Testing route Get users
     Testing route Put users
     Testing route Delete users
+    Testing route password recovery
+    Testing route password verify
+    Testing route password change
+
     Testing route Post drivers
+    Testing route Login Drivers
     Testing route Get drivers
     Testing route Put drivers
     Testing route Delete drivers
+
     Testing route user to driver
     
