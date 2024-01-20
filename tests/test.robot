@@ -20,56 +20,111 @@ Testing route Pong
 Testing route Health
     Log To Console    Teste da Rota Health... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route Login
     Log To Console    Teste da Rota Login... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route Get users
     Log To Console    Teste da Rota Get Users... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
     
 Testing route Post users
     Log To Console    Teste da Rota Post Users... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route Put users
     Log To Console    Teste da Rota Put Users... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route Delete users
     Log To Console    Teste da Rota Delete Users... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route Get drivers
     Log To Console    Teste da Rota Get drivers... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
     
 Testing route Post drivers
     Log To Console    Teste da Rota Post drivers... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route Put drivers
     Log To Console    Teste da Rota Put drivers... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route delete drivers
     Log To Console    Teste da Rota Delete drivers... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 Testing route user to driver
     Log To Console    Teste da Rota Usuários virando Drivers... 
     Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}    GET On Session    api_session    /ping
+    Log    ${response.content}
+    Should Be Equal As Strings    ${response.status_code}    200
+    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
 
 *** Test Cases ***
