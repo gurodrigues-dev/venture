@@ -14,9 +14,9 @@ func CreateDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	_, err := repository.CheckExistsEmailInDrivers(c.PostForm("email"))
+	emailExist, err := repository.CheckExistsEmailInDrivers(c.PostForm("email"))
 
-	if err != nil {
+	if emailExist {
 
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Este email já existe.",
@@ -159,6 +159,70 @@ func UpdateDriver(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"requestID": requestID,
 		"message":   "user updated success.",
+	})
+
+}
+
+func DeleteDriver(c *gin.Context) {
+
+	requestID, _ := c.Get("RequestID")
+
+	resp, ok := utils.VerifyCpf(c)
+
+	fmt.Println(resp, ok)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     "Security breach, intruder account trying to delete account.",
+			"message":   "Invalid Cpf",
+		})
+
+		return
+
+	}
+
+	cpf := c.Param("cpf")
+
+	emailOfUserToDeleteInAwsSes, err := repository.DeleteDriverByCpf(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error while deleting in database",
+		})
+
+		return
+	}
+
+	_, err = utils.DeleteQRCodeOfUser(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error when deleting qrcode of user",
+		})
+
+		return
+	}
+
+	_, err = utils.DeleteEmailFromAwsSes(emailOfUserToDeleteInAwsSes)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error when deleting user email of SES",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"requestID": requestID,
+		"message":   "User deleted w/ success",
 	})
 
 }

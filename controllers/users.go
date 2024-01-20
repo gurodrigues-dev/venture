@@ -14,13 +14,13 @@ func CreateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	_, err := repository.CheckExistsEmailInUsers(c.PostForm("email"))
+	emailExist, err := repository.CheckExistsEmailInUsers(c.PostForm("email"))
 
-	if err != nil {
+	if emailExist {
 
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Este email já existe.",
-			"error":   err.Error(),
+			"error":   "email found.",
 		})
 
 		return
@@ -150,70 +150,6 @@ func UpdateUser(c *gin.Context) {
 
 }
 
-func DeleteUser(c *gin.Context) {
-
-	requestID, _ := c.Get("RequestID")
-
-	resp, ok := utils.VerifyCpf(c)
-
-	fmt.Println(resp, ok)
-
-	if !resp {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"requestID": requestID,
-			"error":     "Security breach, intruder account trying to delete account.",
-			"message":   "Invalid Cpf",
-		})
-
-		return
-
-	}
-
-	cpf := c.Param("cpf")
-
-	emailOfUserToDeleteInAwsSes, err := repository.DeleteByCpf(cpf)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"requestID": requestID,
-			"error":     err.Error(),
-			"message":   "Error while deleting in database",
-		})
-
-		return
-	}
-
-	_, err = utils.DeleteQRCodeOfUser(cpf)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"requestID": requestID,
-			"error":     err.Error(),
-			"message":   "Error when deleting qrcode of user",
-		})
-
-		return
-	}
-
-	_, err = utils.DeleteEmailFromAwsSes(emailOfUserToDeleteInAwsSes)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"requestID": requestID,
-			"error":     err.Error(),
-			"message":   "Error when deleting user email of SES",
-		})
-
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"requestID": requestID,
-		"message":   "User deleted w/ success",
-	})
-
-}
-
 func AuthenticateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
@@ -330,6 +266,58 @@ func UserToDriver(c *gin.Context) {
 		"requestID":   requestID,
 		"status":      "driver created successfully",
 		"s3bucketurl": respOfAwsBucket,
+	})
+
+}
+
+func DeleteUser(c *gin.Context) {
+
+	requestID, _ := c.Get("RequestID")
+
+	resp, ok := utils.VerifyCpf(c)
+
+	fmt.Println(resp, ok)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     "Security breach, intruder account trying to delete account.",
+			"message":   "Invalid Cpf",
+		})
+
+		return
+
+	}
+
+	cpf := c.Param("cpf")
+
+	emailOfUserToDeleteInAwsSes, err := repository.DeleteUserByCpf(cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error while deleting in database",
+		})
+
+		return
+	}
+
+	_, err = utils.DeleteEmailFromAwsSes(emailOfUserToDeleteInAwsSes)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+			"message":   "Error when deleting user email of SES",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"requestID": requestID,
+		"message":   "User deleted w/ success",
 	})
 
 }

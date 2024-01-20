@@ -77,6 +77,8 @@ func HandleRequests() {
 
 	r.PUT("api/v1/drivers/:cpf", authMiddleware, controllers.UpdateDriver)
 
+	r.DELETE("api/v1/drivers/:cpf", authMiddleware, controllers.DeleteDriver)
+
 	//usuarios
 
 	r.POST("api/v1/users", controllers.CreateUser)
@@ -85,13 +87,13 @@ func HandleRequests() {
 
 	r.PUT("api/v1/users/:cpf", authMiddleware, controllers.UpdateUser)
 
-	r.DELETE("api/v1/users/:cpf", authMiddleware, controllers.DeleteUser)
+	r.DELETE("api/v1/users/:cpf", authMiddleware, controllers.DeleteDriver)
 
 	r.POST("api/v1/users/driver", authMiddleware, controllers.UserToDriver)
 
 	//middleware
 
-	r.POST("api/v1/users/login", controllers.AuthenticateUser)
+	r.POST("api/v1/login", controllers.AuthenticateUser)
 
 	// password
 

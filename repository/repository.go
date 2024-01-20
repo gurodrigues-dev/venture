@@ -53,6 +53,8 @@ func SaveDriver(driver *models.CreateDriver, endereco *models.Endereco) (bool, e
 
 func SaveUser(user *models.CreateUser, endereco *models.Endereco) (bool, error) {
 
+	fmt.Println(user, endereco)
+
 	_, err := config.LoadEnvironmentVariables()
 
 	if err != nil {
@@ -83,8 +85,12 @@ func SaveUser(user *models.CreateUser, endereco *models.Endereco) (bool, error) 
 		return false, err
 	}
 
-	_, err = db.Exec("INSERT INTO endereco (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+	_, err = db.Exec("INSERT INTO endereco_users (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		endereco.Rua, user.CPF, endereco.Numero, endereco.Complemento, endereco.Cidade, endereco.Estado, endereco.CEP)
+
+	if err != nil {
+		return false, err
+	}
 
 	return true, nil
 }
@@ -267,7 +273,7 @@ func UpdateUser(c *gin.Context, dataToUpdate *models.UpdateUser) (bool, error) {
 	return true, nil
 }
 
-func DeleteByCpf(cpf string) (string, error) {
+func DeleteDriverByCpf(cpf string) (string, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -307,9 +313,8 @@ func DeleteByCpf(cpf string) (string, error) {
 		}
 	}()
 
-	// Obtenha o e-mail antes de excluir o usuário
-	var userEmail string
-	err = tx.QueryRow("SELECT email FROM drivers WHERE cpf = $1", cpf).Scan(&userEmail)
+	var driverEmail string
+	err = tx.QueryRow("SELECT email FROM drivers WHERE cpf = $1", cpf).Scan(&driverEmail)
 	if err != nil {
 		return "", err
 	}
@@ -320,6 +325,65 @@ func DeleteByCpf(cpf string) (string, error) {
 	}
 
 	_, err = tx.Exec("DELETE FROM drivers WHERE cpf = $1", cpf)
+	if err != nil {
+		return "", err
+	}
+
+	return driverEmail, nil
+}
+
+func DeleteUserByCpf(cpf string) (string, error) {
+
+	_, err := config.LoadEnvironmentVariables()
+
+	if err != nil {
+		return "", err
+	}
+
+	var (
+		userdb   = config.GetUserDatabase()
+		port     = config.GetPortDatabase()
+		host     = config.GetHostDatabase()
+		password = config.GetPasswordDatabase()
+		dbname   = config.GetNameDatabase()
+	)
+
+	conn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, userdb, password, dbname)
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		return "", err
+	}
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	var userEmail string
+	err = tx.QueryRow("SELECT email FROM users WHERE cpf = $1", cpf).Scan(&userEmail)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = tx.Exec("DELETE FROM endereco WHERE cpf = $1", cpf)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = tx.Exec("DELETE FROM users WHERE cpf = $1", cpf)
 	if err != nil {
 		return "", err
 	}
