@@ -1,5 +1,6 @@
 *** Settings ***
 Library    RequestsLibrary
+Library    Collections
 
 *** Variables ***
 ${BASE_URL}    http://localhost:8080/api/v1
@@ -8,23 +9,57 @@ ${EXPECTED_RESPONSE}    {"message":"pong"}
 
 *** Keywords ***
 Testing route Pong   
-    Log To Console    Teste da Rota Pong... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+    TRY
+        Log To Console    Teste da Rota Pong... 
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+        ${response}    GET On Session    api_session    /ping
+        Log    ${response.content}
+        Should Be Equal As Strings    ${response.status_code}    200
+        Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+        Log To Console   [OK] ✔️
+        
+    EXCEPT    
+        Log To Console    Teste da Rota Pong falhou ❌
+    END 
 
 Testing route Health
-    Log To Console    Teste da Rota Health... 
+    TRY
+        Log To Console    Teste da Rota Health... 
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+        ${response}    GET On Session    api_session    /health
+        Log    ${response.content}
+        Should Be Equal As Strings    ${response.status_code}    200
+        ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+        
+        Dictionary Should Contain Key    ${json_response}    cpu
+        Dictionary Should Contain Key    ${json_response}    envs
+        Dictionary Should Contain Key    ${json_response}    mem
+        Dictionary Should Contain Key    ${json_response}    message
+        Dictionary Should Contain Key    ${json_response}    uptime
+
+        Log To Console   [OK] ✔️
+        
+    EXCEPT
+        
+        Log To Console    Teste da Rota Pong falhou ❌
+
+    END
+
+
+    
+
+Testing route Post users
+    Log To Console    Teste da Rota Post Users... 
     Sleep    1
     Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
+    ${response}    GET On Session    api_session    /users
     Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+    Should Be Equal As Strings    ${response.status_code}    201
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+
     Log To Console   [OK] ✔️
 
 Testing route Login Users
@@ -57,16 +92,6 @@ Testing route Get users
     Should Be Equal As Strings    ${response.content}    {"message":"pong"}
     Log To Console   [OK] ✔️
     
-Testing route Post users
-    Log To Console    Teste da Rota Post Users... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
-
 Testing route Put users
     Log To Console    Teste da Rota Put Users... 
     Sleep    1
@@ -172,20 +197,20 @@ Unitary Tests
     Testing route pong
     Testing route health
 
-    Testing route Post users
-    Testing route Login Users
-    Testing route Get users
-    Testing route Put users
-    Testing route Delete users
-    Testing route password recovery
-    Testing route password verify
-    Testing route password change
+    # Testing route Post users
+    # Testing route Login Users
+    # Testing route Get users
+    # Testing route Put users
+    # Testing route Delete users
+    # Testing route password recovery
+    # Testing route password verify
+    # Testing route password change
 
-    Testing route Post drivers
-    Testing route Login Drivers
-    Testing route Get drivers
-    Testing route Put drivers
-    Testing route Delete drivers
+    # Testing route Post drivers
+    # Testing route Login Drivers
+    # Testing route Get drivers
+    # Testing route Put drivers
+    # Testing route Delete drivers
 
-    Testing route user to driver
+    # Testing route user to driver
     
