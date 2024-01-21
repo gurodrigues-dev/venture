@@ -8,6 +8,23 @@ ${HEADERS}     Content-Type=application/json
 &{HEADERS-FORM}    Content-Type=application/x-www-form-urlencoded
 
 *** Keywords ***
+Login and Get Token
+    [Arguments]    ${cpf}    ${password}    ${table}
+    Create Session    api_session    ${BASE_URL}
+    
+    ${data}    Create Dictionary
+        ...    cpf=${cpf}
+        ...    password=${password}
+        ...    table=${table}
+
+    ${response}    POST On Session    api_session    /login    data=${data}    headers=${HEADERS-FORM}
+    Log    ${response.content}
+
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+    Dictionary Should Contain Key    ${json_response}    token
+
+    [Return]    ${json_response['token']}
+
 Testing route Pong   
     TRY
         Log To Console    Teste da Rota Pong... 
@@ -77,170 +94,212 @@ Testing route Post users
         Dictionary Should Contain Key    ${json_response}    requestID
         Dictionary Should Contain Key    ${json_response}    status
         Log To Console   [OK] ✔️
-    EXCEPT
+    EXCEPT    message
+        Log To Console    message
         Log To Console    Teste da Rota Post Users falhou ❌    
     END
 
-Login and Get Token
-    [Arguments]    ${cpf}    ${password}    ${table}
-    Log To Console    Teste da Rota Login para Users... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    
-    ${data}    Create Dictionary
-        ...    cpf=${cpf}
-        ...    password=${password}
-        ...    table=${table}
-
-    ${response}    POST On Session    api_session    /login
-    Log    ${response.content}
-
-    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
-    Dictionary Should Contain Key    ${json_response}    token
-
-    [Return]    ${json_response.token}
 
 Testing route Get users
-    ${token}    Login and Get Token    65246837068    123teste    users
-    ${HEADERS-FORM}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
-    Log To Console    Teste da Rota Get Users... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
+    TRY
+       ${token}    Login and Get Token    65246837068    123teste    users
+    
+        &{HEADERS-FORM-GET-USER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
+        Log To Console    Teste da Rota Get Users... 
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+        ${response}    GET On Session    api_session    /users/65246837068    headers=${HEADERS-FORM-GET-USER}
+        Log    ${response.content}
+        Should Be Equal As Strings    ${response.status_code}    200
+        ${json_response}    Evaluate    json.loads('''${response.content}''')    json
 
-    ${data}    Create Dictionary
-        ...    cpf=65246837068
-        ...    password=123teste
-        ...    table=users
+        Dictionary Should Contain Key    ${json_response}    dataOfUser
+        Dictionary Should Contain Key    ${json_response}    requestID
 
-    ${response}    GET On Session    api_session    /users/65246837068
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
-
-    Dictionary Should Contain Key    ${json_response}    dataOfUser
-    Dictionary Should Contain Key    ${json_response}    requestID
-
-    Log To Console   [OK] ✔️
+        Log To Console   [OK] ✔️ 
+    EXCEPT    message
+        Log To Console    message
+        Log To Console    Teste da Rota Get Users falhou ❌   
+    END
 
 Testing route Delete users
+    ${token}    Login and Get Token    65246837068    123teste    users
+
+    &{HEADERS-FORM-DELETE-USER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
+    
     Log To Console    Teste da Rota Delete Users... 
     Sleep    1
     Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
+    ${response}   DELETE On Session    api_session    /users/65246837068    headers=${HEADERS-FORM-DELETE-USER}   
     Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+    Dictionary Should Contain Value    ${json_response}    User deleted w/ success
+
+    Log To Console   [OK] ✔️ 
 
 Testing route Post drivers
-    Log To Console    Teste da Rota Post drivers... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+    TRY
+        Log To Console    Teste da Rota Post Users... 
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+    
+        ${data}    Create Dictionary
+        ...    name=User Test
+        ...    cnh=59691146158
+        ...    cpf=55931964002
+        ...    rg=506982270
+        ...    email=guuhdazueira@gmail.com
+        ...    rua=Rua Jose Falchi
+        ...    numero=20
+        ...    cidade=sao paulo
+        ...    estado=sp
+        ...    cep=04921090
+        ...    password=123teste
 
-Testing route Login Drivers
-    Log To Console    Teste da Rota Login para Drivers... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+
+        ${response}    POST On Session    api_session    /drivers    data=${data}    headers=${HEADERS-FORM}
+        Log    ${response.content}
+        ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+        Dictionary Should Contain Key    ${json_response}    email
+        Dictionary Should Contain Key    ${json_response}    requestID
+        Dictionary Should Contain Key    ${json_response}    status
+        Log To Console   [OK] ✔️
+    EXCEPT    message
+        Log To Console    message
+        Log To Console    Teste da Rota Post Drivers falhou ❌    
+    END
 
 Testing route Get drivers
-    Log To Console    Teste da Rota Get drivers... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+    TRY
+       ${token}    Login and Get Token    55931964002    123teste    drivers
+    
+        &{HEADERS-FORM-GET-DRIVER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
+        Log To Console    Teste da Rota Get Drivers... 
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+        ${response}    GET On Session    api_session    /drivers/55931964002    headers=${HEADERS-FORM-GET-DRIVER}
+        Log    ${response.content}
+        Should Be Equal As Strings    ${response.status_code}    200
+        ${json_response}    Evaluate    json.loads('''${response.content}''')    json
 
-Testing route Put drivers
-    Log To Console    Teste da Rota Put drivers... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+        Dictionary Should Contain Key    ${json_response}    dataOfDriver
+        Dictionary Should Contain Key    ${json_response}    requestID
 
-Testing route delete drivers
-    Log To Console    Teste da Rota Delete drivers... 
+        Log To Console   [OK] ✔️ 
+    EXCEPT    message
+        Log To Console    message
+        Log To Console    Teste da Rota Get Users falhou ❌   
+    END
+
+Testing route Delete drivers
+    ${token}    Login and Get Token    55931964002     123teste    drivers
+
+    &{HEADERS-FORM-DELETE-DRIVER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
+    
+    Log To Console    Teste da Rota Delete Drivers... 
     Sleep    1
     Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
+    ${response}   DELETE On Session    api_session    /drivers/55931964002     headers=${HEADERS-FORM-DELETE-DRIVER}   
     Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+    Dictionary Should Contain Value    ${json_response}    User deleted w/ success
+
+    Log To Console   [OK] ✔️ 
 
 Testing route user to driver
-    Log To Console    Teste da Rota Usuários virando Drivers... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
+    ${token}    Login and Get Token    65246837068    123teste    users
+    ${data}    Create Dictionary
+        ...    cnh=38908526120
+        ...    password=123teste
+    &{HEADERS-FORM-POST-USER-TO-DRIVER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
+        Log To Console    Teste da Rota User virando Driver... 
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+    ${response}    Post On Session    api_session    /users/drivers/65246837068    data=${data}    headers=${HEADERS-FORM-POST-USER-TO-DRIVER}
     Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+    
+    Dictionary Should Contain Key    ${json_response}    s3bucketurl
+
     Log To Console   [OK] ✔️
 
-Testing route password recovery
-    Log To Console    Teste da Rota Recuperação de Senha... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+Post User-Driver
+    TRY
+        Sleep    1
+        Create Session    api_session    ${BASE_URL}
+    
+        ${data}    Create Dictionary
+        ...    name=User Test
+        ...    cpf=65246837068
+        ...    rg=506982270
+        ...    email=roderscleysonjn@gmail.com
+        ...    rua=Rua Jose Falchi
+        ...    numero=20
+        ...    cidade=sao paulo
+        ...    estado=sp
+        ...    cep=04921090
+        ...    complemento=apto 5
+        ...    password=123teste
 
-Testing route password verify
-    Log To Console    Teste da Rota Recuperação de Senha... 
-    Sleep    1
-    Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
-    Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
 
-Testing route password change
-        Log To Console    Teste da Rota Recuperação de Senha... 
+        ${response}    POST On Session    api_session    /users    data=${data}    headers=${HEADERS-FORM}
+        Log    ${response.content}
+        Should Be Equal As Strings    ${response.status_code}    201
+        ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+        Dictionary Should Contain Key    ${json_response}    email
+        Dictionary Should Contain Key    ${json_response}    requestID
+        Dictionary Should Contain Key    ${json_response}    status
+        Log To Console   [OK] ✔️
+    EXCEPT    message
+        Log To Console    message
+        Log To Console    Teste da Rota Post Users falhou ❌    
+    END
+    
+Delete User-Driver
+    ${token}    Login and Get Token    65246837068    123teste    users
+
+    &{HEADERS-FORM-DELETE-USER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
     Sleep    1
     Create Session    api_session    ${BASE_URL}
-    ${response}    GET On Session    api_session    /ping
+    ${response}   DELETE On Session    api_session    /users/65246837068    headers=${HEADERS-FORM-DELETE-USER}   
     Log    ${response.content}
-    Should Be Equal As Strings    ${response.status_code}    200
-    Should Be Equal As Strings    ${response.content}    {"message":"pong"}
-    Log To Console   [OK] ✔️
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+    Dictionary Should Contain Value    ${json_response}    User deleted w/ success
+
+    &{HEADERS-FORM-DELETE-DRIVER}    Create Dictionary    Content-Type=application/x-www-form-urlencoded    Authorization=${token}
+    
+    Log To Console    Teste da Rota Delete Drivers... 
+    Sleep    1
+    Create Session    api_session    ${BASE_URL}
+    ${response}   DELETE On Session    api_session    /drivers/65246837068     headers=${HEADERS-FORM-DELETE-DRIVER}   
+    Log    ${response.content}
+    ${json_response}    Evaluate    json.loads('''${response.content}''')    json
+
+    Dictionary Should Contain Value    ${json_response}    User deleted w/ success
+    
 
 *** Test Cases ***
 Unitary Tests
+    # server
     Testing route pong
     Testing route health
 
+    # users
     Testing route Post users
     Testing route Get users
-    # Testing route Login Users
-    # Testing route Put users
-    # Testing route Delete users
-    # Testing route password recovery
-    # Testing route password verify
-    # Testing route password change
+    Testing route Delete users
 
-    # Testing route Post drivers
-    # Testing route Login Drivers
-    # Testing route Get drivers
-    # Testing route Put drivers
-    # Testing route Delete drivers
+    # drivers
+    Testing route Post drivers
+    Testing route Get drivers
+    Testing route Delete drivers
 
-    # Testing route user to driver
-    
+    # user to driver
+    Post User-Driver
+    Testing route user to driver
+    Delete User-Driver
