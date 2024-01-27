@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"gin/config"
+	"gin/logs"
 	"gin/utils"
 	"net/http"
 
@@ -69,8 +70,21 @@ func Health(c *gin.Context) {
 
 func PingPong(c *gin.Context) {
 
+	requestData := logs.GetDataOfRequest(c)
+
+	respOfLogs, err := logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+			"error":   err.Error(),
+		})
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
+		"data":    requestData,
+		"log":     respOfLogs,
 	})
 
 	return
