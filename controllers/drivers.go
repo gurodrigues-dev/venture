@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"gin/models"
 	"gin/repository"
 	"gin/utils"
@@ -119,9 +118,7 @@ func UpdateDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	resp, ok := utils.VerifyCpf(c)
-
-	fmt.Println(resp, ok)
+	resp, _ := utils.VerifyCpf(c)
 
 	if !resp {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -167,9 +164,7 @@ func DeleteDriver(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	resp, ok := utils.VerifyCpf(c)
-
-	fmt.Println(resp, ok)
+	resp, _ := utils.VerifyCpf(c)
 
 	if !resp {
 		c.JSON(http.StatusBadRequest, gin.H{

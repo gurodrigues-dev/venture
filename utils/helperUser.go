@@ -52,15 +52,11 @@ func VerifyCpf(c *gin.Context) (bool, error) {
 
 	cpfJwtToken, found := c.Get("cpf")
 
-	fmt.Println(cpfJwtToken)
-
 	if !found {
 		return false, fmt.Errorf("Erro ao encontrar Token")
 	}
 
 	cpfRequest := c.Param("cpf")
-
-	fmt.Println(cpfRequest)
 
 	cpfMatch := cpfJwtToken == cpfRequest
 

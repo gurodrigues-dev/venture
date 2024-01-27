@@ -53,8 +53,6 @@ func SaveDriver(driver *models.CreateDriver, endereco *models.Endereco) (bool, e
 
 func SaveUser(user *models.CreateUser, endereco *models.Endereco) (bool, error) {
 
-	fmt.Println(user, endereco)
-
 	_, err := config.LoadEnvironmentVariables()
 
 	if err != nil {

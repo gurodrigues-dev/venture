@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"gin/models"
 	"gin/repository"
 	"gin/utils"
@@ -106,9 +105,7 @@ func UpdateUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	resp, ok := utils.VerifyCpf(c)
-
-	fmt.Println(resp, ok)
+	resp, _ := utils.VerifyCpf(c)
 
 	if !resp {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -274,9 +271,7 @@ func DeleteUser(c *gin.Context) {
 
 	requestID, _ := c.Get("RequestID")
 
-	resp, ok := utils.VerifyCpf(c)
-
-	fmt.Println(resp, ok)
+	resp, _ := utils.VerifyCpf(c)
 
 	if !resp {
 		c.JSON(http.StatusBadRequest, gin.H{
