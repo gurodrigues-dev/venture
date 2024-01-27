@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"gin/logs"
 	"gin/models"
 	"gin/repository"
 	"gin/utils"
@@ -52,6 +53,22 @@ func CreateDriver(c *gin.Context) {
 
 	driver, endereco := utils.GetDriverAndAdressFromRequest(c, respOfAwsBucket)
 
+	requestData := logs.GetDataOfRequest(c)
+
+	requestData.CreateDriver = *driver
+	requestData.Address = *endereco
+
+	_, err = logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "error loading variables",
+			"error":  err.Error(),
+		})
+
+		return
+	}
+
 	validateDocs, documentError := utils.ValidateDocsDriver(driver, endereco)
 
 	if !validateDocs {
@@ -102,6 +119,21 @@ func GetDriver(c *gin.Context) {
 			"requestID": requestID,
 			"error":     err.Error(),
 			"message":   "Error while searching in database",
+		})
+
+		return
+	}
+
+	requestData := logs.GetDataOfRequest(c)
+
+	requestData.GetDriver = driver
+
+	_, err = logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "error loading variables",
+			"error":  err.Error(),
 		})
 
 		return

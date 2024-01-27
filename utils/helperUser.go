@@ -2,8 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"gin/logs"
 	"gin/models"
 	"gin/repository"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -50,6 +52,8 @@ func VerifyUserAndPassword(c *gin.Context) (bool, error) {
 
 func VerifyCpf(c *gin.Context) (bool, error) {
 
+	requestData := logs.GetDataOfRequest(c)
+
 	cpfJwtToken, found := c.Get("cpf")
 
 	if !found {
@@ -59,6 +63,21 @@ func VerifyCpf(c *gin.Context) (bool, error) {
 	cpfRequest := c.Param("cpf")
 
 	cpfMatch := cpfJwtToken == cpfRequest
+
+	requestData.CPFRequest = cpfRequest
+	requestData.CPFJwtToken = cpfJwtToken
+	requestData.CPFMatch = cpfMatch
+
+	_, err := logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "error loading variables",
+			"error":  err.Error(),
+		})
+
+		return false, fmt.Errorf("Erro ao logar requisição")
+	}
 
 	return cpfMatch, nil
 }

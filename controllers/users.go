@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"gin/logs"
 	"gin/models"
 	"gin/repository"
 	"gin/utils"
@@ -39,6 +40,22 @@ func CreateUser(c *gin.Context) {
 	}
 
 	user, endereco := utils.GetUserAndAdressFromRequest(c)
+
+	requestData := logs.GetDataOfRequest(c)
+
+	requestData.CreateUser = *user
+	requestData.Address = *endereco
+
+	_, err = logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "error loading variables",
+			"error":  err.Error(),
+		})
+
+		return
+	}
 
 	resOfValidateDocs, documentError := utils.ValidateDocsUser(user, endereco)
 
@@ -89,6 +106,21 @@ func GetUser(c *gin.Context) {
 			"requestID": requestID,
 			"error":     err.Error(),
 			"message":   "Error while searching in database",
+		})
+
+		return
+	}
+
+	requestData := logs.GetDataOfRequest(c)
+
+	requestData.GetUser = user
+
+	_, err = logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "error loading variables",
+			"error":  err.Error(),
 		})
 
 		return

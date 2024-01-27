@@ -13,4 +13,12 @@ type RequestData struct {
 	UserAgent     string    `json:"user_agent"`
 	BytesSent     int64     `json:"bytes_sent"`
 	BytesReceived int64     `json:"bytes_received"`
+	CreateDriver  CreateDriver
+	GetDriver     GetDriver
+	CreateUser    CreateUser
+	GetUser       GetUser
+	Address       Endereco
+	CPFRequest    string
+	CPFJwtToken   interface{}
+	CPFMatch      bool
 }

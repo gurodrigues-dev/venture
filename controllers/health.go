@@ -14,7 +14,20 @@ import (
 
 func Health(c *gin.Context) {
 
-	_, err := config.LoadEnvironmentVariables()
+	requestData := logs.GetDataOfRequest(c)
+
+	_, err := logs.LoggingDataOfRequest(requestData)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status": "error loading variables",
+			"error":  err.Error(),
+		})
+
+		return
+	}
+
+	_, err = config.LoadEnvironmentVariables()
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -72,7 +85,7 @@ func PingPong(c *gin.Context) {
 
 	requestData := logs.GetDataOfRequest(c)
 
-	respOfLogs, err := logs.LoggingDataOfRequest(requestData)
+	_, err := logs.LoggingDataOfRequest(requestData)
 
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -83,8 +96,6 @@ func PingPong(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "pong",
-		"data":    requestData,
-		"log":     respOfLogs,
 	})
 
 	return
