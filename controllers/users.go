@@ -70,6 +70,7 @@ func CreateUser(c *gin.Context) {
 
 	}
 
+	// remove the repository and trade by post kafka
 	_, err = repository.SaveUser(user, endereco)
 
 	if err != nil {
