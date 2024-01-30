@@ -11,6 +11,7 @@ type CreateDriver struct {
 	Email    string
 	Password string
 	URL      string
+	Endereco Endereco
 }
 
 type UpdateDriver struct {

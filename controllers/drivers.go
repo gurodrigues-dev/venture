@@ -51,12 +51,11 @@ func CreateDriver(c *gin.Context) {
 		return
 	}
 
-	driver, endereco := utils.GetDriverAndAdressFromRequest(c, respOfAwsBucket)
+	driver := utils.GetDriverAndAdressFromRequest(c, respOfAwsBucket)
 
 	requestData := logs.GetDataOfRequest(c)
 
 	requestData.CreateDriver = *driver
-	requestData.Address = *endereco
 
 	_, err = logs.LoggingDataOfRequest(requestData)
 
@@ -69,7 +68,7 @@ func CreateDriver(c *gin.Context) {
 		return
 	}
 
-	validateDocs, documentError := utils.ValidateDocsDriver(driver, endereco)
+	validateDocs, documentError := utils.ValidateDocsDriver(driver)
 
 	if !validateDocs {
 
@@ -82,7 +81,7 @@ func CreateDriver(c *gin.Context) {
 
 	}
 
-	_, err = repository.SaveDriver(driver, endereco)
+	_, err = repository.SaveDriver(driver)
 
 	if err != nil {
 
