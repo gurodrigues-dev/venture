@@ -32,7 +32,7 @@ Summary:
 
 # S2 - Criando separação entre as categorias de Users e Drivers
 
-- [ ] Adaptar users para drivers 
+- [X] Adaptar users para drivers 
     - Criar coluna no database chamada categoria e para motoristas adicionar a categoria "drivers" e para comum "user". 
     - Um user, pode se tornar driver
     - Um driver, deve poder acessar tudo referente a user.
@@ -41,12 +41,12 @@ Summary:
 
 # S3 - Logs, Testes e Filas
 
-- [ ] Implantação de logs
+- [X] Implantação de logs
 
 - [ ] Adicionar Kafka
     - Somente a criação de usuários.
 
-- [ ] Adicionar testes
+- [X] Adicionar testes
 
 
 # S4 - Drivers
