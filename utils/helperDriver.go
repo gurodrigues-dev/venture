@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetDriverAndAdressFromRequest(c *gin.Context, url string) (*models.CreateDriver, *models.Endereco) {
+func GetDriverAndAdressFromRequest(c *gin.Context, url string) *models.CreateDriver {
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
@@ -20,22 +20,21 @@ func GetDriverAndAdressFromRequest(c *gin.Context, url string) (*models.CreateDr
 		ID:       uuid.New(),
 		Email:    c.PostForm("email"),
 		URL:      url,
+		Endereco: models.Endereco{
+			Rua:         c.PostForm("rua"),
+			Numero:      c.PostForm("numero"),
+			Complemento: c.PostForm("complemento"),
+			Cidade:      c.PostForm("cidade"),
+			Estado:      c.PostForm("estado"),
+			CEP:         c.PostForm("cep"),
+		},
 	}
 
-	endereco := &models.Endereco{
-		Rua:         c.PostForm("rua"),
-		Numero:      c.PostForm("numero"),
-		Complemento: c.PostForm("complemento"),
-		Cidade:      c.PostForm("cidade"),
-		Estado:      c.PostForm("estado"),
-		CEP:         c.PostForm("cep"),
-	}
-
-	return driver, endereco
+	return driver
 
 }
 
-func GettingNowInfoFromUserAndRequestInfos(c *gin.Context, user *models.InfoUserToDriver) (*models.CreateDriver, *models.Endereco) {
+func GettingNowInfoFromUserAndRequestInfos(c *gin.Context, user *models.InfoUserToDriver) *models.CreateDriver {
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
@@ -48,22 +47,21 @@ func GettingNowInfoFromUserAndRequestInfos(c *gin.Context, user *models.InfoUser
 		ID:       uuid.New(),
 		Email:    user.Info.Email,
 		URL:      user.URL,
+		Endereco: models.Endereco{
+			Rua:         user.Info.Endereco.Rua,
+			Numero:      user.Info.Endereco.Numero,
+			Complemento: user.Info.Endereco.Complemento,
+			Cidade:      user.Info.Endereco.Cidade,
+			Estado:      user.Info.Endereco.Estado,
+			CEP:         user.Info.Endereco.CEP,
+		},
 	}
 
-	endereco := &models.Endereco{
-		Rua:         user.Info.Endereco.Rua,
-		Numero:      user.Info.Endereco.Numero,
-		Complemento: user.Info.Endereco.Complemento,
-		Cidade:      user.Info.Endereco.Cidade,
-		Estado:      user.Info.Endereco.Estado,
-		CEP:         user.Info.Endereco.CEP,
-	}
-
-	return driver, endereco
+	return driver
 
 }
 
-func ValidateDocsDriver(user *models.CreateDriver, endereco *models.Endereco) (bool, string) {
+func ValidateDocsDriver(user *models.CreateDriver) (bool, string) {
 
 	validateCPF := IsCPF(user.CPF)
 
@@ -80,7 +78,7 @@ func ValidateDocsDriver(user *models.CreateDriver, endereco *models.Endereco) (b
 		return false, "cnh invalid, type and try again."
 	}
 
-	validateCEP := IsCEP(endereco.CEP)
+	validateCEP := IsCEP(user.Endereco.CEP)
 
 	if !validateCEP {
 

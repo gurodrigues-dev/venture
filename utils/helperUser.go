@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetUserAndAdressFromRequest(c *gin.Context) (*models.CreateUser, *models.Endereco) {
+func GetUserAndAdressFromRequest(c *gin.Context) *models.CreateUser {
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
@@ -22,18 +22,17 @@ func GetUserAndAdressFromRequest(c *gin.Context) (*models.CreateUser, *models.En
 		RG:       c.PostForm("rg"),
 		ID:       uuid.New(),
 		Email:    c.PostForm("email"),
+		Endereco: models.Endereco{
+			Rua:         c.PostForm("rua"),
+			Numero:      c.PostForm("numero"),
+			Complemento: c.PostForm("complemento"),
+			Cidade:      c.PostForm("cidade"),
+			Estado:      c.PostForm("estado"),
+			CEP:         c.PostForm("cep"),
+		},
 	}
 
-	endereco := &models.Endereco{
-		Rua:         c.PostForm("rua"),
-		Numero:      c.PostForm("numero"),
-		Complemento: c.PostForm("complemento"),
-		Cidade:      c.PostForm("cidade"),
-		Estado:      c.PostForm("estado"),
-		CEP:         c.PostForm("cep"),
-	}
-
-	return user, endereco
+	return user
 
 }
 
@@ -82,7 +81,7 @@ func VerifyCpf(c *gin.Context) (bool, error) {
 	return cpfMatch, nil
 }
 
-func ValidateDocsUser(user *models.CreateUser, endereco *models.Endereco) (bool, string) {
+func ValidateDocsUser(user *models.CreateUser) (bool, string) {
 
 	validateCPF := IsCPF(user.CPF)
 
@@ -92,7 +91,7 @@ func ValidateDocsUser(user *models.CreateUser, endereco *models.Endereco) (bool,
 
 	}
 
-	validateCEP := IsCEP(endereco.CEP)
+	validateCEP := IsCEP(user.Endereco.CEP)
 
 	if !validateCEP {
 
