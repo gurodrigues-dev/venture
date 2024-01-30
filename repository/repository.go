@@ -13,7 +13,7 @@ import (
 
 var db *sql.DB
 
-func SaveDriver(driver *models.CreateDriver, endereco *models.Endereco) (bool, error) {
+func SaveDriver(driver *models.CreateDriver) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -46,12 +46,12 @@ func SaveDriver(driver *models.CreateDriver, endereco *models.Endereco) (bool, e
 	}
 
 	_, err = db.Exec("INSERT INTO endereco_drivers (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		endereco.Rua, driver.CPF, endereco.Numero, endereco.Complemento, endereco.Cidade, endereco.Estado, endereco.CEP)
+		driver.Endereco.Rua, driver.CPF, driver.Endereco.Numero, driver.Endereco.Complemento, driver.Endereco.Cidade, driver.Endereco.Estado, driver.Endereco.CEP)
 
 	return true, nil
 }
 
-func SaveUser(user *models.CreateUser, endereco *models.Endereco) (bool, error) {
+func SaveUser(user *models.CreateUser) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -84,7 +84,7 @@ func SaveUser(user *models.CreateUser, endereco *models.Endereco) (bool, error) 
 	}
 
 	_, err = db.Exec("INSERT INTO endereco_users (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		endereco.Rua, user.CPF, endereco.Numero, endereco.Complemento, endereco.Cidade, endereco.Estado, endereco.CEP)
+		user.Endereco.Rua, user.CPF, user.Endereco.Numero, user.Endereco.Complemento, user.Endereco.Cidade, user.Endereco.Estado, user.Endereco.CEP)
 
 	if err != nil {
 		return false, err
