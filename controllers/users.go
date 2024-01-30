@@ -39,12 +39,11 @@ func CreateUser(c *gin.Context) {
 
 	}
 
-	user, endereco := utils.GetUserAndAdressFromRequest(c)
+	user := utils.GetUserAndAdressFromRequest(c)
 
 	requestData := logs.GetDataOfRequest(c)
 
 	requestData.CreateUser = *user
-	requestData.Address = *endereco
 
 	_, err = logs.LoggingDataOfRequest(requestData)
 
@@ -57,7 +56,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	resOfValidateDocs, documentError := utils.ValidateDocsUser(user, endereco)
+	resOfValidateDocs, documentError := utils.ValidateDocsUser(user)
 
 	if !resOfValidateDocs {
 
@@ -70,8 +69,7 @@ func CreateUser(c *gin.Context) {
 
 	}
 
-	// remove the repository and trade by post kafka
-	_, err = repository.SaveUser(user, endereco)
+	_, err = repository.SaveUser(user)
 
 	if err != nil {
 
@@ -264,9 +262,9 @@ func UserToDriver(c *gin.Context) {
 		Info: user,
 	}
 
-	driver, endereco := utils.GettingNowInfoFromUserAndRequestInfos(c, &dataChangedUserToDriver)
+	driver := utils.GettingNowInfoFromUserAndRequestInfos(c, &dataChangedUserToDriver)
 
-	validateDocs, documentError := utils.ValidateDocsDriver(driver, endereco)
+	validateDocs, documentError := utils.ValidateDocsDriver(driver)
 
 	if !validateDocs {
 
@@ -279,7 +277,7 @@ func UserToDriver(c *gin.Context) {
 
 	}
 
-	_, err = repository.SaveDriver(driver, endereco)
+	_, err = repository.SaveDriver(driver)
 
 	if err != nil {
 

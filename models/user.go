@@ -9,6 +9,7 @@ type CreateUser struct {
 	Name     string
 	Email    string
 	Password string
+	Endereco Endereco
 }
 
 type GetUser struct {
