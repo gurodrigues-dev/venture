@@ -61,7 +61,8 @@ func kafkaConsumerToCreateUsers(kafkaConfig *models.KafkaConfig) (bool, error) {
 			return false, fmt.Errorf("Erro ao fazer unmarshall da mensagem: %v", err)
 		}
 
-		// _, err = repository.SaveUser(user, endereco)
+		fmt.Println(&userData)
+		return true, nil
 
 	}
 
