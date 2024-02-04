@@ -69,12 +69,12 @@ func CreateUser(c *gin.Context) {
 
 	}
 
-	_, err = utils.PostToKafkaToCreateUsers(user)
+	_, err = repository.SaveUser(user)
 
 	if err != nil {
 
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "error when inserting into kafka",
+			"message": "error when inserting into database",
 			"error":   err.Error(),
 		})
 

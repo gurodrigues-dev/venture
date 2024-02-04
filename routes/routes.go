@@ -85,8 +85,6 @@ func HandleRequests() {
 
 	r.POST("api/v1/users", controllers.CreateUser) // producer
 
-	r.POST("api/v1/users/consumer", controllers.ConsumerToCreateUsers) // consumer
-
 	r.GET("api/v1/users/:cpf", authMiddleware, controllers.GetUser)
 
 	r.PUT("api/v1/users/:cpf", authMiddleware, controllers.UpdateUser)
