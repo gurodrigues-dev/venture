@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetUserAndAdressFromRequest(c *gin.Context) *models.CreateUser {
+func GetUserAndAdressFromRequest(c *gin.Context) (*models.CreateUser, error) {
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
@@ -32,7 +32,13 @@ func GetUserAndAdressFromRequest(c *gin.Context) *models.CreateUser {
 		},
 	}
 
-	return user
+	if user.Endereco.Estado != "sp" && user.Endereco.Estado != "SP" {
+
+		return &models.CreateUser{}, fmt.Errorf("Fora de disponibilidade")
+
+	}
+
+	return user, nil
 
 }
 

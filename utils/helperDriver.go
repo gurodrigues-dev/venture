@@ -1,13 +1,14 @@
 package utils
 
 import (
+	"fmt"
 	"gin/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func GetDriverAndAdressFromRequest(c *gin.Context, url string) *models.CreateDriver {
+func GetDriverAndAdressFromRequest(c *gin.Context, url string) (*models.CreateDriver, error) {
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
@@ -30,7 +31,13 @@ func GetDriverAndAdressFromRequest(c *gin.Context, url string) *models.CreateDri
 		},
 	}
 
-	return driver
+	if driver.Endereco.Estado != "SP" && driver.Endereco.Estado != "sp" {
+
+		return &models.CreateDriver{}, fmt.Errorf("Fora de disponibilidade")
+
+	}
+
+	return driver, nil
 
 }
 

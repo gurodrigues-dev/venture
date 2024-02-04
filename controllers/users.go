@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/logs"
 	"gin/models"
 	"gin/repository"
@@ -39,7 +40,16 @@ func CreateUser(c *gin.Context) {
 
 	}
 
-	user := utils.GetUserAndAdressFromRequest(c)
+	user, err := utils.GetUserAndAdressFromRequest(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+		})
+
+		return
+	}
 
 	requestData := logs.GetDataOfRequest(c)
 
@@ -158,6 +168,15 @@ func UpdateUser(c *gin.Context) {
 	update.Endereco.Cidade = c.PostForm("cidade")
 	update.Endereco.Estado = c.PostForm("estado")
 	update.Endereco.CEP = c.PostForm("CEP")
+
+	if c.PostForm("estado") != "SP" {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     fmt.Errorf("Infelizmente fora de SP, não é possível utilizar o app"),
+			"message":   "Error whiling update client",
+		})
+	}
 
 	resp, err := repository.UpdateUser(c, &update)
 

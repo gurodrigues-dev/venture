@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/logs"
 	"gin/models"
 	"gin/repository"
@@ -51,7 +52,16 @@ func CreateDriver(c *gin.Context) {
 		return
 	}
 
-	driver := utils.GetDriverAndAdressFromRequest(c, respOfAwsBucket)
+	driver, err := utils.GetDriverAndAdressFromRequest(c, respOfAwsBucket)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     err.Error(),
+		})
+
+		return
+	}
 
 	requestData := logs.GetDataOfRequest(c)
 
@@ -171,6 +181,15 @@ func UpdateDriver(c *gin.Context) {
 	update.Endereco.Cidade = c.PostForm("cidade")
 	update.Endereco.Estado = c.PostForm("estado")
 	update.Endereco.CEP = c.PostForm("CEP")
+
+	if c.PostForm("estado") != "SP" {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"requestID": requestID,
+			"error":     fmt.Errorf("Infelizmente fora de SP, não é possível utilizar o app"),
+			"message":   "Error whiling update client",
+		})
+	}
 
 	resp, err := repository.UpdateDriver(c, &update)
 
