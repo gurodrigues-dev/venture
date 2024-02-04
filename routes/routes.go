@@ -97,6 +97,26 @@ func HandleRequests() {
 
 	r.POST("api/v1/login", controllers.AuthenticateUser)
 
+	// schools
+
+	r.POST("api/v1/school", controllers.CreateSchool)
+
+	r.GET("api/v1/school", controllers.GetSchool)
+
+	r.PUT("api/v1/school", controllers.UpdateSchool)
+
+	r.DELETE("api/v1/school", controllers.DeleteSchool)
+
+	// childrens
+
+	r.POST("api/v1/children", controllers.CreateChildren)
+
+	r.GET("api/v1/children", controllers.GetChildren)
+
+	r.PUT("api/v1/children", controllers.UpdateChildren)
+
+	r.DELETE("api/v1/children", controllers.DeleteChildren)
+
 	// password
 
 	r.POST("api/v1/password/recovery", controllers.RecoveryPassword)
