@@ -101,21 +101,21 @@ func HandleRequests() {
 
 	r.POST("api/v1/school", controllers.CreateSchool)
 
-	r.GET("api/v1/school", controllers.GetSchool)
+	r.GET("api/v1/school", authMiddleware, controllers.GetSchool)
 
-	r.PUT("api/v1/school", controllers.UpdateSchool)
+	r.PUT("api/v1/school", authMiddleware, controllers.UpdateSchool)
 
-	r.DELETE("api/v1/school", controllers.DeleteSchool)
+	r.DELETE("api/v1/school", authMiddleware, controllers.DeleteSchool)
 
 	// childrens
 
 	r.POST("api/v1/children", controllers.CreateChildren)
 
-	r.GET("api/v1/children", controllers.GetChildren)
+	r.GET("api/v1/children", authMiddleware, controllers.GetChildren)
 
-	r.PUT("api/v1/children", controllers.UpdateChildren)
+	r.PUT("api/v1/children", authMiddleware, controllers.UpdateChildren)
 
-	r.DELETE("api/v1/children", controllers.DeleteChildren)
+	r.DELETE("api/v1/children", authMiddleware, controllers.DeleteChildren)
 
 	// password
 
