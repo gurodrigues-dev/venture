@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"gin/models"
+	"gin/repository"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,21 @@ func CreateSchool(c *gin.Context) {
 
 		return
 	}
+
+	err = repository.SaveSchool(&school)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusBadRequest, gin.H{
+		"data":    &school,
+		"message": "school created w/ success",
+	})
 
 	return
 }
