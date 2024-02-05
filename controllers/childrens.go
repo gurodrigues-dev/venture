@@ -2,25 +2,22 @@ package controllers
 
 import "github.com/gin-gonic/gin"
 
-func CreateSchool(c *gin.Context) {
+func CreateChildren(c *gin.Context) {
 
 	return
 }
 
-func GetSchool(c *gin.Context) {
+func GetChildren(c *gin.Context) {
 
 	return
-
 }
 
-func UpdateSchool(c *gin.Context) {
+func UpdateChildren(c *gin.Context) {
 
 	return
-
 }
 
-func DeleteSchool(c *gin.Context) {
+func DeleteChildren(c *gin.Context) {
 
 	return
-
 }
