@@ -45,6 +45,10 @@ func SaveDriver(driver *models.CreateDriver) (bool, error) {
 	_, err = db.Exec("INSERT INTO endereco_drivers (rua, cpf, numero, complemento, cidade, estado, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)",
 		driver.Endereco.Rua, driver.CPF, driver.Endereco.Numero, driver.Endereco.Complemento, driver.Endereco.Cidade, driver.Endereco.Estado, driver.Endereco.CEP)
 
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
