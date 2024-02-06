@@ -45,7 +45,7 @@ func GetUserAndAdressFromRequest(c *gin.Context) (*models.CreateUser, error) {
 func VerifyUserAndPassword(c *gin.Context) (bool, error) {
 
 	cpf := c.PostForm("cpf")
-	table := c.PostForm("table")
+	table := c.PostForm("table") // type of user
 
 	hashedPassword := HashPassword(c.PostForm("password"))
 
