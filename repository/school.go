@@ -55,7 +55,7 @@ func UpdateSchool() {
 
 }
 
-func DeleteSchoolByCnpj(cpf *string) error {
+func DeleteSchoolByCnpj(cnpj *string) error {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -79,6 +79,26 @@ func DeleteSchoolByCnpj(cpf *string) error {
 		return err
 	}
 	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+
+	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", cnpj)
+	if err != nil {
+		return err
+	}
 
 	return nil
 
