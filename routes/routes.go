@@ -11,7 +11,8 @@ import (
 )
 
 type Claims struct {
-	Cpf string `json:"cpf"`
+	Cpf  string `json:"cpf"`
+	Cnpj string `json:"cnpj"`
 	jwt.StandardClaims
 }
 
@@ -61,6 +62,7 @@ func HandleRequests() {
 		}
 
 		c.Set("cpf", claims.Cpf)
+		c.Set("cnpj", claims.Cnpj)
 		c.Set("isAuthenticated", true)
 		c.Next()
 	}
@@ -95,7 +97,9 @@ func HandleRequests() {
 
 	//middleware
 
-	r.POST("api/v1/login", controllers.AuthenticateUser)
+	r.POST("api/v1/login/users", controllers.AuthenticateUser)
+
+	r.POST("api/v1/login/schools", controllers.AuthenticateSchool)
 
 	// schools
 
