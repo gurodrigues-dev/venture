@@ -9,3 +9,9 @@ type School struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+type LoginSchool struct {
+	CNPJ     string `json:"cnpj"`
+	Type     string `json:"type"`
+	Password string `json:"password"`
+}

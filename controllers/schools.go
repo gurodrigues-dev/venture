@@ -15,6 +15,31 @@ func CreateSchool(c *gin.Context) {
 
 	err := c.ShouldBindJSON(&school)
 
+	emailExist, err := repository.CheckExistsEmailInUsers(school.Email)
+
+	if emailExist {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Este email já existe.",
+			"error":   "email found.",
+		})
+
+		return
+	}
+
+	_, err = utils.SendMessageOfVerifyToEmailInAwsSes(school.Email)
+
+	if err != nil {
+
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Erro ao encontrar email.",
+			"error":   err.Error(),
+		})
+
+		return
+
+	}
+
 	school.Password = utils.HashPassword(school.Password)
 
 	if err != nil {
@@ -56,6 +81,12 @@ func UpdateSchool(c *gin.Context) {
 }
 
 func DeleteSchool(c *gin.Context) {
+
+	return
+
+}
+
+func AuthenticateSchool(c *gin.Context) {
 
 	return
 
