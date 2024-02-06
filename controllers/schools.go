@@ -3,6 +3,7 @@ package controllers
 import (
 	"gin/models"
 	"gin/repository"
+	"gin/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,8 @@ func CreateSchool(c *gin.Context) {
 	var school models.School
 
 	err := c.ShouldBindJSON(&school)
+
+	school.Password = utils.HashPassword(school.Password)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
