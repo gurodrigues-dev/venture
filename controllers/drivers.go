@@ -253,7 +253,7 @@ func DeleteDriver(c *gin.Context) {
 		return
 	}
 
-	_, err = utils.DeleteEmailFromAwsSes(emailOfUserToDeleteInAwsSes)
+	_, err = utils.DeleteEmailFromAwsSes(&emailOfUserToDeleteInAwsSes)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
