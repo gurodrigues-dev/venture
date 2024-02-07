@@ -55,12 +55,12 @@ func UpdateSchool() {
 
 }
 
-func DeleteSchoolByCnpj(cnpj *string) error {
+func DeleteSchoolByCnpj(cnpj *string) (string, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	var (
@@ -76,13 +76,13 @@ func DeleteSchoolByCnpj(cnpj *string) error {
 
 	db, err := sql.Open("postgres", conn)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer db.Close()
 
 	tx, err := db.Begin()
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer func() {
 		if p := recover(); p != nil {
@@ -95,11 +95,17 @@ func DeleteSchoolByCnpj(cnpj *string) error {
 		}
 	}()
 
-	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", cnpj)
+	var userEmail string
+	err = tx.QueryRow("SELECT email FROM schools WHERE cpf = $1", *cnpj).Scan(&userEmail)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	_, err = tx.Exec("DELETE FROM schools WHERE cpf = $1", *cnpj)
+	if err != nil {
+		return "", err
+	}
+
+	return userEmail, nil
 
 }
