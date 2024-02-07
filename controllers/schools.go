@@ -82,11 +82,80 @@ func UpdateSchool(c *gin.Context) {
 
 func DeleteSchool(c *gin.Context) {
 
+	resp, _ := utils.VerifyCnpj(c)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Security breach, intruder account trying to delete account.",
+			"message": "Invalid Cpf",
+		})
+
+		return
+
+	}
+
+	cnpj := c.Param("cnpj")
+
+	emailToDelete, err := repository.DeleteSchoolByCnpj(&cnpj)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   err.Error(),
+			"message": "Error while deleting in database",
+		})
+
+		return
+	}
+
+	_, err = utils.DeleteEmailFromAwsSes(&emailToDelete)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   err.Error(),
+			"message": "Error when deleting user email of SES",
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User deleted w/ success",
+	})
+
 	return
 
 }
 
 func AuthenticateSchool(c *gin.Context) {
+
+	var LoginInfo models.LoginSchool
+
+	_, err := utils.VerifySchoolAndPassword(&LoginInfo)
+
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Login error",
+			"error":   err.Error(),
+		})
+
+		return
+	}
+
+	tokenJwt, err := utils.CreateJwtToken(LoginInfo.CNPJ)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Error while creating JWToken",
+			"error":   err.Error(),
+		})
+
+		return
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{
+		"message": "login accepted",
+		"token":   tokenJwt,
+	})
 
 	return
 
