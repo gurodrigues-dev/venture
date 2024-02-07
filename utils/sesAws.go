@@ -43,7 +43,7 @@ func SendMessageOfVerifyToEmailInAwsSes(emailAddress string) (bool, error) {
 	return true, nil
 }
 
-func DeleteEmailFromAwsSes(emailAddress string) (bool, error) {
+func DeleteEmailFromAwsSes(emailAddress *string) (bool, error) {
 
 	config.LoadEnvironmentVariables()
 
@@ -69,7 +69,7 @@ func DeleteEmailFromAwsSes(emailAddress string) (bool, error) {
 	svc := ses.New(sess)
 
 	_, err = svc.DeleteVerifiedEmailAddress(&ses.DeleteVerifiedEmailAddressInput{
-		EmailAddress: aws.String(emailAddress),
+		EmailAddress: aws.String(*emailAddress),
 	})
 
 	if err != nil {
