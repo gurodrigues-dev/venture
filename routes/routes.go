@@ -105,11 +105,11 @@ func HandleRequests() {
 
 	r.POST("api/v1/school", controllers.CreateSchool)
 
-	r.GET("api/v1/school", authMiddleware, controllers.GetSchool)
+	r.GET("api/v1/school/:cnpj", authMiddleware, controllers.GetSchool)
 
-	r.PUT("api/v1/school", authMiddleware, controllers.UpdateSchool)
+	r.PUT("api/v1/school/:cnpj", authMiddleware, controllers.UpdateSchool)
 
-	r.DELETE("api/v1/school", authMiddleware, controllers.DeleteSchool)
+	r.DELETE("api/v1/school/:cnpj", authMiddleware, controllers.DeleteSchool)
 
 	// childrens
 
