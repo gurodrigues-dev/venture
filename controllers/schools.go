@@ -87,7 +87,7 @@ func DeleteSchool(c *gin.Context) {
 	if !resp {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error":   "Security breach, intruder account trying to delete account.",
-			"message": "Invalid Cpf",
+			"message": "Invalid Cnpj",
 		})
 
 		return
@@ -130,7 +130,9 @@ func AuthenticateSchool(c *gin.Context) {
 
 	var LoginInfo models.LoginSchool
 
-	_, err := utils.VerifySchoolAndPassword(&LoginInfo)
+	err := c.ShouldBindJSON(&LoginInfo)
+
+	_, err = utils.VerifySchoolAndPassword(&LoginInfo)
 
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
