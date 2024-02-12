@@ -75,31 +75,31 @@ func HandleRequests() {
 
 	// drivers
 
-	r.POST("api/v1/drivers", controllers.CreateDriver)
+	r.POST("api/v1/driver", controllers.CreateDriver)
 
-	r.GET("api/v1/drivers/:cpf", authMiddleware, controllers.GetDriver)
+	r.GET("api/v1/driver/:cpf", authMiddleware, controllers.GetDriver)
 
-	r.PUT("api/v1/drivers/:cpf", authMiddleware, controllers.UpdateDriver)
+	r.PUT("api/v1/driver/:cpf", authMiddleware, controllers.UpdateDriver)
 
-	r.DELETE("api/v1/drivers/:cpf", authMiddleware, controllers.DeleteDriver)
+	r.DELETE("api/v1/driver/:cpf", authMiddleware, controllers.DeleteDriver)
 
 	//usuarios
 
-	r.POST("api/v1/users", controllers.CreateUser) // producer
+	r.POST("api/v1/user", controllers.CreateUser) // producer
 
-	r.GET("api/v1/users/:cpf", authMiddleware, controllers.GetUser)
+	r.GET("api/v1/user/:cpf", authMiddleware, controllers.GetUser)
 
-	r.PUT("api/v1/users/:cpf", authMiddleware, controllers.UpdateUser)
+	r.PUT("api/v1/user/:cpf", authMiddleware, controllers.UpdateUser)
 
-	r.DELETE("api/v1/users/:cpf", authMiddleware, controllers.DeleteUser)
+	r.DELETE("api/v1/user/:cpf", authMiddleware, controllers.DeleteUser)
 
-	r.POST("api/v1/users/drivers/:cpf", authMiddleware, controllers.UserToDriver)
+	r.POST("api/v1/user/driver/:cpf", authMiddleware, controllers.UserToDriver)
 
 	//middleware
 
-	r.POST("api/v1/login/users", controllers.AuthenticateUser)
+	r.POST("api/v1/login/user", controllers.AuthenticateUser)
 
-	r.POST("api/v1/login/schools", controllers.AuthenticateSchool)
+	r.POST("api/v1/login/school", controllers.AuthenticateSchool)
 
 	// schools
 
