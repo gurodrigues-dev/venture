@@ -11,7 +11,7 @@ type School struct {
 }
 
 type LoginSchool struct {
-	CNPJ     string `json:"cnpj"`
-	Type     string `json:"type"`
-	Password string `json:"password"`
+	CNPJ          string `json:"cnpj"`
+	TableOfSearch string `json:"table"`
+	Password      string `json:"password"`
 }
