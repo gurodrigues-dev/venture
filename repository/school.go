@@ -96,12 +96,12 @@ func DeleteSchoolByCnpj(cnpj *string) (string, error) {
 	}()
 
 	var userEmail string
-	err = tx.QueryRow("SELECT email FROM schools WHERE cpf = $1", *cnpj).Scan(&userEmail)
+	err = tx.QueryRow("SELECT email FROM schools WHERE cnpj = $1", *cnpj).Scan(&userEmail)
 	if err != nil {
 		return "", err
 	}
 
-	_, err = tx.Exec("DELETE FROM schools WHERE cpf = $1", *cnpj)
+	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", *cnpj)
 	if err != nil {
 		return "", err
 	}
