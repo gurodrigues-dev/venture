@@ -12,7 +12,7 @@ func VerifySchoolAndPassword(data *models.LoginSchool) (bool, error) {
 
 	hashedPassword := HashPassword(data.Password)
 
-	match, err := repository.VerifyPasswordByCnpj(&data.CNPJ, &data.Type, &hashedPassword)
+	match, err := repository.VerifyPasswordByCnpj(&data.CNPJ, &data.TableOfSearch, &hashedPassword)
 
 	return match, err
 
