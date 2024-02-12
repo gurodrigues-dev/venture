@@ -12,6 +12,6 @@ type School struct {
 
 type LoginSchool struct {
 	CNPJ          string `json:"cnpj"`
-	TableOfSearch string `json:"table"`
+	TableOfSearch string `json:"table"` // essa tabela é a mesma que vai ser usada no banco
 	Password      string `json:"password"`
 }

@@ -70,6 +70,18 @@ func CreateSchool(c *gin.Context) {
 
 func GetSchool(c *gin.Context) {
 
+	resp, _ := utils.VerifyCpf(c)
+
+	if !resp {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Security breach, intruder account trying to delete account.",
+			"message": "Invalid Cnpj",
+		})
+
+		return
+
+	}
+
 	return
 
 }
