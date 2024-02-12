@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gin/config"
 	"gin/models"
+	"log"
 )
 
 func SaveSchool(school *models.School) error {
@@ -43,9 +44,59 @@ func SaveSchool(school *models.School) error {
 
 }
 
-func FindSchoolByName(name *string) {
+func FindSchoolByName(name *string) (*models.School, error) {
 
-	return
+	_, err := config.LoadEnvironmentVariables()
+
+	if err != nil {
+		return &models.School{}, err
+	}
+
+	var (
+		userdb   = config.GetUserDatabase()
+		port     = config.GetPortDatabase()
+		host     = config.GetHostDatabase()
+		password = config.GetPasswordDatabase()
+		dbname   = config.GetNameDatabase()
+	)
+
+	conn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, userdb, password, dbname)
+
+	db, err := sql.Open("postgres", conn)
+	if err != nil {
+		return &models.School{}, err
+	}
+	defer db.Close()
+
+	rows, err := db.Query(`
+		SELECT s.nome
+		FROM schools s
+		WHERE s.name = $1
+	`, *name)
+
+	if err != nil {
+		return &models.School{}, err
+	}
+	defer rows.Close()
+
+	var school *models.School
+
+	found := false
+
+	for rows.Next() {
+		found = true
+		err := rows.Scan(&school.Name)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if !found {
+		return &models.School{}, fmt.Errorf("Escola não encontrada")
+	}
+
+	return school, nil
 
 }
 
