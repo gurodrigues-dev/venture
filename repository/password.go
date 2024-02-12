@@ -82,7 +82,7 @@ func VerifyPasswordByCpf(cpf, table, hash string) (bool, error) {
 
 }
 
-func VerifyPasswordByCnpj(cnpj, typeSchool, hash *string) (bool, error) {
+func VerifyPasswordByCnpj(cnpj, tableOfSearch, hash *string) (bool, error) {
 
 	_, err := config.LoadEnvironmentVariables()
 
@@ -109,7 +109,7 @@ func VerifyPasswordByCnpj(cnpj, typeSchool, hash *string) (bool, error) {
 
 	var storedHashedPassword string
 
-	query := "SELECT password FROM " + *typeSchool + " WHERE cnpj = $1"
+	query := "SELECT password FROM " + *tableOfSearch + " WHERE cnpj = $1"
 
 	err = db.QueryRow(query, *cnpj).Scan(&storedHashedPassword)
 	if err != nil {
