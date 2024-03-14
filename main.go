@@ -2,6 +2,7 @@ package main
 
 import (
 	"gin/config"
+	_ "gin/docs"
 	"gin/internal/controllers"
 	"gin/internal/repository"
 	"gin/internal/service"
