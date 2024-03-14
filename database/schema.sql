@@ -1,5 +1,5 @@
 -- Tabela users
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE IF NOT EXISTS users (
     id SERIAL,
     name VARCHAR(100) NOT NULL,
     cpf VARCHAR(20) PRIMARY KEY,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS user (
 );
 
 -- Tabela driver
-CREATE TABLE IF NOT EXISTS driver (
+CREATE TABLE IF NOT EXISTS drivers (
     id SERIAL,
     cpf VARCHAR(14) PRIMARY KEY,
     cnh VARCHAR(20) NOT NULL,
@@ -30,39 +30,44 @@ CREATE TABLE IF NOT EXISTS address (
 );
 
 -- Tabela children
-CREATE TABLE IF NOT EXISTS children (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS childrens (
+    id SERIAL,
     rg VARCHAR(20) PRIMARY KEY,
-    responsavel INT REFERENCES driver(id),
+    responsavel VARCHAR(14),
     nome VARCHAR(100),
     escola VARCHAR(100),
     driver VARCHAR(100),
-    endereco INT REFERENCES address(id)
+    endereco TEXT,
+    FOREIGN KEY (responsavel) REFERENCES drivers(cpf)
 );
 
 -- Tabela schools
-CREATE TABLE IF NOT EXISTS school (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS schools (
+    id SERIAL,
     nome VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
     cnpj VARCHAR(14) PRIMARY KEY,
     rua VARCHAR(100) NOT NULL,
     numero VARCHAR(10) NOT NULL,
-    cep VARCHAR(8 NOT NULL,
+    cep VARCHAR(8) NOT NULL,
     email VARCHAR(100) NOT NULL
 );
 
 -- Tabela school_drivers
-CREATE TABLE IF NOT EXISTS school_driver (
+CREATE TABLE IF NOT EXISTS schools_drivers (
     registro SERIAL PRIMARY KEY,
-    school VARCHAR(14) REFERENCES schools(cnpj),
-    driver VARCHAR(14) REFERENCES driver(cpf)
+    school VARCHAR(14),
+    driver VARCHAR(14),
+    FOREIGN KEY (school) REFERENCES schools(cnpj),
+    FOREIGN KEY (driver) REFERENCES drivers(cpf)
 );
 
 -- Tabela users_drivers
 CREATE TABLE IF NOT EXISTS users_drivers (
     matricula SERIAL PRIMARY KEY,
-    driver VARCHAR(14) REFERENCES driver(cpf),
-    child VARCHAR(20) REFERENCES children(rg)
+    driver VARCHAR(14),
+    child VARCHAR(20),
+    FOREIGN KEY (driver) REFERENCES drivers(cpf),
+    FOREIGN KEY (child) REFERENCES childrens(rg)
 );
 
