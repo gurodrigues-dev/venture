@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/config"
 	"gin/internal/service"
 	"net/http"
@@ -26,11 +27,11 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-// @Summary Ping endpoint
-// @Description Teste de conexão com o servidor
-// @Produce json
-// @Success 200 {object} gin.H{"ping": "pong"}
-// @Router /ping [get]
+// @Summary	Show API ping
+//
+//	@Success	200				{string}	string
+//
+// @Router		/api/v1/ping [get]
 func (ct *controller) ping(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"ping": "pong"})
 }
@@ -99,21 +100,23 @@ func (ct *controller) Start() {
 	api.PATCH("/user", authMiddleware)
 	api.DELETE("/user", authMiddleware)
 
-	// child
+	// // child
 	api.POST("/child", authMiddleware)
 	api.GET("/child", authMiddleware)
 	api.PATCH("/child", authMiddleware)
 	api.DELETE("/child", authMiddleware)
 
-	// driver
+	// // driver
 	api.POST("/driver", authMiddleware)
 	api.GET("/driver", authMiddleware)
 	api.PATCH("/driver", authMiddleware)
 	api.DELETE("/driver", authMiddleware)
 
-	// school
+	// // school
 	api.POST("/school")
 	api.GET("/school", authMiddleware)
 	api.PATCH("/school", authMiddleware)
 	api.DELETE("/school", authMiddleware)
+
+	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 }
