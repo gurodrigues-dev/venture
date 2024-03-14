@@ -1,0 +1,12 @@
+info:
+  contact: {}
+paths:
+  /ping:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Show API ping
+swagger: "2.0"
