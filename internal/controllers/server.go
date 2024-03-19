@@ -22,8 +22,13 @@ func New(s *service.Service) *controller {
 	}
 }
 
-type Claims struct {
+type ClaimsUser struct {
 	CPF string `json:"cpf"`
+	jwt.StandardClaims
+}
+
+type ClaimsSchool struct {
+	CNPJ string `json:"cnpj"`
 	jwt.StandardClaims
 }
 
@@ -56,18 +61,25 @@ func (ct *controller) Start() {
 		c.Next()
 	})
 
+	// middleware for users
 	authMiddleware := func(c *gin.Context) {
 
 		secret := []byte(conf.Server.Secret)
 
-		tokenString := c.GetHeader("Authorization")
+		tokenString, err := c.Cookie("token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Sem cookie de sessão"})
+			c.Abort()
+			return
+		}
+
 		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
 			c.Abort()
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsUser{}, func(token *jwt.Token) (interface{}, error) {
 			return secret, nil
 		})
 
@@ -77,7 +89,7 @@ func (ct *controller) Start() {
 			return
 		}
 
-		claims, ok := token.Claims.(*Claims)
+		claims, ok := token.Claims.(*ClaimsUser)
 		if !ok || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
 			c.Abort()
@@ -87,6 +99,47 @@ func (ct *controller) Start() {
 		c.Set("cpf", claims.CPF)
 		c.Set("isAuthenticated", true)
 		c.Next()
+
+	}
+
+	schoolMiddleware := func(c *gin.Context) {
+
+		secret := []byte(conf.Server.Secret)
+
+		tokenString, err := c.Cookie("token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Sem cookie de sessão"})
+			c.Abort()
+			return
+		}
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+			c.Abort()
+			return
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsSchool{}, func(token *jwt.Token) (interface{}, error) {
+			return secret, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(*ClaimsSchool)
+		if !ok || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		c.Set("cnpj", claims.CNPJ)
+		c.Set("isAuthenticated", true)
+		c.Next()
+
 	}
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -114,9 +167,9 @@ func (ct *controller) Start() {
 
 	// // school
 	api.POST("/school")
-	api.GET("/school", authMiddleware)
-	api.PATCH("/school", authMiddleware)
-	api.DELETE("/school", authMiddleware)
+	api.GET("/school", schoolMiddleware)
+	api.PATCH("/school", schoolMiddleware)
+	api.DELETE("/school", schoolMiddleware)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 }
