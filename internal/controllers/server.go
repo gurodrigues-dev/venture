@@ -153,19 +153,19 @@ func (ct *controller) Start() {
 	api.PATCH("/user", authMiddleware)
 	api.DELETE("/user", authMiddleware)
 
-	// // child
+	// child
 	api.POST("/child", authMiddleware)
 	api.GET("/child", authMiddleware)
 	api.PATCH("/child", authMiddleware)
 	api.DELETE("/child", authMiddleware)
 
-	// // driver
+	// driver
 	api.POST("/driver", authMiddleware)
 	api.GET("/driver", authMiddleware)
 	api.PATCH("/driver", authMiddleware)
 	api.DELETE("/driver", authMiddleware)
 
-	// // school
+	// school
 	api.POST("/school")
 	api.GET("/school", schoolMiddleware)
 	api.PATCH("/school", schoolMiddleware)
