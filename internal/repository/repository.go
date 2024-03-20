@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"gin/types"
 
 	_ "github.com/lib/pq"
 )
@@ -19,11 +20,13 @@ type Repository interface {
 	ReadDriver(ctx context.Context)
 	UpdateDriver(ctx context.Context)
 	DeleteDriver(ctx context.Context)
-	CreateSchool(ctx context.Context)
-	ReadSchool(ctx context.Context)
-	UpdateSchool(ctx context.Context)
-	DeleteSchool(ctx context.Context)
+	CreateSchool(ctx context.Context, school *types.School) error
+	ReadSchool(ctx context.Context, id *int) (*types.School, error)
+	UpdateSchool(ctx context.Context) error
+	DeleteSchool(ctx context.Context, id *int) error
+	AuthSchool(ctx context.Context, school *types.School) error
 	NewPassword(ctx context.Context)
+	VerifyEmailExists(ctx context.Context, email *string) (bool, error)
 }
 
 type CloudRepository interface {
