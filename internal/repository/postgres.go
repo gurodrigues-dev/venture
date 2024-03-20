@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"gin/config"
+	"gin/types"
 	"os"
 )
 
@@ -105,20 +106,65 @@ func (p *Postgres) DeleteDriver(ctx context.Context) {
 
 }
 
-func (p *Postgres) CreateSchool(ctx context.Context) {
-
+func (p *Postgres) CreateSchool(ctx context.Context, school *types.School) error {
+	sqlQuery := `INSERT INTO schools (name, cnpj, email, password) VALUES ($1, $2, $3, $4)`
+	_, err := p.conn.Exec(sqlQuery, school.Name, school.CNPJ, school.Email, school.Password)
+	return err
 }
 
-func (p *Postgres) ReadSchool(ctx context.Context) {
-
+func (p *Postgres) ReadSchool(ctx context.Context, id *int) (*types.School, error) {
+	sqlQuery := `SELECT name, cnpj, email, password WHERE id = $1 LIMIT 1`
+	var school types.School
+	err := p.conn.QueryRow(sqlQuery, id).Scan(
+		&school.Name,
+		&school.CNPJ,
+		&school.Email,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
+	return &school, nil
 }
 
-func (p *Postgres) UpdateSchool(ctx context.Context) {
-
+func (p *Postgres) UpdateSchool(ctx context.Context) error {
+	return nil
 }
 
-func (p *Postgres) DeleteSchool(ctx context.Context) {
+func (p *Postgres) DeleteSchool(ctx context.Context, id *int) error {
+	tx, err := p.conn.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	_, err = tx.Exec("DELETE FROM schools WHERE id = $1", id)
+	return err
+}
 
+func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) error {
+	sqlQuery := `SELECT password FROM schools WHERE email = $1`
+	var password string
+	err := p.conn.QueryRow(sqlQuery, school.Email).Scan(&password)
+	if err != nil {
+		return err
+	}
+	match := password == school.Password
+	if !match {
+		return fmt.Errorf("email or password wrong")
+	}
+	return nil
+}
+
+func (p *Postgres) VerifyEmailExists(ctx context.Context, email *string) (bool, error) {
+	return false, nil
 }
 
 func (p *Postgres) NewPassword(ctx context.Context) {
