@@ -163,8 +163,21 @@ func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) error {
 	return nil
 }
 
-func (p *Postgres) VerifyEmailExists(ctx context.Context, email *string) (bool, error) {
-	return false, nil
+func (p *Postgres) VerifyEmailExists(ctx context.Context, table, email *string) (bool, error) {
+	sqlQuery := `SELECT email FROM` + table + `WHERE email = $1`
+
+	var emailDatabase string
+
+	err := p.conn.QueryRow(sqlQuery, email).Scan(&emailDatabase)
+
+	fmt.Println(err)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+
 }
 
 func (p *Postgres) NewPassword(ctx context.Context) {

@@ -26,7 +26,7 @@ type Repository interface {
 	DeleteSchool(ctx context.Context, id *int) error
 	AuthSchool(ctx context.Context, school *types.School) error
 	NewPassword(ctx context.Context)
-	VerifyEmailExists(ctx context.Context, email *string) (bool, error)
+	VerifyEmailExists(ctx context.Context, table, email *string) (bool, error)
 }
 
 type CloudRepository interface {
