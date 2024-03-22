@@ -149,22 +149,28 @@ func (p *Postgres) DeleteSchool(ctx context.Context, id *int) error {
 	return err
 }
 
-func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) error {
-	sqlQuery := `SELECT password FROM schools WHERE email = $1`
-	var password string
-	err := p.conn.QueryRow(sqlQuery, school.Email).Scan(&password)
-	if err != nil {
-		return err
+func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) (*types.School, error) {
+	sqlQuery := `SELECT id, name, cnpj, email, password WHERE email = $1 LIMIT 1`
+	var schoolData types.School
+	err := p.conn.QueryRow(sqlQuery, school.Email).Scan(
+		&schoolData.ID,
+		&schoolData.Name,
+		&schoolData.CNPJ,
+		&schoolData.Email,
+		&schoolData.Password,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
 	}
-	match := password == school.Password
+	match := schoolData.Password == school.Password
 	if !match {
-		return fmt.Errorf("email or password wrong")
+		return nil, fmt.Errorf("email or password wrong")
 	}
-	return nil
+	return &schoolData, nil
 }
 
 func (p *Postgres) VerifyEmailExists(ctx context.Context, table, email *string) (bool, error) {
-	sqlQuery := `SELECT email FROM` + table + `WHERE email = $1`
+	sqlQuery := "SELECT email FROM " + *table + " WHERE email = $1"
 
 	var emailDatabase string
 
