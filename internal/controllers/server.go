@@ -27,6 +27,11 @@ type ClaimsUser struct {
 	jwt.StandardClaims
 }
 
+type ClaimsDriver struct {
+	CPF string `json:"cpf"`
+	jwt.StandardClaims
+}
+
 type ClaimsSchool struct {
 	CNPJ string `json:"cnpj"`
 	jwt.StandardClaims
