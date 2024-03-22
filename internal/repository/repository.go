@@ -24,7 +24,7 @@ type Repository interface {
 	ReadSchool(ctx context.Context, id *int) (*types.School, error)
 	UpdateSchool(ctx context.Context) error
 	DeleteSchool(ctx context.Context, id *int) error
-	AuthSchool(ctx context.Context, school *types.School) error
+	AuthSchool(ctx context.Context, school *types.School) (*types.School, error)
 	NewPassword(ctx context.Context)
 	VerifyEmailExists(ctx context.Context, table, email *string) (bool, error)
 }
