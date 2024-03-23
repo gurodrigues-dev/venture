@@ -154,27 +154,28 @@ func (ct *controller) Start() {
 
 	// user
 	api.POST("/user")
-	api.GET("/user", authMiddleware)
-	api.PATCH("/user", authMiddleware)
-	api.DELETE("/user", authMiddleware)
+	api.GET("/user")
+	api.PATCH("/user")
+	api.DELETE("/user")
 
 	// child
-	api.POST("/child", authMiddleware)
-	api.GET("/child", authMiddleware)
+	api.POST("/child")
+	api.GET("/child")
 	api.PATCH("/child", authMiddleware)
-	api.DELETE("/child", authMiddleware)
+	api.DELETE("/child")
 
 	// driver
-	api.POST("/driver", authMiddleware)
-	api.GET("/driver", authMiddleware)
-	api.PATCH("/driver", authMiddleware)
-	api.DELETE("/driver", authMiddleware)
+	api.POST("/driver")
+	api.GET("/driver")
+	api.PATCH("/driver")
+	api.DELETE("/driver")
 
 	// school
-	api.POST("/school")
-	api.GET("/school", schoolMiddleware)
+	api.POST("/school", ct.CreateSchool)
+	api.GET("/school", schoolMiddleware, ct.ReadSchool)
 	api.PATCH("/school", schoolMiddleware)
 	api.DELETE("/school", schoolMiddleware)
+	api.POST("/login/school", ct.AuthSchool)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 }
