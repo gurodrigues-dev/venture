@@ -93,6 +93,7 @@ func (s *Service) DeleteCreateSchool(ctx context.Context, id *int) error {
 }
 
 func (s *Service) AuthSchool(ctx context.Context, school *types.School) (*types.School, error) {
+	school.Password = utils.HashPassword(school.Password)
 	return s.repository.AuthSchool(ctx, school)
 }
 
