@@ -15,6 +15,7 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("Erro ao parsear o body: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"erro": "Conteúdo do body inválido"})
+		return
 	}
 
 	err := ct.service.CreateSchool(c, &input)
@@ -30,6 +31,17 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 }
 
 func (ct *controller) ReadSchool(c *gin.Context) {
+
+	cookie, err := c.Cookie("username")
+	if err != nil {
+		c.String(http.StatusNotFound, "Cookie não encontrado")
+		return
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{
+		"teste":  "cookie validado",
+		"cookie": cookie,
+	})
 
 }
 
@@ -54,8 +66,8 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 	school, err := ct.service.AuthSchool(c, &input)
 
 	if err != nil {
-		log.Printf("Email ou senha incorreto: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"erro": "Email ou senha incorreto."})
+		log.Printf("Email ou senha incorretos: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"erro": "Email ou senha incorretos."})
 		return
 	}
 
@@ -66,6 +78,8 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"erro": "Erro ao criar Token de Autenticação"})
 		return
 	}
+
+	c.SetCookie("token", jwt, 3600, "/", c.Request.Host, false, true)
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"school": school,
