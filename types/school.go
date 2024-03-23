@@ -2,11 +2,11 @@ package types
 
 type School struct {
 	ID       int    `json:"id"`
-	Nome     string `json:"nome"`
+	Name     string `json:"name"`
 	CNPJ     string `json:"cnpj"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
-	Address  string `json:"address"`
+	Street   string `json:"street"`
 	Number   int    `json:"number"`
-	CEP      string `json:"cep"`
+	ZIP      string `json:"zip"`
 }

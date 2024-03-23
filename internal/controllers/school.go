@@ -13,16 +13,16 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 	var input types.School
 
 	if err := c.BindJSON(&input); err != nil {
-		log.Printf("Erro ao parsear o body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"erro": "Conteúdo do body inválido"})
+		log.Printf("error to parsed body: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body content"})
 		return
 	}
 
 	err := ct.service.CreateSchool(c, &input)
 
 	if err != nil {
-		log.Printf("Erro ao criar escola: %s", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Ocorreu um erro ao criar a conta."})
+		log.Printf("error to create school: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "an error occurred when creating school"})
 		return
 	}
 
@@ -32,14 +32,14 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 
 func (ct *controller) ReadSchool(c *gin.Context) {
 
-	cookie, err := c.Cookie("username")
+	cookie, err := c.Cookie("token")
 	if err != nil {
-		c.String(http.StatusNotFound, "Cookie não encontrado")
+		c.String(http.StatusNotFound, "cookie don't found")
 		return
 	}
 
 	c.JSON(http.StatusAccepted, gin.H{
-		"teste":  "cookie validado",
+		"teste":  "cookie validated",
 		"cookie": cookie,
 	})
 
@@ -58,24 +58,24 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 	var input types.School
 
 	if err := c.BindJSON(&input); err != nil {
-		log.Printf("Erro ao parsear o body: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"erro": "Conteúdo do body inválido"})
+		log.Printf("error to parsed body: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"erro": "invalid body content"})
 		return
 	}
 
 	school, err := ct.service.AuthSchool(c, &input)
 
 	if err != nil {
-		log.Printf("Email ou senha incorretos: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"erro": "Email ou senha incorretos."})
+		log.Printf("wrong email or password: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "wrong email or password"})
 		return
 	}
 
 	jwt, err := ct.service.CreateTokenJWTSchool(c, &input)
 
 	if err != nil {
-		log.Printf("Erro ao criar token JWT: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"erro": "Erro ao criar Token de Autenticação"})
+		log.Printf("error to create jwt token: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error to create jwt token"})
 		return
 	}
 
