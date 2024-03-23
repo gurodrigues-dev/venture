@@ -107,8 +107,8 @@ func (p *Postgres) DeleteDriver(ctx context.Context) {
 }
 
 func (p *Postgres) CreateSchool(ctx context.Context, school *types.School) error {
-	sqlQuery := `INSERT INTO schools (name, cnpj, email, password) VALUES ($1, $2, $3, $4)`
-	_, err := p.conn.Exec(sqlQuery, school.Name, school.CNPJ, school.Email, school.Password)
+	sqlQuery := `INSERT INTO schools (nome, cnpj, email, password, rua, numero, cep) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	_, err := p.conn.Exec(sqlQuery, school.Nome, school.CNPJ, school.Email, school.Password, school.Address, school.Number, school.CEP)
 	return err
 }
 
@@ -116,7 +116,7 @@ func (p *Postgres) ReadSchool(ctx context.Context, id *int) (*types.School, erro
 	sqlQuery := `SELECT name, cnpj, email, password WHERE id = $1 LIMIT 1`
 	var school types.School
 	err := p.conn.QueryRow(sqlQuery, id).Scan(
-		&school.Name,
+		&school.Nome,
 		&school.CNPJ,
 		&school.Email,
 	)
@@ -150,11 +150,11 @@ func (p *Postgres) DeleteSchool(ctx context.Context, id *int) error {
 }
 
 func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) (*types.School, error) {
-	sqlQuery := `SELECT id, name, cnpj, email, password WHERE email = $1 LIMIT 1`
+	sqlQuery := `SELECT id, nome, cnpj, email, password FROM schools WHERE email = $1 LIMIT 1`
 	var schoolData types.School
 	err := p.conn.QueryRow(sqlQuery, school.Email).Scan(
 		&schoolData.ID,
-		&schoolData.Name,
+		&schoolData.Nome,
 		&schoolData.CNPJ,
 		&schoolData.Email,
 		&schoolData.Password,
@@ -166,6 +166,7 @@ func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) (*types
 	if !match {
 		return nil, fmt.Errorf("email or password wrong")
 	}
+	schoolData.Password = ""
 	return &schoolData, nil
 }
 
