@@ -172,9 +172,10 @@ func (ct *controller) Start() {
 
 	// school
 	api.POST("/school", ct.CreateSchool)
-	api.GET("/school", schoolMiddleware, ct.ReadSchool)
-	api.PATCH("/school", schoolMiddleware)
-	api.DELETE("/school", schoolMiddleware)
+	api.GET("/school/:id", schoolMiddleware, ct.ReadSchool)
+	api.GET("/school", schoolMiddleware, ct.ReadAllSchools)
+	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
+	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
