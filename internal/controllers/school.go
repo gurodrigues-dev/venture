@@ -34,13 +34,21 @@ func (ct *controller) ReadSchool(c *gin.Context) {
 
 	cookie, err := c.Cookie("token")
 	if err != nil {
-		c.String(http.StatusNotFound, "cookie don't found")
+		c.JSON(http.StatusNotFound, "cookie don't found")
+		return
+	}
+
+	cnpj, err := ct.service.ParserJwtSchool(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "name don't found")
 		return
 	}
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"teste":  "cookie validated",
 		"cookie": cookie,
+		"cnpj":   cnpj,
 	})
 
 }
@@ -71,7 +79,7 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 		return
 	}
 
-	jwt, err := ct.service.CreateTokenJWTSchool(c, &input)
+	jwt, err := ct.service.CreateTokenJWTSchool(c, school)
 
 	if err != nil {
 		log.Printf("error to create jwt token: %s", err.Error())
@@ -79,7 +87,7 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", jwt, 3600, "/", c.Request.Host, false, true)
+	c.SetCookie("token", jwt, 3600, "/", "localhost", false, true)
 
 	c.JSON(http.StatusAccepted, gin.H{
 		"school": school,
