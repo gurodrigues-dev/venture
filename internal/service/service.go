@@ -208,3 +208,15 @@ func (s *Service) InterfaceToString(value interface{}) (*string, error) {
 		return nil, fmt.Errorf("value isn't string")
 	}
 }
+
+func (s *Service) FoundDriver(cnpj *string) {
+
+}
+
+func (s *Service) InviteNewDriver(driver *types.Driver) {
+
+}
+
+func (s *Service) AddingSchool(token *string) {
+
+}

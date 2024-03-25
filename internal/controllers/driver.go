@@ -17,3 +17,7 @@ func (ct *controller) UpdateDriver(c *gin.Context) {
 func (ct *controller) DeleteDriver(c *gin.Context) {
 
 }
+
+func (ct *controller) AddingSchool(c *gin.Context) {
+
+}

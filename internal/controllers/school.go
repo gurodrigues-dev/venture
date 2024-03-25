@@ -155,3 +155,7 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 	})
 
 }
+
+func (ct *controller) InviteNewDriver(c *gin.Context) {
+
+}
