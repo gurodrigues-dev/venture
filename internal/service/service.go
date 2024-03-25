@@ -84,12 +84,16 @@ func (s *Service) ReadSchool(ctx context.Context, id *int) (*types.School, error
 	return s.repository.ReadSchool(ctx, id)
 }
 
+func (s *Service) ReadAllSchools(ctx context.Context) ([]types.School, error) {
+	return s.repository.ReadAllSchools(ctx)
+}
+
 func (s *Service) UpdateCreateSchool(ctx context.Context) error {
 	return s.repository.UpdateSchool(ctx)
 }
 
-func (s *Service) DeleteCreateSchool(ctx context.Context, id *int) error {
-	return s.repository.DeleteSchool(ctx, id)
+func (s *Service) DeleteSchool(ctx context.Context, cnpj *string) error {
+	return s.repository.DeleteSchool(ctx, cnpj)
 }
 
 func (s *Service) AuthSchool(ctx context.Context, school *types.School) (*types.School, error) {
@@ -186,7 +190,7 @@ func (s *Service) ParserJwtSchool(ctx *gin.Context) (interface{}, error) {
 
 func (s *Service) ParserJwtUserAndDriver(ctx *gin.Context) error {
 
-	_, found := ctx.Get("")
+	_, found := ctx.Get("cpf")
 
 	if !found {
 		return fmt.Errorf("error while veryfing token")
@@ -194,4 +198,13 @@ func (s *Service) ParserJwtUserAndDriver(ctx *gin.Context) error {
 
 	return nil
 
+}
+
+func (s *Service) InterfaceToString(value interface{}) (*string, error) {
+	switch v := value.(type) {
+	case string:
+		return &v, nil
+	default:
+		return nil, fmt.Errorf("value isn't string")
+	}
 }

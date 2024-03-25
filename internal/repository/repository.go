@@ -22,8 +22,9 @@ type Repository interface {
 	DeleteDriver(ctx context.Context)
 	CreateSchool(ctx context.Context, school *types.School) error
 	ReadSchool(ctx context.Context, id *int) (*types.School, error)
+	ReadAllSchools(ctx context.Context) ([]types.School, error)
 	UpdateSchool(ctx context.Context) error
-	DeleteSchool(ctx context.Context, id *int) error
+	DeleteSchool(ctx context.Context, cnpj *string) error
 	AuthSchool(ctx context.Context, school *types.School) (*types.School, error)
 	NewPassword(ctx context.Context)
 	VerifyEmailExists(ctx context.Context, table, email *string) (bool, error)
