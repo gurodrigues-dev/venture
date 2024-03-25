@@ -177,8 +177,6 @@ func (p *Postgres) VerifyEmailExists(ctx context.Context, table, email *string) 
 
 	err := p.conn.QueryRow(sqlQuery, email).Scan(&emailDatabase)
 
-	fmt.Println(err)
-
 	if err != nil {
 		return false, err
 	}
