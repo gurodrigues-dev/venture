@@ -113,12 +113,16 @@ func (p *Postgres) CreateSchool(ctx context.Context, school *types.School) error
 }
 
 func (p *Postgres) ReadSchool(ctx context.Context, id *int) (*types.School, error) {
-	sqlQuery := `SELECT name, cnpj, email, password WHERE id = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools WHERE id = $1 LIMIT 1`
 	var school types.School
 	err := p.conn.QueryRow(sqlQuery, id).Scan(
+		&school.ID,
 		&school.Name,
 		&school.CNPJ,
 		&school.Email,
+		&school.Street,
+		&school.Number,
+		&school.ZIP,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
@@ -126,11 +130,37 @@ func (p *Postgres) ReadSchool(ctx context.Context, id *int) (*types.School, erro
 	return &school, nil
 }
 
+func (p *Postgres) ReadAllSchools(ctx context.Context) ([]types.School, error) {
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools`
+
+	rows, err := p.conn.Query(sqlQuery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var schools []types.School
+
+	for rows.Next() {
+		var school types.School
+		err := rows.Scan(&school.ID, &school.Name, &school.CNPJ, &school.Email, &school.Street, &school.Number, &school.ZIP)
+		if err != nil {
+			return nil, err
+		}
+		schools = append(schools, school)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return schools, nil
+}
+
 func (p *Postgres) UpdateSchool(ctx context.Context) error {
 	return nil
 }
 
-func (p *Postgres) DeleteSchool(ctx context.Context, id *int) error {
+func (p *Postgres) DeleteSchool(ctx context.Context, cnpj *string) error {
 	tx, err := p.conn.Begin()
 	if err != nil {
 		return err
@@ -145,7 +175,7 @@ func (p *Postgres) DeleteSchool(ctx context.Context, id *int) error {
 			err = tx.Commit()
 		}
 	}()
-	_, err = tx.Exec("DELETE FROM schools WHERE id = $1", id)
+	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", cnpj)
 	return err
 }
 
