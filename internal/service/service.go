@@ -172,15 +172,15 @@ func (s *Service) CreateTokenJWTSchool(ctx context.Context, school *types.School
 
 }
 
-func (s *Service) ParserJwtSchool(ctx *gin.Context) error {
+func (s *Service) ParserJwtSchool(ctx *gin.Context) (interface{}, error) {
 
-	_, found := ctx.Get("")
+	cnpj, found := ctx.Get("cnpj")
 
 	if !found {
-		return fmt.Errorf("error while veryfing token")
+		return nil, fmt.Errorf("error while veryfing token")
 	}
 
-	return nil
+	return cnpj, nil
 
 }
 
