@@ -8,19 +8,21 @@ import (
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context)
-	ReadUser(ctx context.Context)
-	UpdateUser(ctx context.Context)
-	DeleteUser(ctx context.Context)
-	CreateChild(ctx context.Context)
-	ReadChild(ctx context.Context)
-	UpdateChild(ctx context.Context)
-	DeleteChild(ctx context.Context)
-	CreateDriver(ctx context.Context)
-	ReadDriver(ctx context.Context)
-	UpdateDriver(ctx context.Context)
-	DeleteDriver(ctx context.Context)
-	CreateSchool(ctx context.Context, school *types.School) error
+	CreateUser(ctx context.Context, user *types.User) error
+	ReadUser(ctx context.Context, id *int) (*types.User, error)
+	UpdateUser(ctx context.Context) error
+	DeleteUser(ctx context.Context, cpf *string) error
+  AuthUser(ctx context.Context, user *types.User) (*types.User, error)
+	CreateChild(ctx context.Context, child *types.Child, user *types.User) error
+	ReadChild(ctx context.Context, idUser *int) ([]types.Child, error)
+	UpdateChild(ctx context.Context) error
+	DeleteChild(ctx context.Context, idChild *int) error
+	CreateDriver(ctx context.Context, driver *types.Driver) error
+	ReadDriver(ctx context.Context, id *int) (*types.Driver, error)
+	UpdateDriver(ctx context.Context) error
+	DeleteDriver(ctx context.Context, cpf *string) error
+	AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error)
+  CreateSchool(ctx context.Context, school *types.School) error
 	ReadSchool(ctx context.Context, id *int) (*types.School, error)
 	ReadAllSchools(ctx context.Context) ([]types.School, error)
 	UpdateSchool(ctx context.Context) error
