@@ -44,9 +44,9 @@ type Cache struct {
 }
 
 type Messaging struct {
-	Brokers   []string `yaml:"broker"`
-	Topic     string   `yaml:"topic"`
-	Partition int      `yaml:"partition"`
+	Brokers   string `yaml:"broker"`
+	Topic     string `yaml:"topic"`
+	Partition int    `yaml:"partition"`
 }
 
 var config *Config
