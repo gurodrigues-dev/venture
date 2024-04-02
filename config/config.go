@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	Name     string `yaml:"name"`
-	Database Database
-	Server   Server
-	Cloud    Cloud
-	Cache    Cache
+	Name      string `yaml:"name"`
+	Database  Database
+	Server    Server
+	Cloud     Cloud
+	Cache     Cache
+	Messaging Messaging
 }
 
 type Server struct {
@@ -40,6 +41,12 @@ type Cloud struct {
 type Cache struct {
 	Address  string `yaml:"address"`
 	Password string `yaml:"password"`
+}
+
+type Messaging struct {
+	Brokers   []string `yaml:"broker"`
+	Topic     string   `yaml:"topic"`
+	Partition int      `yaml:"partition"`
 }
 
 var config *Config
