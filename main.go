@@ -31,7 +31,12 @@ func main() {
 		log.Fatalf("error creating redis connection: %s", err.Error())
 	}
 
-	service := service.New(repo, aws, redis)
+	kafka, err := repository.NewKafkaClient()
+	if err != nil {
+		log.Fatalf("error creating kafka connection: %s", err.Error())
+	}
+
+	service := service.New(repo, aws, redis, kafka)
 
 	controller := controllers.New(service)
 
