@@ -15,11 +15,12 @@ import (
 
 type Service struct {
 	repository repository.Repository
-	cloud      repository.CloudRepository
-	redis      repository.CacheRepository
+	cloud      repository.Cloud
+	redis      repository.Cache
+	broker     repository.Messaging
 }
 
-func New(repo repository.Repository, cloud repository.CloudRepository, redis repository.CacheRepository) *Service {
+func New(repo repository.Repository, cloud repository.Cloud, redis repository.Cache, broker repository.Messaging) *Service {
 	return &Service{
 		repository: repo,
 		cloud:      cloud,
@@ -209,14 +210,28 @@ func (s *Service) InterfaceToString(value interface{}) (*string, error) {
 	}
 }
 
-func (s *Service) FoundDriver(cnpj *string) {
-
-}
-
 func (s *Service) InviteNewDriver(driver *types.Driver) {
 
+	// cria token de 6 numeros de forma randomica
+
+	// valida se ele ja existe numa lista de sismember
+
+	// caso nao crie ele com token: cnh do driver
+
+	// depois retorne o numero do token com cnh no jsonfinal
+
 }
 
-func (s *Service) AddingSchool(token *string) {
+func (s *Service) ValidateTokenOfRecordSchoolAndDriver(token *string) {
+
+	// busca o token no sismember
+
+	// se existir no sismember, busca token e o seu valor
+
+}
+
+func (s *Service) AddingRecordOfSchoolAndDriver(school *string, driver *string) {
+
+	// cria um registro de escola e motorista no banco
 
 }
