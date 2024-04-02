@@ -33,6 +33,10 @@ func (r *Redis) SaveKeyAndValue(ctx context.Context) {
 
 }
 
-func (r *Redis) VerifyToken(ctx context.Context) {
+func (r *Redis) FindKeyRedis(ctx context.Context) {
+
+}
+
+func (r *Redis) ValidateExistsSismember(ctx context.Context) {
 
 }
