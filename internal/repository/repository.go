@@ -45,8 +45,6 @@ type Cache interface {
 }
 
 type Messaging interface {
-	Publish(ctx context.Context)
-	Subscribe(ctx context.Context)
 	Consumer(ctx context.Context)
-	Producer(ctx context.Context)
+	Producer(ctx context.Context, msg string)
 }
