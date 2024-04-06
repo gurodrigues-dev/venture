@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"gin/config"
 	"gin/internal/repository"
@@ -106,8 +107,8 @@ func (s *Service) CheckEmail(ctx context.Context) {
 
 }
 
-func (s *Service) SendEmail(ctx context.Context) {
-
+func (s *Service) AddMessageInQueue(ctx context.Context, msg string) error {
+	return s.broker.Producer(ctx, msg)
 }
 
 func (s *Service) SaveImageBucket(ctx context.Context) {
@@ -233,5 +234,17 @@ func (s *Service) ValidateTokenOfRecordSchoolAndDriver(token *string) {
 func (s *Service) AddingRecordOfSchoolAndDriver(school *string, driver *string) {
 
 	// cria um registro de escola e motorista no banco
+
+}
+
+func (s *Service) StructToEmail(email *types.Email) (string, error) {
+
+	json, err := json.Marshal(email)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(json), nil
 
 }
