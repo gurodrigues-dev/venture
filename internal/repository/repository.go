@@ -45,6 +45,5 @@ type Cache interface {
 }
 
 type Messaging interface {
-	Consumer(ctx context.Context)
-	Producer(ctx context.Context, msg string)
+	Producer(ctx context.Context, msg string) error
 }
