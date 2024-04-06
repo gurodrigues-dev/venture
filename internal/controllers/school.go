@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/types"
 	"log"
 	"net/http"
@@ -24,6 +25,26 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 	if err != nil {
 		log.Printf("error to create school: %s", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "an error occurred when creating school"})
+		return
+	}
+
+	email := types.Email{
+		Recipient: input.Email,
+		Subject:   fmt.Sprintf("Verification Email - %s", input.Name),
+		Body:      fmt.Sprintf("Hello, %s! This email was registred in Venture. Our Apprechiated your choose, the choose of technology", input.Name),
+	}
+
+	msg, err := ct.service.StructToEmail(&email)
+	if err != nil {
+		log.Printf("error while convert email to message")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
+		return
+	}
+
+	err = ct.service.AddMessageInQueue(c, msg)
+	if err != nil {
+		log.Printf("error while adding message on queue")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
 		return
 	}
 
@@ -153,7 +174,6 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 		"school": school,
 		"token":  jwt,
 	})
-
 }
 
 func (ct *controller) InviteNewDriver(c *gin.Context) {
