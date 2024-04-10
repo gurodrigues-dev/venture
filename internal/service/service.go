@@ -103,10 +103,6 @@ func (s *Service) AuthSchool(ctx context.Context, school *types.School) (*types.
 	return s.repository.AuthSchool(ctx, school)
 }
 
-func (s *Service) CheckEmail(ctx context.Context) {
-
-}
-
 func (s *Service) AddMessageInQueue(ctx context.Context, msg string) error {
 	return s.broker.Producer(ctx, msg)
 }
@@ -211,33 +207,7 @@ func (s *Service) InterfaceToString(value interface{}) (*string, error) {
 	}
 }
 
-func (s *Service) InviteNewDriver(driver *types.Driver) {
-
-	// cria token de 6 numeros de forma randomica
-
-	// valida se ele ja existe numa lista de sismember
-
-	// caso nao crie ele com token: cnh do driver
-
-	// depois retorne o numero do token com cnh no jsonfinal
-
-}
-
-func (s *Service) ValidateTokenOfRecordSchoolAndDriver(token *string) {
-
-	// busca o token no sismember
-
-	// se existir no sismember, busca token e o seu valor
-
-}
-
-func (s *Service) AddingRecordOfSchoolAndDriver(school *string, driver *string) {
-
-	// cria um registro de escola e motorista no banco
-
-}
-
-func (s *Service) StructToEmail(email *types.Email) (string, error) {
+func (s *Service) EmailStructToJSON(email *types.Email) (string, error) {
 
 	json, err := json.Marshal(email)
 

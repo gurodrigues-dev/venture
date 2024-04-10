@@ -34,7 +34,7 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 		Body:      fmt.Sprintf("Hello, %s! This email was registred in Venture. Our Apprechiated your choose, the choose of technology", input.Name),
 	}
 
-	msg, err := ct.service.StructToEmail(&email)
+	msg, err := ct.service.EmailStructToJSON(&email)
 	if err != nil {
 		log.Printf("error while convert email to message")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
