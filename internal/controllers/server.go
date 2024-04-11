@@ -178,5 +178,11 @@ func (ct *controller) Start() {
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
 
+	// invite
+	api.POST("/invite", ct.CreateInvite)
+	api.GET("/invite", ct.ReadInvite)
+	api.PATCH("/invite", ct.UpdateInvite)
+	api.DELETE("/invite", ct.DeleteInvite)
+
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 }
