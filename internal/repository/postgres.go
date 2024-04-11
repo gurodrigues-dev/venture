@@ -59,59 +59,59 @@ func (p *Postgres) migrate(filepath string) error {
 }
 
 func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
-  return nil, nil
+	return nil, nil
 }
 
 func (p *Postgres) UpdateUser(ctx context.Context) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) DeleteUser(ctx context.Context, cpf *string) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) AuthUser(ctx context.Context, user *types.User) (*types.User, error) {
-  return nil, nil
+	return nil, nil
 }
 
 func (p *Postgres) CreateChild(ctx context.Context, child *types.Child, user *types.User) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) ReadChild(ctx context.Context, id *int) ([]types.Child, error) {
-  return nil, nil
+	return nil, nil
 }
 
 func (p *Postgres) UpdateChild(ctx context.Context) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) DeleteChild(ctx context.Context, idChild *int) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) CreateDriver(ctx context.Context, driver *types.Driver) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) ReadDriver(ctx context.Context, id *int) (*types.Driver, error) {
-  return nil, nil
+	return nil, nil
 }
 
 func (p *Postgres) UpdateDriver(ctx context.Context) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) DeleteDriver(ctx context.Context, cpf *string) error {
-  return nil
+	return nil
 }
 
 func (p *Postgres) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
-  return nil, nil 
+	return nil, nil
 }
 
 func (p *Postgres) CreateSchool(ctx context.Context, school *types.School) error {
@@ -224,5 +224,21 @@ func (p *Postgres) VerifyEmailExists(ctx context.Context, table, email *string) 
 }
 
 func (p *Postgres) NewPassword(ctx context.Context) {
+
+}
+
+func (p *Postgres) CreateInvite(ctx context.Context) {
+
+}
+
+func (p *Postgres) ReadInvite(ctx context.Context) {
+
+}
+
+func (p *Postgres) UpdateInvite(ctx context.Context) {
+
+}
+
+func (p *Postgres) DeleteInvite(ctx context.Context) {
 
 }
