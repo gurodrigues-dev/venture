@@ -218,3 +218,11 @@ func (s *Service) EmailStructToJSON(email *types.Email) (string, error) {
 	return string(json), nil
 
 }
+
+func (s *Service) AgreeInviteOfSchool(ctx context.Context) {
+
+}
+
+func (s *Service) DisagreeInviteOfSchool(ctx context.Context) {
+
+}
