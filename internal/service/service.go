@@ -219,10 +219,18 @@ func (s *Service) EmailStructToJSON(email *types.Email) (string, error) {
 
 }
 
-func (s *Service) AgreeInviteOfSchool(ctx context.Context) {
+func (s *Service) CreateInvite(ctx context.Context) {
 
 }
 
-func (s *Service) DisagreeInviteOfSchool(ctx context.Context) {
+func (s *Service) ReadInvite(ctx context.Context) {
+
+}
+
+func (s *Service) UpdateInvite(ctx context.Context) {
+
+}
+
+func (s *Service) DeleteInvite(ctx context.Context) {
 
 }

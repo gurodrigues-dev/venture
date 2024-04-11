@@ -30,6 +30,10 @@ type Repository interface {
 	AuthSchool(ctx context.Context, school *types.School) (*types.School, error)
 	NewPassword(ctx context.Context)
 	VerifyEmailExists(ctx context.Context, table, email *string) (bool, error)
+	CreateInvite(ctx context.Context)
+	ReadInvite(ctx context.Context)
+	UpdateInvite(ctx context.Context)
+	DeleteInvite(ctx context.Context)
 }
 
 type Cloud interface {
