@@ -16,9 +16,8 @@ FROM alpine:latest
 
 WORKDIR /app
 
-# Copy the pre-built binary from the previous stage
 COPY --from=builder /app/main .
 
-EXPOSE 9632
+EXPOSE 8787
 
 CMD ["./main"]
