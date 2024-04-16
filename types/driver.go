@@ -9,7 +9,7 @@ type Driver struct {
 	CNH        string `json:"cnh"`
 	QrCode     string `json:"qrcode"`
 	Street     string `json:"street"`
-	Number     int    `json:"number"`
+	Number     string `json:"number"`
 	ZIP        string `json:"zip"`
 	Complement string `json:"complement"`
 }
