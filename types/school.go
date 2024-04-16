@@ -7,6 +7,6 @@ type School struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Street   string `json:"street"`
-	Number   int    `json:"number"`
+	Number   string `json:"number"`
 	ZIP      string `json:"zip"`
 }
