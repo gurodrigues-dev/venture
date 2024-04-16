@@ -33,7 +33,7 @@ func (k *Kafka) Producer(ctx context.Context, msg string) error {
 
 	message := []byte(msg)
 
-	err := k.producer.WriteMessages(context.Background(), kafka.Message{
+	err := k.producer.WriteMessages(ctx, kafka.Message{
 		Key:     nil,
 		Value:   message,
 		Time:    time.Now(),
