@@ -124,7 +124,7 @@ func (ct *controller) Start() {
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(tokenString, &ClaimsUser{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsDriver{}, func(token *jwt.Token) (interface{}, error) {
 			return secret, nil
 		})
 
@@ -210,8 +210,9 @@ func (ct *controller) Start() {
 	api.GET("/driver/:cnh", ct.ReadDriver)
 	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
 	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
-	api.POST("driver/school", driverMiddleware) // will implement then invite crud
-	api.GET("driver/student", driverMiddleware) // will implement then invite crud
+	api.POST("/login/driver", ct.AuthDriver)
+	api.POST("/driver/school", driverMiddleware) // will implement then invite crud
+	api.GET("/driver/student", driverMiddleware) // will implement then invite crud
 
 	// school
 	api.POST("/school", ct.CreateSchool)
