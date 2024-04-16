@@ -40,8 +40,6 @@ func NewAwsConnection() (*AWS, error) {
 
 func (a *AWS) CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string, error) {
 
-	conf := config.Get()
-
 	qrCodeData := fmt.Sprintf("http://localhost:8080/api/v1/drivers/%s", *cnh)
 	qrCode, err := qrcode.Encode(qrCodeData, qrcode.Medium, 256)
 
@@ -54,7 +52,7 @@ func (a *AWS) CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string,
 	fileName := fmt.Sprintf("qrcodes/%s.png", *cnh)
 
 	_, err = svc.PutObject(&s3.PutObjectInput{
-		Bucket:      aws.String(conf.Cloud.BucketName),
+		Bucket:      aws.String("venture-s3-bucket"),
 		Key:         aws.String(fileName),
 		Body:        bytes.NewReader(qrCode),
 		ACL:         aws.String("public-read"),
@@ -65,7 +63,7 @@ func (a *AWS) CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string,
 		return "Error while saving qrcode in aws", err
 	}
 
-	qrCodeURL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", conf.Cloud.BucketName, fileName)
+	qrCodeURL := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", "venture-s3-bucket", fileName)
 
 	return qrCodeURL, nil
 
