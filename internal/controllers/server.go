@@ -28,7 +28,7 @@ type ClaimsUser struct {
 }
 
 type ClaimsDriver struct {
-	CPF string `json:"cpf"`
+	CNH string `json:"cnh"`
 	jwt.StandardClaims
 }
 
@@ -107,6 +107,46 @@ func (ct *controller) Start() {
 
 	}
 
+	driverMiddleware := func(c *gin.Context) {
+
+		secret := []byte(conf.Server.Secret)
+
+		tokenString, err := c.Cookie("token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Sem cookie de sessão"})
+			c.Abort()
+			return
+		}
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+			c.Abort()
+			return
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsUser{}, func(token *jwt.Token) (interface{}, error) {
+			return secret, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(*ClaimsDriver)
+		if !ok || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		c.Set("cnh", claims.CNH)
+		c.Set("isAuthenticated", true)
+		c.Next()
+
+	}
+
 	schoolMiddleware := func(c *gin.Context) {
 
 		secret := []byte(conf.Server.Secret)
@@ -166,12 +206,12 @@ func (ct *controller) Start() {
 	api.DELETE("/child")
 
 	// driver
-	api.POST("/driver")
-	api.GET("/driver")
-	api.PATCH("/driver")
-	api.DELETE("/driver")
-	api.POST("driver/school")
-	api.GET("driver/student")
+	api.POST("/driver", ct.CreateDriver)
+	api.GET("/driver/:cnh", ct.ReadDriver)
+	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
+	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
+	api.POST("driver/school", driverMiddleware) // will implement then invite crud
+	api.GET("driver/student", driverMiddleware) // will implement then invite crud
 
 	// school
 	api.POST("/school", ct.CreateSchool)
@@ -180,14 +220,14 @@ func (ct *controller) Start() {
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/driver", schoolMiddleware)  // not implement
-	api.GET("/school/student", schoolMiddleware) // not implement
+	api.GET("/school/driver", schoolMiddleware)  // will implement then invite crud
+	api.GET("/school/student", schoolMiddleware) // will implement then invite crud
 
 	// invite
-	api.POST("/invite", ct.CreateInvite)
-	api.GET("/invite", ct.ReadInvite)
-	api.PATCH("/invite", ct.UpdateInvite)
-	api.DELETE("/invite", ct.DeleteInvite)
+	api.POST("/invite", schoolMiddleware, ct.CreateInvite)
+	api.GET("/invite", driverMiddleware, ct.ReadInvite)
+	api.PATCH("/invite", driverMiddleware, ct.UpdateInvite)
+	api.DELETE("/invite", driverMiddleware, ct.DeleteInvite)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 }
