@@ -26,6 +26,7 @@ func New(repo repository.Repository, cloud repository.Cloud, redis repository.Ca
 		repository: repo,
 		cloud:      cloud,
 		redis:      redis,
+		broker:     broker,
 	}
 }
 
