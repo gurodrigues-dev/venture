@@ -41,6 +41,8 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 		return
 	}
 
+	log.Print("mensagem enviada para fila -> ", msg)
+
 	err = ct.service.AddMessageInQueue(c, msg)
 	if err != nil {
 		log.Printf("error while adding message on queue")
@@ -174,8 +176,4 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 		"school": school,
 		"token":  jwt,
 	})
-}
-
-func (ct *controller) InviteNewDriver(c *gin.Context) {
-
 }
