@@ -34,14 +34,6 @@ func NewAwsConnection() (*AWS, error) {
 
 }
 
-func (a *AWS) CheckEmail(ctx context.Context) {
-
-}
-
-func (a *AWS) SendEmail(ctx context.Context) {
-
-}
-
 func (a *AWS) SaveImageBucket(ctx context.Context) {
 
 }
