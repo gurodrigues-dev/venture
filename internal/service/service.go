@@ -83,8 +83,8 @@ func (s *Service) CreateSchool(ctx context.Context, school *types.School) error 
 	return s.repository.CreateSchool(ctx, school)
 }
 
-func (s *Service) ReadSchool(ctx context.Context, id *int) (*types.School, error) {
-	return s.repository.ReadSchool(ctx, id)
+func (s *Service) ReadSchool(ctx context.Context, cnpj *string) (*types.School, error) {
+	return s.repository.ReadSchool(ctx, cnpj)
 }
 
 func (s *Service) ReadAllSchools(ctx context.Context) ([]types.School, error) {

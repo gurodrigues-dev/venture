@@ -23,7 +23,7 @@ type Repository interface {
 	DeleteDriver(ctx context.Context, cpf *string) error
 	AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error)
 	CreateSchool(ctx context.Context, school *types.School) error
-	ReadSchool(ctx context.Context, id *int) (*types.School, error)
+	ReadSchool(ctx context.Context, cnpj *string) (*types.School, error)
 	ReadAllSchools(ctx context.Context) ([]types.School, error)
 	UpdateSchool(ctx context.Context) error
 	DeleteSchool(ctx context.Context, cnpj *string) error
