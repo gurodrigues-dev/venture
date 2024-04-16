@@ -100,10 +100,10 @@ func (p *Postgres) CreateDriver(ctx context.Context, driver *types.Driver) error
 	return err
 }
 
-func (p *Postgres) ReadDriver(ctx context.Context, cpf *string) (*types.Driver, error) {
-	sqlQuery := `SELECT id, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM schools WHERE cpf = $1 LIMIT 1`
+func (p *Postgres) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error) {
+	sqlQuery := `SELECT id, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM schools WHERE cnh = $1 LIMIT 1`
 	var driver types.Driver
-	err := p.conn.QueryRow(sqlQuery, *cpf).Scan(
+	err := p.conn.QueryRow(sqlQuery, *cnh).Scan(
 		&driver.ID,
 		&driver.Name,
 		&driver.CPF,
@@ -124,7 +124,7 @@ func (p *Postgres) UpdateDriver(ctx context.Context) error {
 	return nil
 }
 
-func (p *Postgres) DeleteDriver(ctx context.Context, cpf *string) error {
+func (p *Postgres) DeleteDriver(ctx context.Context, cnh *string) error {
 	tx, err := p.conn.Begin()
 	if err != nil {
 		return err
@@ -139,12 +139,31 @@ func (p *Postgres) DeleteDriver(ctx context.Context, cpf *string) error {
 			err = tx.Commit()
 		}
 	}()
-	_, err = tx.Exec("DELETE FROM drivers WHERE cpf = $1", *cpf)
+	_, err = tx.Exec("DELETE FROM drivers WHERE cnh = $1", *cnh)
 	return err
 }
 
 func (p *Postgres) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
-	return nil, nil
+	sqlQuery := `SELECT id, name, cpf, cnh, email, qrcode, password FROM drivers WHERE email = $1 LIMIT 1`
+	var driverData types.Driver
+	err := p.conn.QueryRow(sqlQuery, driver.Email).Scan(
+		&driverData.ID,
+		&driverData.Name,
+		&driverData.CPF,
+		&driverData.CNH,
+		&driverData.Email,
+		&driverData.QrCode,
+		&driverData.Password,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
+	match := driverData.Password == driver.Password
+	if !match {
+		return nil, fmt.Errorf("email or password wrong")
+	}
+	driverData.Password = ""
+	return &driverData, nil
 }
 
 func (p *Postgres) CreateSchool(ctx context.Context, school *types.School) error {
