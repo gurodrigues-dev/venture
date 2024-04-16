@@ -31,11 +31,12 @@ type Database struct {
 }
 
 type Cloud struct {
-	Region    string `yaml:"region"`
-	AccessKey string `yaml:"accesskey"`
-	SecretKey string `yaml:"secretkey"`
-	Token     string `yaml:"token"`
-	Source    string `yaml:"source"`
+	Region     string `yaml:"region"`
+	AccessKey  string `yaml:"accesskey"`
+	SecretKey  string `yaml:"secretkey"`
+	Token      string `yaml:"token"`
+	Source     string `yaml:"source"`
+	BucketName string `yaml:"bucketName"`
 }
 
 type Cache struct {
