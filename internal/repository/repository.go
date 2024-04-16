@@ -37,8 +37,6 @@ type Repository interface {
 }
 
 type Cloud interface {
-	CheckEmail(ctx context.Context)
-	SendEmail(ctx context.Context)
 	SaveImageBucket(ctx context.Context)
 }
 
