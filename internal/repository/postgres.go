@@ -100,22 +100,24 @@ func (p *Postgres) CreateDriver(ctx context.Context, driver *types.Driver) error
 	return err
 }
 
-func (p *Postgres) ReadDriver(ctx context.Context, id *int) (*types.Driver, error) {
-	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools WHERE id = $1 LIMIT 1`
-	var school types.School
-	err := p.conn.QueryRow(sqlQuery, id).Scan(
-		&school.ID,
-		&school.Name,
-		&school.CNPJ,
-		&school.Email,
-		&school.Street,
-		&school.Number,
-		&school.ZIP,
+func (p *Postgres) ReadDriver(ctx context.Context, cpf *string) (*types.Driver, error) {
+	sqlQuery := `SELECT id, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM schools WHERE cpf = $1 LIMIT 1`
+	var driver types.Driver
+	err := p.conn.QueryRow(sqlQuery, *cpf).Scan(
+		&driver.ID,
+		&driver.Name,
+		&driver.CPF,
+		&driver.QrCode,
+		&driver.Email,
+		&driver.Street,
+		&driver.Number,
+		&driver.ZIP,
+		&driver.Complement,
 	)
 	if err != nil || err == sql.ErrNoRows {
 		return nil, err
 	}
-	return nil, nil
+	return &driver, nil
 }
 
 func (p *Postgres) UpdateDriver(ctx context.Context) error {
@@ -137,7 +139,7 @@ func (p *Postgres) DeleteDriver(ctx context.Context, cpf *string) error {
 			err = tx.Commit()
 		}
 	}()
-	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", err)
+	_, err = tx.Exec("DELETE FROM drivers WHERE cpf = $1", *cpf)
 	return err
 }
 
