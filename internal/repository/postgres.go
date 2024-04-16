@@ -95,10 +95,26 @@ func (p *Postgres) DeleteChild(ctx context.Context, idChild *int) error {
 }
 
 func (p *Postgres) CreateDriver(ctx context.Context, driver *types.Driver) error {
-	return nil
+	sqlQuery := `INSERT INTO drivers (name, cpf, email, password, cnh, qrcode, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $9, $10)`
+	_, err := p.conn.Exec(sqlQuery, driver.Name, driver.CPF, driver.Email, driver.Password, driver.CNH, driver.QrCode, driver.Street, driver.Number, driver.Complement)
+	return err
 }
 
 func (p *Postgres) ReadDriver(ctx context.Context, id *int) (*types.Driver, error) {
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools WHERE id = $1 LIMIT 1`
+	var school types.School
+	err := p.conn.QueryRow(sqlQuery, id).Scan(
+		&school.ID,
+		&school.Name,
+		&school.CNPJ,
+		&school.Email,
+		&school.Street,
+		&school.Number,
+		&school.ZIP,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -107,7 +123,22 @@ func (p *Postgres) UpdateDriver(ctx context.Context) error {
 }
 
 func (p *Postgres) DeleteDriver(ctx context.Context, cpf *string) error {
-	return nil
+	tx, err := p.conn.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	_, err = tx.Exec("DELETE FROM schools WHERE cnpj = $1", err)
+	return err
 }
 
 func (p *Postgres) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
