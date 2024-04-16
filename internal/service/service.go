@@ -149,7 +149,7 @@ func (s *Service) CreateTokenJWTDriver(ctx context.Context, driver *types.Driver
 	conf := config.Get()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"cpf": driver.CPF,
+		"cnh": driver.CNH,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
