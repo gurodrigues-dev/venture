@@ -95,18 +95,19 @@ func (p *Postgres) DeleteChild(ctx context.Context, idChild *int) error {
 }
 
 func (p *Postgres) CreateDriver(ctx context.Context, driver *types.Driver) error {
-	sqlQuery := `INSERT INTO drivers (name, cpf, email, password, cnh, qrcode, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7, $7, $9, $10)`
-	_, err := p.conn.Exec(sqlQuery, driver.Name, driver.CPF, driver.Email, driver.Password, driver.CNH, driver.QrCode, driver.Street, driver.Number, driver.Complement)
+	sqlQuery := `INSERT INTO drivers (name, cpf, email, password, cnh, qrcode, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
+	_, err := p.conn.Exec(sqlQuery, driver.Name, driver.CPF, driver.Email, driver.Password, driver.CNH, driver.QrCode, driver.Street, driver.Number, driver.Complement, driver.ZIP)
 	return err
 }
 
 func (p *Postgres) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error) {
-	sqlQuery := `SELECT id, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM schools WHERE cnh = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM drivers WHERE cnh = $1 LIMIT 1`
 	var driver types.Driver
 	err := p.conn.QueryRow(sqlQuery, *cnh).Scan(
 		&driver.ID,
 		&driver.Name,
 		&driver.CPF,
+		&driver.CNH,
 		&driver.QrCode,
 		&driver.Email,
 		&driver.Street,
