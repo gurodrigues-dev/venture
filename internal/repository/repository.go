@@ -18,7 +18,7 @@ type Repository interface {
 	UpdateChild(ctx context.Context) error
 	DeleteChild(ctx context.Context, idChild *int) error
 	CreateDriver(ctx context.Context, driver *types.Driver) error
-	ReadDriver(ctx context.Context, id *int) (*types.Driver, error)
+	ReadDriver(ctx context.Context, cpf *string) (*types.Driver, error)
 	UpdateDriver(ctx context.Context) error
 	DeleteDriver(ctx context.Context, cpf *string) error
 	AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error)
@@ -37,7 +37,7 @@ type Repository interface {
 }
 
 type Cloud interface {
-	SaveImageBucket(ctx context.Context)
+	SaveImageBucket(ctx context.Context, cpf *string) (string, error)
 }
 
 type Cache interface {
