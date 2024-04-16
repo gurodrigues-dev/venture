@@ -5,7 +5,6 @@ import (
 	"gin/types"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -56,24 +55,9 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 
 func (ct *controller) ReadSchool(c *gin.Context) {
 
-	cnpj, err := ct.service.ParserJwtSchool(c)
+	cnpj := c.Param("cnpj")
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, "cnpj of cookie don't found")
-		return
-	}
-
-	log.Print("consulting page of read school --> ", cnpj)
-
-	id, err := strconv.Atoi(c.Param("id"))
-
-	if err != nil {
-		log.Printf("error to parse string: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id"})
-		return
-	}
-
-	school, err := ct.service.ReadSchool(c, &id)
+	school, err := ct.service.ReadSchool(c, &cnpj)
 
 	if err != nil {
 		log.Printf("error while found school: %s", err.Error())
