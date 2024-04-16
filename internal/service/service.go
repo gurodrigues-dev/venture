@@ -67,16 +67,21 @@ func (s *Service) CreateDriver(ctx context.Context, driver *types.Driver) error 
 	return s.repository.CreateDriver(ctx, driver)
 }
 
-func (s *Service) ReadDriver(ctx context.Context, cpf *string) (*types.Driver, error) {
-	return s.repository.ReadDriver(ctx, cpf)
+func (s *Service) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error) {
+	return s.repository.ReadDriver(ctx, cnh)
 }
 
 func (s *Service) UpdateDriver(ctx context.Context) error {
 	return s.repository.UpdateDriver(ctx)
 }
 
-func (s *Service) DeleteDriver(ctx context.Context, cpf *string) error {
-	return s.repository.DeleteDriver(ctx, cpf)
+func (s *Service) DeleteDriver(ctx context.Context, cnh *string) error {
+	return s.repository.DeleteDriver(ctx, cnh)
+}
+
+func (s *Service) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
+	driver.Password = utils.HashPassword(driver.Password)
+	return s.repository.AuthDriver(ctx, driver)
 }
 
 func (s *Service) CreateSchool(ctx context.Context, school *types.School) error {
@@ -109,8 +114,8 @@ func (s *Service) AddMessageInQueue(ctx context.Context, msg string) error {
 	return s.broker.Producer(ctx, msg)
 }
 
-func (s *Service) SaveImageBucket(ctx context.Context, cpf *string) (string, error) {
-	return s.cloud.SaveImageBucket(ctx, cpf)
+func (s *Service) CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string, error) {
+	return s.cloud.CreateAndSaveQrCodeInS3(ctx, cnh)
 }
 
 func (s *Service) SaveKeyAndValue(ctx context.Context) {
@@ -188,15 +193,27 @@ func (s *Service) ParserJwtSchool(ctx *gin.Context) (interface{}, error) {
 
 }
 
-func (s *Service) ParserJwtUserAndDriver(ctx *gin.Context) error {
+func (s *Service) ParserJwtUser(ctx *gin.Context) (interface{}, error) {
 
-	_, found := ctx.Get("cpf")
+	cpf, found := ctx.Get("cpf")
 
 	if !found {
-		return fmt.Errorf("error while veryfing token")
+		return nil, fmt.Errorf("error while veryfing token")
 	}
 
-	return nil
+	return cpf, nil
+
+}
+
+func (s *Service) ParserJwtDriver(ctx *gin.Context) (interface{}, error) {
+
+	cnh, found := ctx.Get("cnh")
+
+	if !found {
+		return nil, fmt.Errorf("error while veryfing token")
+	}
+
+	return cnh, nil
 
 }
 
