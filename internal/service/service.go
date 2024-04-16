@@ -62,20 +62,21 @@ func (s *Service) DeleteChild(ctx context.Context) {
 
 }
 
-func (s *Service) CreateDriver(ctx context.Context) {
-
+func (s *Service) CreateDriver(ctx context.Context, driver *types.Driver) error {
+	driver.Password = utils.HashPassword(driver.Password)
+	return s.repository.CreateDriver(ctx, driver)
 }
 
-func (s *Service) ReadDriver(ctx context.Context) {
-
+func (s *Service) ReadDriver(ctx context.Context, cpf *string) (*types.Driver, error) {
+	return s.repository.ReadDriver(ctx, cpf)
 }
 
-func (s *Service) UpdateDriver(ctx context.Context) {
-
+func (s *Service) UpdateDriver(ctx context.Context) error {
+	return s.repository.UpdateDriver(ctx)
 }
 
-func (s *Service) DeleteDriver(ctx context.Context) {
-
+func (s *Service) DeleteDriver(ctx context.Context, cpf *string) error {
+	return s.repository.DeleteDriver(ctx, cpf)
 }
 
 func (s *Service) CreateSchool(ctx context.Context, school *types.School) error {
@@ -108,8 +109,8 @@ func (s *Service) AddMessageInQueue(ctx context.Context, msg string) error {
 	return s.broker.Producer(ctx, msg)
 }
 
-func (s *Service) SaveImageBucket(ctx context.Context) {
-
+func (s *Service) SaveImageBucket(ctx context.Context, cpf *string) (string, error) {
+	return s.cloud.SaveImageBucket(ctx, cpf)
 }
 
 func (s *Service) SaveKeyAndValue(ctx context.Context) {
