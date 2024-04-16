@@ -157,6 +157,7 @@ func (ct *controller) Start() {
 	api.GET("/user")
 	api.PATCH("/user")
 	api.DELETE("/user")
+	api.GET("/payment")
 
 	// child
 	api.POST("/child")
@@ -169,14 +170,18 @@ func (ct *controller) Start() {
 	api.GET("/driver")
 	api.PATCH("/driver")
 	api.DELETE("/driver")
+	api.POST("driver/school")
+	api.GET("driver/student")
 
 	// school
 	api.POST("/school", ct.CreateSchool)
-	api.GET("/school/:id", schoolMiddleware, ct.ReadSchool)
-	api.GET("/school", schoolMiddleware, ct.ReadAllSchools)
+	api.GET("/school/:cnpj", ct.ReadSchool)
+	api.GET("/school", ct.ReadAllSchools)
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
+	api.GET("/school/driver", schoolMiddleware)  // not implement
+	api.GET("/school/student", schoolMiddleware) // not implement
 
 	// invite
 	api.POST("/invite", ct.CreateInvite)
