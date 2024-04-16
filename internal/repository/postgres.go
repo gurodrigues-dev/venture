@@ -151,10 +151,10 @@ func (p *Postgres) CreateSchool(ctx context.Context, school *types.School) error
 	return err
 }
 
-func (p *Postgres) ReadSchool(ctx context.Context, id *int) (*types.School, error) {
-	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools WHERE id = $1 LIMIT 1`
+func (p *Postgres) ReadSchool(ctx context.Context, cnpj *string) (*types.School, error) {
+	sqlQuery := `SELECT id, name, cnpj, email, street, number, zip FROM schools WHERE cnpj = $1 LIMIT 1`
 	var school types.School
-	err := p.conn.QueryRow(sqlQuery, id).Scan(
+	err := p.conn.QueryRow(sqlQuery, *cnpj).Scan(
 		&school.ID,
 		&school.Name,
 		&school.CNPJ,
