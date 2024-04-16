@@ -18,9 +18,9 @@ type Repository interface {
 	UpdateChild(ctx context.Context) error
 	DeleteChild(ctx context.Context, idChild *int) error
 	CreateDriver(ctx context.Context, driver *types.Driver) error
-	ReadDriver(ctx context.Context, cpf *string) (*types.Driver, error)
+	ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error)
 	UpdateDriver(ctx context.Context) error
-	DeleteDriver(ctx context.Context, cpf *string) error
+	DeleteDriver(ctx context.Context, cnh *string) error
 	AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error)
 	CreateSchool(ctx context.Context, school *types.School) error
 	ReadSchool(ctx context.Context, cnpj *string) (*types.School, error)
@@ -37,7 +37,7 @@ type Repository interface {
 }
 
 type Cloud interface {
-	SaveImageBucket(ctx context.Context, cpf *string) (string, error)
+	CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string, error)
 }
 
 type Cache interface {
