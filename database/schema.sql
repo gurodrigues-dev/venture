@@ -15,10 +15,10 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS drivers (
     id SERIAL,
     name VARCHAR(100) NOT NULL,
-    cpf VARCHAR(14) PRIMARY KEY,
+    cpf VARCHAR(14) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
-    cnh VARCHAR(20) NOT NULL,
+    cnh VARCHAR(20) PRIMARY KEY NOT NULL,
     qrcode VARCHAR(100) NOT NULL,
     street VARCHAR(100) NOT NULL,
     number VARCHAR(10) NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS schools_drivers (
     school VARCHAR(14),
     driver VARCHAR(14),
     FOREIGN KEY (school) REFERENCES schools(cnpj),
-    FOREIGN KEY (driver) REFERENCES drivers(cpf)
+    FOREIGN KEY (driver) REFERENCES drivers(cnh)
 );
 
 -- Tabela users_drivers
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS users_drivers (
     registration SERIAL PRIMARY KEY,
     driver VARCHAR(14),
     child VARCHAR(20),
-    FOREIGN KEY (driver) REFERENCES drivers(cpf),
+    FOREIGN KEY (driver) REFERENCES drivers(cnh),
     FOREIGN KEY (child) REFERENCES childrens(rg)
 );
 
@@ -79,6 +79,6 @@ CREATE TABLE IF NOT EXISTS invites (
     guest VARCHAR(14),
     status TEXT NOT NULL,
     FOREIGN KEY (requester) REFERENCES schools(cnpj),
-    FOREIGN KEY (guest) REFERENCES drivers(cpf)
+    FOREIGN KEY (guest) REFERENCES drivers(cnh)
 )
 
