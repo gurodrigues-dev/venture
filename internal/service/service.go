@@ -238,18 +238,26 @@ func (s *Service) EmailStructToJSON(email *types.Email) (string, error) {
 
 }
 
-func (s *Service) CreateInvite(ctx context.Context) {
-
+func (s *Service) CreateInvite(ctx context.Context, invite *types.Invite) error {
+	return s.repository.CreateInvite(ctx, invite)
 }
 
-func (s *Service) ReadInvite(ctx context.Context) {
-
+func (s *Service) ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error) {
+	return s.repository.ReadInvite(ctx, invite_id)
 }
 
-func (s *Service) UpdateInvite(ctx context.Context) {
-
+func (s *Service) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
+	return s.repository.ReadAllInvites(ctx, cnh)
 }
 
-func (s *Service) DeleteInvite(ctx context.Context) {
+func (s *Service) UpdateInvite(ctx context.Context, invite_id *int) error {
+	return s.repository.UpdateInvite(ctx, invite_id)
+}
 
+func (s *Service) DeleteInvite(ctx context.Context, invite_id *int) error {
+	return s.repository.DeleteInvite(ctx, invite_id)
+}
+
+func (s *Service) CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error {
+	return s.repository.CreateRecordToSchoolAndDriver(ctx, invite)
 }
