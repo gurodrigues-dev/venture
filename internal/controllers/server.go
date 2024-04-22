@@ -221,14 +221,15 @@ func (ct *controller) Start() {
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/driver", schoolMiddleware)  // will implement then invite crud
-	api.GET("/school/student", schoolMiddleware) // will implement then invite crud
+	api.GET("/school/driver", schoolMiddleware)    // will implement then invite crud
+	api.GET("/school/student", schoolMiddleware)   // will implement then invite crud
+	api.DELETE("/school/driver", schoolMiddleware) // will implement then invite crud
 
 	// invite
 	api.POST("/invite", schoolMiddleware, ct.CreateInvite)
-	api.GET("/invite", driverMiddleware, ct.ReadInvite)
-	api.PATCH("/invite", driverMiddleware, ct.UpdateInvite)
-	api.DELETE("/invite", driverMiddleware, ct.DeleteInvite)
+	api.GET("/invite", driverMiddleware, ct.ReadAllInvites)
+	api.PATCH("/invite/:id", driverMiddleware, ct.UpdateInvite)
+	api.DELETE("/invite/:id", driverMiddleware, ct.DeleteInvite)
 
 	router.Run(fmt.Sprintf(":%d", conf.Server.Port))
 }
