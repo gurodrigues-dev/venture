@@ -30,10 +30,14 @@ type Repository interface {
 	AuthSchool(ctx context.Context, school *types.School) (*types.School, error)
 	NewPassword(ctx context.Context)
 	VerifyEmailExists(ctx context.Context, table, email *string) (bool, error)
-	CreateInvite(ctx context.Context)
-	ReadInvite(ctx context.Context)
-	UpdateInvite(ctx context.Context)
-	DeleteInvite(ctx context.Context)
+	CreateInvite(ctx context.Context, invite *types.Invite) error
+	ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error)
+	ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error)
+	UpdateInvite(ctx context.Context, invite_id *int) error
+	DeleteInvite(ctx context.Context, invite_id *int) error
+	CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error
+	DeleteRecordToSchoolAndDriver(ctx context.Context, record_id *int) error
+	GetDriversSchool(ctx context.Context, cnh *string) ([]types.School, error)
 }
 
 type Cloud interface {
