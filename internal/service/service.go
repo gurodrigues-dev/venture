@@ -261,3 +261,7 @@ func (s *Service) DeleteInvite(ctx context.Context, invite_id *int) error {
 func (s *Service) CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error {
 	return s.repository.CreateRecordToSchoolAndDriver(ctx, invite)
 }
+
+func (s *Service) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
+	return s.repository.GetWorkplaces(ctx, cnh)
+}

@@ -37,7 +37,7 @@ type Repository interface {
 	DeleteInvite(ctx context.Context, invite_id *int) error
 	CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error
 	DeleteRecordToSchoolAndDriver(ctx context.Context, record_id *int) error
-	GetDriversSchool(ctx context.Context, cnh *string) ([]types.School, error)
+	GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error)
 }
 
 type Cloud interface {

@@ -151,6 +151,31 @@ func (ct *controller) AuthDriver(c *gin.Context) {
 
 func (ct *controller) CurrentWorkplaces(c *gin.Context) {
 
+	cnhInterface, err := ct.service.ParserJwtDriver(c)
+
+	if err != nil {
+		log.Printf("error to read jwt: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type of jwt"})
+		return
+	}
+
+	cnh, err := ct.service.InterfaceToString(cnhInterface)
+
+	if err != nil {
+		log.Printf("error to convert interface in string: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "the value isn't string"})
+		return
+	}
+
+	schools, err := ct.service.GetWorkplaces(c, cnh)
+	if err != nil {
+		log.Printf("error to search schools: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "error at find schools"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"schools": schools})
+
 }
 
 func (ct *controller) CurrentStudents(c *gin.Context) {
