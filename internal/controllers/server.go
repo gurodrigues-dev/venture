@@ -211,7 +211,7 @@ func (ct *controller) Start() {
 	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
 	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
 	api.POST("/login/driver", ct.AuthDriver)
-	api.POST("/driver/school", driverMiddleware) // will implement then invite crud
+	api.POST("/driver/school", driverMiddleware, ct.CurrentWorkplaces)
 	api.GET("/driver/student", driverMiddleware) // will implement then invite crud
 
 	// school
