@@ -379,7 +379,7 @@ func (p *Postgres) DeleteRecordToSchoolAndDriver(ctx context.Context, record_id 
 	return err
 }
 
-func (p *Postgres) GetDriversSchool(ctx context.Context, cnh *string) ([]types.School, error) {
+func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
 	sqlQuery := `SELECT school FROM schools_drivers WHERE driver = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnh)
