@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gin/config"
 	"gin/types"
+	"log"
 	"os"
 )
 
@@ -281,6 +282,7 @@ func (p *Postgres) NewPassword(ctx context.Context) {
 }
 
 func (p *Postgres) CreateInvite(ctx context.Context, invite *types.Invite) error {
+	log.Print(invite)
 	sqlQuery := `INSERT INTO invites (requester, guest, status) VALUES ($1, $2, $3)`
 	_, err := p.conn.Exec(sqlQuery, invite.Requester, invite.Guest, "pending")
 	return err
@@ -302,7 +304,7 @@ func (p *Postgres) ReadInvite(ctx context.Context, invite_id *int) (*types.Invit
 }
 
 func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
-	sqlQuery := `SELECT invite_id, requester, status FROM invites WHERE status = pending AND guest = $1`
+	sqlQuery := `SELECT invite_id, requester, guest, status FROM invites WHERE status = 'pending' AND guest = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnh)
 	if err != nil {
@@ -329,7 +331,7 @@ func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Inv
 }
 
 func (p *Postgres) UpdateInvite(ctx context.Context, invite_id *int) error {
-	sqlQuery := `UPDATE invites SET status = accepting WHERE invite_id = $1`
+	sqlQuery := `UPDATE invites SET status = 'accepted' WHERE invite_id = $1`
 	_, err := p.conn.Exec(sqlQuery, invite_id)
 
 	return err
@@ -403,5 +405,32 @@ func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.Scho
 	}
 
 	return schools, nil
+
+}
+
+func (p *Postgres) GetDriversOfSchool(ctx context.Context, cnpj *string) ([]types.Driver, error) {
+	sqlQuery := `SELECT name_driver, driver FROM schools_drivers WHERE school = $1`
+
+	rows, err := p.conn.Query(sqlQuery, *cnpj)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var drivers []types.Driver
+
+	for rows.Next() {
+		var driver types.Driver
+		err := rows.Scan(&driver.Name, &driver.CNH)
+		if err != nil {
+			return nil, err
+		}
+		drivers = append(drivers, driver)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return drivers, nil
 
 }
