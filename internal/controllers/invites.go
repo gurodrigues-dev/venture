@@ -11,6 +11,22 @@ import (
 
 func (ct *controller) CreateInvite(c *gin.Context) {
 
+	cnpjInterface, err := ct.service.ParserJwtSchool(c)
+
+	if err != nil {
+		log.Printf("error to read jwt: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid type of jwt"})
+		return
+	}
+
+	cnpj, err := ct.service.InterfaceToString(cnpjInterface)
+
+	if err != nil {
+		log.Printf("error to convert interface in string: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "the value isn't string"})
+		return
+	}
+
 	var input types.Invite
 
 	if err := c.BindJSON(&input); err != nil {
@@ -19,7 +35,11 @@ func (ct *controller) CreateInvite(c *gin.Context) {
 		return
 	}
 
-	err := ct.service.CreateInvite(c, &input)
+	// verificar se eles ja nao tem vinculo para nao duplicar invites
+
+	input.Requester = *cnpj
+
+	err = ct.service.CreateInvite(c, &input)
 
 	if err != nil {
 		log.Printf("error to create invite: %s", err.Error())
@@ -64,7 +84,6 @@ func (ct *controller) ReadAllInvites(c *gin.Context) {
 
 func (ct *controller) UpdateInvite(c *gin.Context) {
 
-	// pegar id do invite
 	idStr := c.Param("id")
 
 	id, err := strconv.Atoi(idStr)
