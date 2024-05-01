@@ -331,7 +331,7 @@ func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Inv
 }
 
 func (p *Postgres) UpdateInvite(ctx context.Context, invite_id *int) error {
-	sqlQuery := `UPDATE invites SET status = 'accepting' WHERE invite_id = $1`
+	sqlQuery := `UPDATE invites SET status = 'accepted' WHERE invite_id = $1`
 	_, err := p.conn.Exec(sqlQuery, invite_id)
 
 	return err
