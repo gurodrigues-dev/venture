@@ -114,7 +114,7 @@ func (ct *controller) UpdateInvite(c *gin.Context) {
 		return
 	}
 
-	err = ct.service.CreateRecordToSchoolAndDriver(c, invite)
+	err = ct.service.CreateEmployee(c, invite)
 	if err != nil {
 		log.Printf("error while creating record of bond: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error at creating record of bond"})
