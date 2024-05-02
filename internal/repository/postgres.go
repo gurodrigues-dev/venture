@@ -434,3 +434,23 @@ func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driv
 	return drivers, nil
 
 }
+
+func (p *Postgres) IsEmployee(ctx context.Context, cnh *string) error {
+
+	sqlQuery := `SELECT driver FROM schools_drivers WHERE driver = $1 LIMIT 1`
+	var driver types.Driver
+	err := p.conn.QueryRow(sqlQuery, *cnh).Scan(
+		&driver.CNH,
+	)
+
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	if err == sql.ErrNoRows {
+		return nil
+	}
+
+	return fmt.Errorf("school and driver have a connection")
+
+}
