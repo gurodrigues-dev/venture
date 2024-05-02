@@ -35,7 +35,13 @@ func (ct *controller) CreateInvite(c *gin.Context) {
 		return
 	}
 
-	// verificar se eles ja nao tem vinculo para nao duplicar invites
+	err = ct.service.IsEmployee(c, &input.Guest)
+
+	if err != nil {
+		log.Printf("already connection: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "you already have a connection with this driver."})
+		return
+	}
 
 	input.Requester = *cnpj
 

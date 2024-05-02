@@ -265,3 +265,11 @@ func (s *Service) CreateRecordToSchoolAndDriver(ctx context.Context, invite *typ
 func (s *Service) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
 	return s.repository.GetWorkplaces(ctx, cnh)
 }
+
+func (s *Service) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {
+	return s.repository.GetEmployees(ctx, cnpj)
+}
+
+func (s *Service) IsEmployee(ctx context.Context, cnh *string) error {
+	return s.repository.IsEmployee(ctx, cnh)
+}
