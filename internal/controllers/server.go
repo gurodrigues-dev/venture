@@ -221,7 +221,7 @@ func (ct *controller) Start() {
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/my-drivers", schoolMiddleware)    // will implement then invite crud
+	api.GET("/school/my-drivers", schoolMiddleware, ct.GetEmployees)
 	api.GET("/school/my-students", schoolMiddleware)   // will implement then invite crud
 	api.DELETE("/school/my-drivers", schoolMiddleware) // will implement then invite crud
 
