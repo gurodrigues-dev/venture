@@ -211,8 +211,8 @@ func (ct *controller) Start() {
 	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
 	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
 	api.POST("/login/driver", ct.AuthDriver)
-	api.POST("/driver/school", driverMiddleware, ct.CurrentWorkplaces)
-	api.GET("/driver/student", driverMiddleware) // will implement then invite crud
+	api.GET("/driver/my-schools", driverMiddleware, ct.CurrentWorkplaces)
+	api.GET("/driver/my-students", driverMiddleware) // will implement then invite crud
 
 	// school
 	api.POST("/school", ct.CreateSchool)
@@ -221,9 +221,9 @@ func (ct *controller) Start() {
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/driver", schoolMiddleware)    // will implement then invite crud
-	api.GET("/school/student", schoolMiddleware)   // will implement then invite crud
-	api.DELETE("/school/driver", schoolMiddleware) // will implement then invite crud
+	api.GET("/school/my-drivers", schoolMiddleware)    // will implement then invite crud
+	api.GET("/school/my-students", schoolMiddleware)   // will implement then invite crud
+	api.DELETE("/school/my-drivers", schoolMiddleware) // will implement then invite crud
 
 	// invite
 	api.POST("/invite", schoolMiddleware, ct.CreateInvite)

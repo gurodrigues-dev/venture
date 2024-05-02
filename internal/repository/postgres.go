@@ -408,7 +408,7 @@ func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.Scho
 
 }
 
-func (p *Postgres) GetDriversOfSchool(ctx context.Context, cnpj *string) ([]types.Driver, error) {
+func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {
 	sqlQuery := `SELECT name_driver, driver FROM schools_drivers WHERE school = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnpj)
