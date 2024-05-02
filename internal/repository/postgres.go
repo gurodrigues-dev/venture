@@ -408,8 +408,8 @@ func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.Scho
 
 }
 
-func (p *Postgres) GetDriversOfSchool(ctx context.Context, cnpj *string) ([]types.Driver, error) {
-	sqlQuery := `SELECT name_driver, driver FROM schools_drivers WHERE school = $1`
+func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {
+	sqlQuery := `SELECT driver FROM schools_drivers WHERE school = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnpj)
 	if err != nil {
@@ -421,7 +421,7 @@ func (p *Postgres) GetDriversOfSchool(ctx context.Context, cnpj *string) ([]type
 
 	for rows.Next() {
 		var driver types.Driver
-		err := rows.Scan(&driver.Name, &driver.CNH)
+		err := rows.Scan(&driver.CNH)
 		if err != nil {
 			return nil, err
 		}
@@ -432,5 +432,25 @@ func (p *Postgres) GetDriversOfSchool(ctx context.Context, cnpj *string) ([]type
 	}
 
 	return drivers, nil
+
+}
+
+func (p *Postgres) IsEmployee(ctx context.Context, cnh *string) error {
+
+	sqlQuery := `SELECT driver FROM schools_drivers WHERE driver = $1 LIMIT 1`
+	var driver types.Driver
+	err := p.conn.QueryRow(sqlQuery, *cnh).Scan(
+		&driver.CNH,
+	)
+
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	if err == sql.ErrNoRows {
+		return nil
+	}
+
+	return fmt.Errorf("school and driver have a connection")
 
 }
