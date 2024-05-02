@@ -161,3 +161,31 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 		"token":  jwt,
 	})
 }
+
+func (ct *controller) GetEmployees(c *gin.Context) {
+
+	cnpjInterface, err := ct.service.ParserJwtSchool(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "cnpj of cookie don't found"})
+		return
+	}
+
+	cnpj, err := ct.service.InterfaceToString(cnpjInterface)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "the value isn't string"})
+		return
+	}
+
+	drivers, err := ct.service.GetEmployees(c, cnpj)
+
+	if err != nil {
+		log.Printf("error while searching drivers: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "error at find drivers"})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, gin.H{"drivers": drivers})
+
+}

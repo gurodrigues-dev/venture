@@ -409,7 +409,7 @@ func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.Scho
 }
 
 func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {
-	sqlQuery := `SELECT name_driver, driver FROM schools_drivers WHERE school = $1`
+	sqlQuery := `SELECT driver FROM schools_drivers WHERE school = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnpj)
 	if err != nil {
@@ -421,7 +421,7 @@ func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driv
 
 	for rows.Next() {
 		var driver types.Driver
-		err := rows.Scan(&driver.Name, &driver.CNH)
+		err := rows.Scan(&driver.CNH)
 		if err != nil {
 			return nil, err
 		}
