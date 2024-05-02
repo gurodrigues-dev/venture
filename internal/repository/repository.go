@@ -35,8 +35,8 @@ type Repository interface {
 	ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error)
 	UpdateInvite(ctx context.Context, invite_id *int) error
 	DeleteInvite(ctx context.Context, invite_id *int) error
-	CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error
-	DeleteRecordToSchoolAndDriver(ctx context.Context, record_id *int) error
+	CreateEmployee(ctx context.Context, invite *types.Invite) error
+	DeleteEmployee(ctx context.Context, record_id *int) error
 	GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error)
 	GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error)
 	IsEmployee(ctx context.Context, cnh *string) error

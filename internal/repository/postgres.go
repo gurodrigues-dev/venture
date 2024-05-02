@@ -356,13 +356,13 @@ func (p *Postgres) DeleteInvite(ctx context.Context, invite_id *int) error {
 	return err
 }
 
-func (p *Postgres) CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error {
+func (p *Postgres) CreateEmployee(ctx context.Context, invite *types.Invite) error {
 	sqlQuery := `INSERT INTO schools_drivers (school, driver) VALUES ($1, $2)`
 	_, err := p.conn.Exec(sqlQuery, invite.Requester, invite.Guest)
 	return err
 }
 
-func (p *Postgres) DeleteRecordToSchoolAndDriver(ctx context.Context, record_id *int) error {
+func (p *Postgres) DeleteEmployee(ctx context.Context, record_id *int) error {
 	tx, err := p.conn.Begin()
 	if err != nil {
 		return err
@@ -377,7 +377,7 @@ func (p *Postgres) DeleteRecordToSchoolAndDriver(ctx context.Context, record_id 
 			err = tx.Commit()
 		}
 	}()
-	_, err = tx.Exec("DELETE FROM invites WHERE invite_id = $1", record_id)
+	_, err = tx.Exec("DELETE FROM schools_drivers WHERE record = $1", record_id)
 	return err
 }
 
@@ -409,7 +409,7 @@ func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.Scho
 }
 
 func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {
-	sqlQuery := `SELECT driver FROM schools_drivers WHERE school = $1`
+	sqlQuery := `SELECT record, driver FROM schools_drivers WHERE school = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnpj)
 	if err != nil {
@@ -421,7 +421,7 @@ func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driv
 
 	for rows.Next() {
 		var driver types.Driver
-		err := rows.Scan(&driver.CNH)
+		err := rows.Scan(&driver.ID, &driver.CNH)
 		if err != nil {
 			return nil, err
 		}
