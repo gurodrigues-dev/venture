@@ -39,6 +39,7 @@ type Repository interface {
 	DeleteRecordToSchoolAndDriver(ctx context.Context, record_id *int) error
 	GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error)
 	GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error)
+	IsEmployee(ctx context.Context, cnh *string) error
 }
 
 type Cloud interface {
