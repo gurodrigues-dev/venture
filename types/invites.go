@@ -1,8 +1,13 @@
 package types
 
-type Invite struct {
-	ID        int    `json:"id"`
+type ValidaInvite struct {
 	Requester string `json:"requester"`
 	Guest     string `json:"guest"`
-	Status    string `json:"status"`
+}
+
+type Invite struct {
+	ID     int    `json:"id"`
+	School School `json:"school"`
+	Driver Driver `json:"driver"`
+	Status string `json:"status"`
 }
