@@ -57,8 +57,12 @@ CREATE TABLE IF NOT EXISTS schools (
 -- Tabela school_drivers (Relação entre Escola e Motorista)
 CREATE TABLE IF NOT EXISTS schools_drivers (
     record SERIAL PRIMARY KEY,
+    name_school VARCHAR(100) NOT NULL,
     school VARCHAR(14),
+    email_school VARCHAR(100) NOT NULL,
+    name_driver VARCHAR(100) NOT NULL,
     driver VARCHAR(14),
+    email_driver VARCHAR(100) NOT NULL
     FOREIGN KEY (school) REFERENCES schools(cnpj),
     FOREIGN KEY (driver) REFERENCES drivers(cnh)
 );
