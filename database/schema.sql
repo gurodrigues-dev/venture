@@ -76,7 +76,11 @@ CREATE TABLE IF NOT EXISTS users_drivers (
 CREATE TABLE IF NOT EXISTS invites (
     invite_id SERIAL PRIMARY KEY,
     requester VARCHAR(14),
+    school VARCHAR(100) NOT NULL,
+    email_school VARCHAR(100) NOT NULL
     guest VARCHAR(14),
+    driver VARCHAR(100) NOT NULL,
+    email_driver VARCHAR(100) NOT NULL
     status TEXT NOT NULL,
     FOREIGN KEY (requester) REFERENCES schools(cnpj),
     FOREIGN KEY (guest) REFERENCES drivers(cnh)
