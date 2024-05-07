@@ -212,7 +212,7 @@ func (ct *controller) Start() {
 	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
 	api.POST("/login/driver", ct.AuthDriver)
 	api.GET("/driver/my-schools", driverMiddleware, ct.CurrentWorkplaces)
-	api.GET("/driver/my-students", driverMiddleware) // will implement then invite crud
+	api.GET("/driver/my-students", driverMiddleware)
 
 	// school
 	api.POST("/school", ct.CreateSchool)
@@ -222,8 +222,8 @@ func (ct *controller) Start() {
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
 	api.GET("/school/my-drivers", schoolMiddleware, ct.GetEmployees)
-	api.GET("/school/my-students", schoolMiddleware)   // will implement then invite crud
-	api.DELETE("/school/my-drivers", schoolMiddleware) // will implement then invite crud
+	api.GET("/school/my-students", schoolMiddleware)
+	api.DELETE("/school/my-drivers/:id", schoolMiddleware, ct.DeleteEmployee)
 
 	// invite
 	api.POST("/invite", schoolMiddleware, ct.CreateInvite)

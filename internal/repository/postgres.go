@@ -283,18 +283,22 @@ func (p *Postgres) NewPassword(ctx context.Context) {
 
 func (p *Postgres) CreateInvite(ctx context.Context, invite *types.Invite) error {
 	log.Print(invite)
-	sqlQuery := `INSERT INTO invites (requester, guest, status) VALUES ($1, $2, $3)`
-	_, err := p.conn.Exec(sqlQuery, invite.Requester, invite.Guest, "pending")
+	sqlQuery := `INSERT INTO invites (requester, school, email_school, guest, driver, email_driver, status) VALUES ($1, $2, $3)`
+	_, err := p.conn.Exec(sqlQuery, invite.School.CNPJ, invite.School.Name, invite.School.Email, invite.Driver.CNH, invite.Driver.Name, invite.Driver.Email, "pending")
 	return err
 }
 
 func (p *Postgres) ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error) {
-	sqlQuery := `SELECT invite_id, requester, guest, status FROM invites WHERE invite_id = $1 LIMIT 1`
+	sqlQuery := `SELECT invite_id, requester, school, email_school, guest, driver, email_driver, status FROM invites WHERE invite_id = $1 LIMIT 1`
 	var invite types.Invite
 	err := p.conn.QueryRow(sqlQuery, *invite_id).Scan(
 		&invite.ID,
-		&invite.Requester,
-		&invite.Guest,
+		&invite.School.CNPJ,
+		&invite.School.Name,
+		&invite.School.Email,
+		&invite.Driver.CNH,
+		&invite.Driver.Name,
+		&invite.Driver.Email,
 		&invite.Status,
 	)
 	if err != nil || err == sql.ErrNoRows {
@@ -304,7 +308,7 @@ func (p *Postgres) ReadInvite(ctx context.Context, invite_id *int) (*types.Invit
 }
 
 func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
-	sqlQuery := `SELECT invite_id, requester, guest, status FROM invites WHERE status = 'pending' AND guest = $1`
+	sqlQuery := `SELECT invite_id, name_school, school, email_school, name_driver, driver, email_driver, status FROM invites WHERE status = 'pending' AND guest = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnh)
 	if err != nil {
@@ -316,7 +320,7 @@ func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Inv
 
 	for rows.Next() {
 		var invite types.Invite
-		err := rows.Scan(&invite.ID, &invite.Requester, &invite.Guest, &invite.Status)
+		err := rows.Scan(&invite.ID, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email, &invite.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -356,13 +360,13 @@ func (p *Postgres) DeleteInvite(ctx context.Context, invite_id *int) error {
 	return err
 }
 
-func (p *Postgres) CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error {
-	sqlQuery := `INSERT INTO schools_drivers (school, driver) VALUES ($1, $2)`
-	_, err := p.conn.Exec(sqlQuery, invite.Requester, invite.Guest)
+func (p *Postgres) CreateEmployee(ctx context.Context, invite *types.Invite) error {
+	sqlQuery := `INSERT INTO schools_drivers (name_school, school, email_school, name_driver, driver, email_driver) VALUES ($1, $2)`
+	_, err := p.conn.Exec(sqlQuery, &invite.ID, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email)
 	return err
 }
 
-func (p *Postgres) DeleteRecordToSchoolAndDriver(ctx context.Context, record_id *int) error {
+func (p *Postgres) DeleteEmployee(ctx context.Context, record_id *int) error {
 	tx, err := p.conn.Begin()
 	if err != nil {
 		return err
@@ -377,12 +381,12 @@ func (p *Postgres) DeleteRecordToSchoolAndDriver(ctx context.Context, record_id 
 			err = tx.Commit()
 		}
 	}()
-	_, err = tx.Exec("DELETE FROM invites WHERE invite_id = $1", record_id)
+	_, err = tx.Exec("DELETE FROM schools_drivers WHERE record = $1", record_id)
 	return err
 }
 
 func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
-	sqlQuery := `SELECT school FROM schools_drivers WHERE driver = $1`
+	sqlQuery := `SELECT school_name, school, school_email FROM schools_drivers WHERE driver = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnh)
 	if err != nil {
@@ -409,7 +413,7 @@ func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.Scho
 }
 
 func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {
-	sqlQuery := `SELECT driver FROM schools_drivers WHERE school = $1`
+	sqlQuery := `SELECT record, name_driver, driver, email_driver FROM schools_drivers WHERE school = $1`
 
 	rows, err := p.conn.Query(sqlQuery, *cnpj)
 	if err != nil {
@@ -421,7 +425,7 @@ func (p *Postgres) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driv
 
 	for rows.Next() {
 		var driver types.Driver
-		err := rows.Scan(&driver.CNH)
+		err := rows.Scan(&driver.ID, &driver.CNH)
 		if err != nil {
 			return nil, err
 		}
