@@ -5,6 +5,7 @@ import (
 	"gin/types"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -187,5 +188,29 @@ func (ct *controller) GetEmployees(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusAccepted, gin.H{"drivers": drivers})
+
+}
+
+func (ct *controller) DeleteEmployee(c *gin.Context) {
+
+	record_idStr := c.Param("id")
+
+	record_id, err := strconv.Atoi(record_idStr)
+
+	if err != nil {
+		log.Printf("error while converting record_id of string to int: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error"})
+		return
+	}
+
+	err = ct.service.DeleteEmployee(c, &record_id)
+
+	if err != nil {
+		log.Printf("error while deleting record: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"message": "internal server error while deleting employee"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "employee deleted w/ success"})
 
 }

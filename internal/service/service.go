@@ -258,8 +258,8 @@ func (s *Service) DeleteInvite(ctx context.Context, invite_id *int) error {
 	return s.repository.DeleteInvite(ctx, invite_id)
 }
 
-func (s *Service) CreateRecordToSchoolAndDriver(ctx context.Context, invite *types.Invite) error {
-	return s.repository.CreateRecordToSchoolAndDriver(ctx, invite)
+func (s *Service) CreateEmployee(ctx context.Context, invite *types.Invite) error {
+	return s.repository.CreateEmployee(ctx, invite)
 }
 
 func (s *Service) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
@@ -272,4 +272,8 @@ func (s *Service) GetEmployees(ctx context.Context, cnpj *string) ([]types.Drive
 
 func (s *Service) IsEmployee(ctx context.Context, cnh *string) error {
 	return s.repository.IsEmployee(ctx, cnh)
+}
+
+func (s *Service) DeleteEmployee(ctx context.Context, record_id *int) error {
+	return s.repository.DeleteEmployee(ctx, record_id)
 }
