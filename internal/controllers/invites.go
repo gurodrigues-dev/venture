@@ -27,7 +27,7 @@ func (ct *controller) CreateInvite(c *gin.Context) {
 		return
 	}
 
-	var input types.Invite
+	var input types.ValidaInvite
 
 	if err := c.BindJSON(&input); err != nil {
 		log.Printf("error to parsed body: %s", err.Error())
@@ -43,9 +43,26 @@ func (ct *controller) CreateInvite(c *gin.Context) {
 		return
 	}
 
-	input.Requester = *cnpj
+	driver, err := ct.service.ReadDriver(c, &input.Guest)
+	if err != nil {
+		log.Printf("already connection: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "you already have a connection with this driver."})
+		return
+	}
 
-	err = ct.service.CreateInvite(c, &input)
+	school, err := ct.service.ReadSchool(c, cnpj)
+	if err != nil {
+		log.Printf("already connection: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "you already have a connection with this driver."})
+		return
+	}
+
+	invite := types.Invite{
+		School: *school,
+		Driver: *driver,
+	}
+
+	err = ct.service.CreateInvite(c, &invite)
 
 	if err != nil {
 		log.Printf("error to create invite: %s", err.Error())
