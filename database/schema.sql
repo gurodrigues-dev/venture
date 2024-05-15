@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS schools_drivers (
     email_school VARCHAR(100) NOT NULL,
     name_driver VARCHAR(100) NOT NULL,
     driver VARCHAR(14),
-    email_driver VARCHAR(100) NOT NULL
+    email_driver VARCHAR(100) NOT NULL,
     FOREIGN KEY (school) REFERENCES schools(cnpj),
     FOREIGN KEY (driver) REFERENCES drivers(cnh)
 );
@@ -81,12 +81,12 @@ CREATE TABLE IF NOT EXISTS invites (
     invite_id SERIAL PRIMARY KEY,
     requester VARCHAR(14),
     school VARCHAR(100) NOT NULL,
-    email_school VARCHAR(100) NOT NULL
+    email_school VARCHAR(100) NOT NULL,
     guest VARCHAR(14),
     driver VARCHAR(100) NOT NULL,
-    email_driver VARCHAR(100) NOT NULL
+    email_driver VARCHAR(100) NOT NULL,
     status TEXT NOT NULL,
     FOREIGN KEY (requester) REFERENCES schools(cnpj),
     FOREIGN KEY (guest) REFERENCES drivers(cnh)
-)
+);
 
