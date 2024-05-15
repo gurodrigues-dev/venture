@@ -211,8 +211,8 @@ func (ct *controller) Start() {
 	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
 	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
 	api.POST("/login/driver", ct.AuthDriver)
-	api.GET("/driver/my-schools", driverMiddleware, ct.CurrentWorkplaces)
-	api.GET("/driver/my-students", driverMiddleware)
+	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
+	api.GET("/driver/s", driverMiddleware)
 
 	// school
 	api.POST("/school", ct.CreateSchool)
@@ -221,9 +221,9 @@ func (ct *controller) Start() {
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/my-drivers", schoolMiddleware, ct.GetEmployees)
-	api.GET("/school/my-students", schoolMiddleware)
-	api.DELETE("/school/my-drivers/:id", schoolMiddleware, ct.DeleteEmployee)
+	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees)
+	api.GET("/school/sponsors", schoolMiddleware)
+	api.DELETE("/school/employees/:id", schoolMiddleware, ct.DeleteEmployee)
 
 	// invite
 	api.POST("/invite", schoolMiddleware, ct.CreateInvite)
