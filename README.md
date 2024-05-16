@@ -561,29 +561,6 @@ Cria uma conta na API
     "message": "Usuário criado com sucesso"
 }
 ```
-
----
-
-### POST /invite
-
-Cria uma conta na API
-
-**Parâmetros**
-
-| Nome       | Local | Tipo   | Descrição            |
-|------------|-------|--------|----------------------|
-| `requester`| body  | string | Solicitante do convite.|
-| `guest`    | body  | string | Convidado pelo convite.|     
-
-**Resposta**
-
-```json
-{
-  "requester": "João",
-  "guest": "Maria"
-}
-```
-
 ---
 
 ### POST /invite
