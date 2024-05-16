@@ -592,86 +592,77 @@ Cria uma conta na API
 
 **Parâmetros**
 
-| Nome | Local | Tipo | Descrição
-|-------------:|:--------:|:-------:| --- |
-| `nome` | body | string  | Nome do usuário. |
-| `email`| body | string  | E-mail do usuário. |
-| `senha`| body | string  | Senha do usuário. |      
+| Nome       | Local | Tipo   | Descrição            |
+|------------|-------|--------|----------------------|
+| `requester`| body  | string | Solicitante do convite.|
+| `guest`    | body  | string | Convidado pelo convite.|     
 
 **Resposta**
 
 ```json
 {
-    "message": "Usuário criado com sucesso"
+  "requester": "João",
+  "guest": "Maria"
 }
 ```
 
 ---
 
-### POST /invite/:id
+### GET /invite
 
-Cria uma conta na API
+Verificar todos os invites de um motorista    
+
+**Resposta**
+
+```json
+{
+    "id": "1",
+    "school": "E.E Estadual",
+    "driver": "Maria João José",
+    "status": "pending"
+}
+```
+
+---
+
+### PATCH /invite/:id
+
+Aceite um invite para ser parceiro de uma escola
 
 **Parâmetros**
 
 | Nome       | Local | Tipo   | Descrição            |
 |------------|-------|--------|----------------------|
-| `id`       | body  | int    | ID do convite.       |
-| `school`   | body  | School | Escola associada ao convite. |
-| `driver`   | body  | Driver | Motorista associado ao convite.|
-| `status`   | body  | string | Status do convite.   |    
+| `id`       | url  | int    | ID do convite.       | 
 
 **Resposta**
 
 ```json
 {
-  "id": 789,
-  "school": {
-    "id": 456,
-    "name": "Escola Estadual",
-    "cnpj": "12.345.678/0001-90",
-    "email": "escola@exemplo.com",
-    "password": "segredo123",
-    "street": "Rua da Escola, 123",
-    "number": "456",
-    "zip": "12345-678"
-  },
-  "driver": {
-    "id": 123,
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "password": "s3cr3tP@ssw0rd",
-    "cpf": "123.456.789-00",
-    "cnh": "123456789",
-    "qrcode": "qr_code_data",
-    "street": "123 Main Street",
-    "number": "456",
-    "zip": "12345-678",
-    "complement": "Apt 101"
-  },
-  "status": "Pendente"
+    "id": "1",
+    "school": "E.E Estadual",
+    "driver": "Maria João José",
+    "status": "pending"
 }
 ```
 
 ---
 
-### POST /invite/:id
+### DELETE /invite/:id
 
-Cria uma conta na API
+Recuse o convite de uma escola
 
 **Parâmetros**
 
-| Nome | Local | Tipo | Descrição
-|-------------:|:--------:|:-------:| --- |
-| `nome` | body | string  | Nome do usuário. |
-| `email`| body | string  | E-mail do usuário. |
-| `senha`| body | string  | Senha do usuário. |      
+| Nome       | Local | Tipo   | Descrição            |
+|------------|-------|--------|----------------------|
+| `id`       | url  | int    | ID do convite.       |    
 
 **Resposta**
 
 ```json
 {
-    "message": "Usuário criado com sucesso"
+    "message": "invite was deleted w/ sucessfully"
 }
 ```
 
