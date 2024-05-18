@@ -29,7 +29,7 @@ type Repository interface {
 	DeleteSchool(ctx context.Context, cnpj *string) error
 	AuthSchool(ctx context.Context, school *types.School) (*types.School, error)
 	NewPassword(ctx context.Context)
-	VerifyEmailExists(ctx context.Context, table, email *string) (bool, error)
+	IsEmailExisting(ctx context.Context, table, email *string) (bool, error)
 	CreateInvite(ctx context.Context, invite *types.Invite) error
 	ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error)
 	ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error)
@@ -49,7 +49,7 @@ type Cloud interface {
 type Cache interface {
 	SaveKeyAndValue(ctx context.Context)
 	FindKeyRedis(ctx context.Context)
-	ValidateExistsSismember(ctx context.Context)
+	IsSismember(ctx context.Context)
 }
 
 type Messaging interface {

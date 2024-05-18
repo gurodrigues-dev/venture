@@ -262,7 +262,7 @@ func (p *Postgres) AuthSchool(ctx context.Context, school *types.School) (*types
 	return &schoolData, nil
 }
 
-func (p *Postgres) VerifyEmailExists(ctx context.Context, table, email *string) (bool, error) {
+func (p *Postgres) IsEmailExisting(ctx context.Context, table, email *string) (bool, error) {
 	sqlQuery := "SELECT email FROM " + *table + " WHERE email = $1"
 
 	var emailDatabase string
