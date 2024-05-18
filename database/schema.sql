@@ -1,5 +1,5 @@
--- Tabela users
-CREATE TABLE IF NOT EXISTS users (
+-- Tabela responsible
+CREATE TABLE IF NOT EXISTS responsible (
     id SERIAL,
     name VARCHAR(100) NOT NULL,
     cpf VARCHAR(20) PRIMARY KEY,
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS childrens (
     number VARCHAR(10) NOT NULL,
     complement VARCHAR(10),
     zip VARCHAR(8) NOT NULL,
-    FOREIGN KEY (responsible) REFERENCES users(cpf)
+    FOREIGN KEY (responsible) REFERENCES responsible(cpf)
 );
 
 -- Tabela schools
@@ -67,8 +67,8 @@ CREATE TABLE IF NOT EXISTS schools_drivers (
     FOREIGN KEY (driver) REFERENCES drivers(cnh)
 );
 
--- Tabela users_drivers
-CREATE TABLE IF NOT EXISTS users_drivers (
+-- Tabela responsible_drivers
+CREATE TABLE IF NOT EXISTS responsible_drivers (
     registration SERIAL PRIMARY KEY,
     driver VARCHAR(14),
     child VARCHAR(20),

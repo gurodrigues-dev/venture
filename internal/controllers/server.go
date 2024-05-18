@@ -22,7 +22,7 @@ func New(s *service.Service) *controller {
 	}
 }
 
-type ClaimsUser struct {
+type ClaimsResponsible struct {
 	CPF string `json:"cpf"`
 	jwt.StandardClaims
 }
@@ -84,7 +84,7 @@ func (ct *controller) Start() {
 			return
 		}
 
-		token, err := jwt.ParseWithClaims(tokenString, &ClaimsUser{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsResponsible{}, func(token *jwt.Token) (interface{}, error) {
 			return secret, nil
 		})
 
@@ -94,7 +94,7 @@ func (ct *controller) Start() {
 			return
 		}
 
-		claims, ok := token.Claims.(*ClaimsUser)
+		claims, ok := token.Claims.(*ClaimsResponsible)
 		if !ok || !token.Valid {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
 			c.Abort()
@@ -192,11 +192,11 @@ func (ct *controller) Start() {
 	api := router.Group("api/v1")
 	api.GET("/ping", ct.ping)
 
-	// user
-	api.POST("/user")
-	api.GET("/user")
-	api.PATCH("/user")
-	api.DELETE("/user")
+	// responsible
+	api.POST("/responsible")
+	api.GET("/responsible")
+	api.PATCH("/responsible")
+	api.DELETE("/responsible")
 	api.GET("/payment")
 
 	// child
