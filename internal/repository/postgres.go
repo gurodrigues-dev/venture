@@ -59,27 +59,27 @@ func (p *Postgres) migrate(filepath string) error {
 	return nil
 }
 
-func (p *Postgres) CreateUser(ctx context.Context, user *types.User) error {
+func (p *Postgres) CreateResponsible(ctx context.Context, responsible *types.Responsible) error {
 	return nil
 }
 
-func (p *Postgres) ReadUser(ctx context.Context, id *int) (*types.User, error) {
+func (p *Postgres) ReadResponsible(ctx context.Context, id *int) (*types.Responsible, error) {
 	return nil, nil
 }
 
-func (p *Postgres) UpdateUser(ctx context.Context) error {
+func (p *Postgres) UpdateResponsible(ctx context.Context) error {
 	return nil
 }
 
-func (p *Postgres) DeleteUser(ctx context.Context, cpf *string) error {
+func (p *Postgres) DeleteResponsible(ctx context.Context, cpf *string) error {
 	return nil
 }
 
-func (p *Postgres) AuthUser(ctx context.Context, user *types.User) (*types.User, error) {
+func (p *Postgres) AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error) {
 	return nil, nil
 }
 
-func (p *Postgres) CreateChild(ctx context.Context, child *types.Child, user *types.User) error {
+func (p *Postgres) CreateChild(ctx context.Context, child *types.Child, responsible *types.Responsible) error {
 	return nil
 }
 

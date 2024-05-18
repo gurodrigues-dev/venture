@@ -8,13 +8,13 @@ import (
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user *types.User) error
-	ReadUser(ctx context.Context, id *int) (*types.User, error)
-	UpdateUser(ctx context.Context) error
-	DeleteUser(ctx context.Context, cpf *string) error
-	AuthUser(ctx context.Context, user *types.User) (*types.User, error)
-	CreateChild(ctx context.Context, child *types.Child, user *types.User) error
-	ReadChild(ctx context.Context, idUser *int) ([]types.Child, error)
+	CreateResponsible(ctx context.Context, responsible *types.Responsible) error
+	ReadResponsible(ctx context.Context, id *int) (*types.Responsible, error)
+	UpdateResponsible(ctx context.Context) error
+	DeleteResponsible(ctx context.Context, cpf *string) error
+	AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error)
+	CreateChild(ctx context.Context, child *types.Child, responsible *types.Responsible) error
+	ReadChild(ctx context.Context, idResponsible *int) ([]types.Child, error)
 	UpdateChild(ctx context.Context) error
 	DeleteChild(ctx context.Context, idChild *int) error
 	CreateDriver(ctx context.Context, driver *types.Driver) error
