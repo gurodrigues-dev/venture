@@ -214,6 +214,7 @@ func (ct *controller) Start() {
 	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
 	api.GET("/driver/sponsors", driverMiddleware)
 
+
 	// school
 	api.POST("/school", ct.CreateSchool)
 	api.GET("/school/:cnpj", ct.ReadSchool)
