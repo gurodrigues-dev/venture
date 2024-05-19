@@ -212,7 +212,7 @@ func (ct *controller) Start() {
 	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
 	api.POST("/login/driver", ct.AuthDriver)
 	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
-	api.GET("/driver/s", driverMiddleware)
+	api.GET("/driver/sponsors", driverMiddleware)
 
 	// school
 	api.POST("/school", ct.CreateSchool)
