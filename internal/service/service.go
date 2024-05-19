@@ -30,20 +30,25 @@ func New(repo repository.Repository, cloud repository.Cloud, redis repository.Ca
 	}
 }
 
-func (s *Service) CreateResponsible(ctx context.Context) {
-
+func (s *Service) CreateResponsible(ctx context.Context, responsbile *types.Responsible) error {
+	responsbile.Password = utils.HashPassword(responsbile.Password)
+	return s.repository.CreateResponsible(ctx, responsbile)
 }
 
-func (s *Service) ReadResponsible(ctx context.Context) {
-
+func (s *Service) ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error) {
+	return s.repository.ReadResponsible(ctx, cpf)
 }
 
-func (s *Service) UpdateResponsible(ctx context.Context) {
-
+func (s *Service) UpdateResponsible(ctx context.Context) error {
+	return s.repository.UpdateResponsible(ctx)
 }
 
-func (s *Service) DeleteResponsible(ctx context.Context) {
+func (s *Service) DeleteResponsible(ctx context.Context, cpf *string) error {
+	return s.repository.DeleteResponsible(ctx, cpf)
+}
 
+func (s *Service) AuthResponsible(ctx context.Context, resposible *types.Responsible) (*types.Responsible, error) {
+	return nil, nil
 }
 
 func (s *Service) CreateChild(ctx context.Context) {
