@@ -1,5 +1,5 @@
--- Tabela users
-CREATE TABLE IF NOT EXISTS users (
+-- Tabela responsibles
+CREATE TABLE IF NOT EXISTS responsibles (
     id SERIAL,
     name VARCHAR(100) NOT NULL,
     cpf VARCHAR(20) PRIMARY KEY,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS drivers (
 CREATE TABLE IF NOT EXISTS childrens (
     id SERIAL,
     rg VARCHAR(20) PRIMARY KEY,
-    responsible VARCHAR(14),
+    responsibles VARCHAR(14),
     name VARCHAR(100),
     school VARCHAR(100),
     driver VARCHAR(100),
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS childrens (
     number VARCHAR(10) NOT NULL,
     complement VARCHAR(10),
     zip VARCHAR(8) NOT NULL,
-    FOREIGN KEY (responsible) REFERENCES users(cpf)
+    FOREIGN KEY (responsibles) REFERENCES responsibles(cpf)
 );
 
 -- Tabela schools
@@ -62,13 +62,13 @@ CREATE TABLE IF NOT EXISTS schools_drivers (
     email_school VARCHAR(100) NOT NULL,
     name_driver VARCHAR(100) NOT NULL,
     driver VARCHAR(14),
-    email_driver VARCHAR(100) NOT NULL
+    email_driver VARCHAR(100) NOT NULL,
     FOREIGN KEY (school) REFERENCES schools(cnpj),
     FOREIGN KEY (driver) REFERENCES drivers(cnh)
 );
 
--- Tabela users_drivers
-CREATE TABLE IF NOT EXISTS users_drivers (
+-- Tabela responsibles_drivers
+CREATE TABLE IF NOT EXISTS responsibles_drivers (
     registration SERIAL PRIMARY KEY,
     driver VARCHAR(14),
     child VARCHAR(20),
@@ -81,12 +81,12 @@ CREATE TABLE IF NOT EXISTS invites (
     invite_id SERIAL PRIMARY KEY,
     requester VARCHAR(14),
     school VARCHAR(100) NOT NULL,
-    email_school VARCHAR(100) NOT NULL
+    email_school VARCHAR(100) NOT NULL,
     guest VARCHAR(14),
     driver VARCHAR(100) NOT NULL,
-    email_driver VARCHAR(100) NOT NULL
+    email_driver VARCHAR(100) NOT NULL,
     status TEXT NOT NULL,
     FOREIGN KEY (requester) REFERENCES schools(cnpj),
     FOREIGN KEY (guest) REFERENCES drivers(cnh)
-)
+);
 

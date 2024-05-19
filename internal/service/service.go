@@ -30,20 +30,25 @@ func New(repo repository.Repository, cloud repository.Cloud, redis repository.Ca
 	}
 }
 
-func (s *Service) CreateUser(ctx context.Context) {
-
+func (s *Service) CreateResponsible(ctx context.Context, responsbile *types.Responsible) error {
+	responsbile.Password = utils.HashPassword(responsbile.Password)
+	return s.repository.CreateResponsible(ctx, responsbile)
 }
 
-func (s *Service) ReadUser(ctx context.Context) {
-
+func (s *Service) ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error) {
+	return s.repository.ReadResponsible(ctx, cpf)
 }
 
-func (s *Service) UpdateUser(ctx context.Context) {
-
+func (s *Service) UpdateResponsible(ctx context.Context) error {
+	return s.repository.UpdateResponsible(ctx)
 }
 
-func (s *Service) DeleteUser(ctx context.Context) {
+func (s *Service) DeleteResponsible(ctx context.Context, cpf *string) error {
+	return s.repository.DeleteResponsible(ctx, cpf)
+}
 
+func (s *Service) AuthResponsible(ctx context.Context, resposible *types.Responsible) (*types.Responsible, error) {
+	return nil, nil
 }
 
 func (s *Service) CreateChild(ctx context.Context) {
@@ -126,12 +131,12 @@ func (s *Service) VerifyToken(ctx context.Context) {
 
 }
 
-func (s *Service) CreateTokenJWTUser(ctx context.Context, user *types.User) (string, error) {
+func (s *Service) CreateTokenJWTResponsible(ctx context.Context, responsible *types.Responsible) (string, error) {
 
 	conf := config.Get()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"cpf": user.CPF,
+		"cpf": responsible.CPF,
 		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 
@@ -193,7 +198,7 @@ func (s *Service) ParserJwtSchool(ctx *gin.Context) (interface{}, error) {
 
 }
 
-func (s *Service) ParserJwtUser(ctx *gin.Context) (interface{}, error) {
+func (s *Service) ParserJwtResponsible(ctx *gin.Context) (interface{}, error) {
 
 	cpf, found := ctx.Get("cpf")
 

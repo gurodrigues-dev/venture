@@ -37,6 +37,6 @@ func (r *Redis) FindKeyRedis(ctx context.Context) {
 
 }
 
-func (r *Redis) ValidateExistsSismember(ctx context.Context) {
+func (r *Redis) IsSismember(ctx context.Context) {
 
 }
