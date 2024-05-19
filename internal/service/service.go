@@ -21,34 +21,13 @@ type Service struct {
 	broker     repository.Messaging
 }
 
-func New(repo repository.Repository, cloud repository.Cloud, redis repository.Cache, broker repository.Messaging) *Service {
+func NewService(repo repository.Repository, cloud repository.Cloud, redis repository.Cache, broker repository.Messaging) *Service {
 	return &Service{
 		repository: repo,
 		cloud:      cloud,
 		redis:      redis,
 		broker:     broker,
 	}
-}
-
-func (s *Service) CreateResponsible(ctx context.Context, responsbile *types.Responsible) error {
-	responsbile.Password = utils.HashPassword(responsbile.Password)
-	return s.repository.CreateResponsible(ctx, responsbile)
-}
-
-func (s *Service) ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error) {
-	return s.repository.ReadResponsible(ctx, cpf)
-}
-
-func (s *Service) UpdateResponsible(ctx context.Context) error {
-	return s.repository.UpdateResponsible(ctx)
-}
-
-func (s *Service) DeleteResponsible(ctx context.Context, cpf *string) error {
-	return s.repository.DeleteResponsible(ctx, cpf)
-}
-
-func (s *Service) AuthResponsible(ctx context.Context, resposible *types.Responsible) (*types.Responsible, error) {
-	return nil, nil
 }
 
 func (s *Service) CreateChild(ctx context.Context) {

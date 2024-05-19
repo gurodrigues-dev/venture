@@ -36,9 +36,10 @@ func main() {
 		log.Fatalf("error creating kafka connection: %s", err.Error())
 	}
 
-	service := service.New(repo, aws, redis, kafka)
+	responsible := service.NewResponsibleService(repo)
+	service := service.NewService(repo, aws, redis, kafka)
 
-	controller := controllers.New(service)
+	controller := controllers.New(service, responsible)
 
 	log.Printf("initing service: %s", config.Name)
 	controller.Start()

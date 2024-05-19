@@ -13,12 +13,14 @@ import (
 )
 
 type controller struct {
-	service *service.Service
+	service            *service.Service
+	responsibleservice *service.ResponsbileService
 }
 
-func New(s *service.Service) *controller {
+func New(s *service.Service, rs *service.ResponsbileService) *controller {
 	return &controller{
-		service: s,
+		service:            s,
+		responsibleservice: rs,
 	}
 }
 
@@ -193,10 +195,11 @@ func (ct *controller) Start() {
 	api.GET("/ping", ct.ping)
 
 	// responsible
-	api.POST("/responsible")
-	api.GET("/responsible")
-	api.PATCH("/responsible")
-	api.DELETE("/responsible")
+	api.POST("/responsible", ct.CreateResponsible)
+	api.GET("/responsible", ct.ReadResponsible)
+	api.PATCH("/responsible", authMiddleware)
+	api.DELETE("/responsible", authMiddleware)
+	api.POST("/login/responsible", ct.AuthResponsible)
 	api.GET("/payment")
 
 	// child
@@ -213,7 +216,6 @@ func (ct *controller) Start() {
 	api.POST("/login/driver", ct.AuthDriver)
 	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
 	api.GET("/driver/sponsors", driverMiddleware)
-
 
 	// school
 	api.POST("/school", ct.CreateSchool)

@@ -8,11 +8,6 @@ import (
 )
 
 type Repository interface {
-	CreateResponsible(ctx context.Context, responsible *types.Responsible) error
-	ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error)
-	UpdateResponsible(ctx context.Context) error
-	DeleteResponsible(ctx context.Context, cpf *string) error
-	AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error)
 	CreateChild(ctx context.Context, child *types.Child, responsible *types.Responsible) error
 	ReadChild(ctx context.Context, idResponsible *int) ([]types.Child, error)
 	UpdateChild(ctx context.Context) error

@@ -18,7 +18,7 @@ func (ct *controller) CreateResponsible(c *gin.Context) {
 		return
 	}
 
-	err := ct.service.CreateResponsible(c, &input)
+	err := ct.responsibleservice.CreateResponsible(c, &input)
 
 	if err != nil {
 		log.Printf("error to create driver: %s", err.Error())
@@ -34,7 +34,7 @@ func (ct *controller) ReadResponsible(c *gin.Context) {
 
 	cpf := c.Param("cpf")
 
-	responsible, err := ct.service.ReadResponsible(c, &cpf)
+	responsible, err := ct.responsibleservice.ReadResponsible(c, &cpf)
 
 	if err != nil {
 		log.Printf("error while found responsible: %s", err.Error())
@@ -65,7 +65,7 @@ func (ct *controller) DeleteResponsible(c *gin.Context) {
 		return
 	}
 
-	err = ct.service.DeleteDriver(c, cpf)
+	err = ct.responsibleservice.DeleteResponsible(c, cpf)
 
 	if err != nil {
 		log.Printf("error whiling deleted driver: %s", err.Error())
@@ -87,7 +87,7 @@ func (ct *controller) AuthResponsible(c *gin.Context) {
 		return
 	}
 
-	responsible, err := ct.service.AuthResponsible(c, &input)
+	responsible, err := ct.responsibleservice.AuthResponsible(c, &input)
 
 	if err != nil {
 		log.Printf("wrong email or password: %s", err.Error())
