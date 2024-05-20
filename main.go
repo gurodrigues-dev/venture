@@ -37,9 +37,9 @@ func main() {
 	}
 
 	responsible := service.NewResponsibleService(repo)
+	driver := service.NewDriverService(repo)
 	service := service.NewService(repo, aws, redis, kafka)
-
-	controller := controllers.New(service, responsible)
+	controller := controllers.New(service, responsible, driver)
 
 	log.Printf("initing service: %s", config.Name)
 	controller.Start()

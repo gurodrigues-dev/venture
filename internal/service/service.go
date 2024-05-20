@@ -46,28 +46,6 @@ func (s *Service) DeleteChild(ctx context.Context) {
 
 }
 
-func (s *Service) CreateDriver(ctx context.Context, driver *types.Driver) error {
-	driver.Password = utils.HashPassword(driver.Password)
-	return s.repository.CreateDriver(ctx, driver)
-}
-
-func (s *Service) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error) {
-	return s.repository.ReadDriver(ctx, cnh)
-}
-
-func (s *Service) UpdateDriver(ctx context.Context) error {
-	return s.repository.UpdateDriver(ctx)
-}
-
-func (s *Service) DeleteDriver(ctx context.Context, cnh *string) error {
-	return s.repository.DeleteDriver(ctx, cnh)
-}
-
-func (s *Service) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
-	driver.Password = utils.HashPassword(driver.Password)
-	return s.repository.AuthDriver(ctx, driver)
-}
-
 func (s *Service) CreateSchool(ctx context.Context, school *types.School) error {
 	school.Password = utils.HashPassword(school.Password)
 	return s.repository.CreateSchool(ctx, school)
@@ -226,28 +204,8 @@ func (s *Service) CreateInvite(ctx context.Context, invite *types.Invite) error 
 	return s.repository.CreateInvite(ctx, invite)
 }
 
-func (s *Service) ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error) {
-	return s.repository.ReadInvite(ctx, invite_id)
-}
-
-func (s *Service) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
-	return s.repository.ReadAllInvites(ctx, cnh)
-}
-
-func (s *Service) UpdateInvite(ctx context.Context, invite_id *int) error {
-	return s.repository.UpdateInvite(ctx, invite_id)
-}
-
-func (s *Service) DeleteInvite(ctx context.Context, invite_id *int) error {
-	return s.repository.DeleteInvite(ctx, invite_id)
-}
-
 func (s *Service) CreateEmployee(ctx context.Context, invite *types.Invite) error {
 	return s.repository.CreateEmployee(ctx, invite)
-}
-
-func (s *Service) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
-	return s.repository.GetWorkplaces(ctx, cnh)
 }
 
 func (s *Service) GetEmployees(ctx context.Context, cnpj *string) ([]types.Driver, error) {

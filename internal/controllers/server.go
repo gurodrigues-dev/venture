@@ -15,12 +15,14 @@ import (
 type controller struct {
 	service            *service.Service
 	responsibleservice *service.ResponsbileService
+	driverservice      *service.DriverService
 }
 
-func New(s *service.Service, rs *service.ResponsbileService) *controller {
+func New(s *service.Service, rs *service.ResponsbileService, ds *service.DriverService) *controller {
 	return &controller{
 		service:            s,
 		responsibleservice: rs,
+		driverservice:      ds,
 	}
 }
 
