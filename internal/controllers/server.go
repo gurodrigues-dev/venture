@@ -14,15 +14,21 @@ import (
 
 type controller struct {
 	service            *service.Service
-	responsibleservice *service.ResponsbileService
+	responsibleservice *service.ResponsibleService
 	driverservice      *service.DriverService
+	schoolservice      *service.SchoolService
+	awsservice         *service.AWSService
+	kafkaservice       *service.KafkaService
+	childservice       *service.ChildService
 }
 
-func New(s *service.Service, rs *service.ResponsbileService, ds *service.DriverService) *controller {
+func New(s *service.Service, rs *service.ResponsibleService, ds *service.DriverService, ss *service.SchoolService, cs *service.ChildService) *controller {
 	return &controller{
 		service:            s,
 		responsibleservice: rs,
 		driverservice:      ds,
+		schoolservice:      ss,
+		childservice:       cs,
 	}
 }
 
@@ -205,7 +211,7 @@ func (ct *controller) Start() {
 	api.GET("/payment")
 
 	// child
-	api.POST("/child")
+	api.POST("/child", ct.CreateChild)
 	api.GET("/child")
 	api.PATCH("/child", authMiddleware)
 	api.DELETE("/child")
