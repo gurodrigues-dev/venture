@@ -51,7 +51,7 @@ func (ct *controller) UpdateResponsible(c *gin.Context) {
 }
 
 func (ct *controller) DeleteResponsible(c *gin.Context) {
-	cpfInterface, err := ct.service.ParserJwtResponsible(c)
+	cpfInterface, err := ct.responsibleservice.ParserJwtResponsible(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "cpf of cookie don't found"})
@@ -95,7 +95,7 @@ func (ct *controller) AuthResponsible(c *gin.Context) {
 		return
 	}
 
-	jwt, err := ct.service.CreateTokenJWTResponsible(c, responsible)
+	jwt, err := ct.responsibleservice.CreateTokenJWTResponsible(c, responsible)
 
 	if err != nil {
 		log.Printf("error to create jwt token: %s", err.Error())

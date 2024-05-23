@@ -20,7 +20,7 @@ func (ct *controller) CreateDriver(c *gin.Context) {
 		return
 	}
 
-	qrCode, err := ct.service.CreateAndSaveQrCodeInS3(c, &input.CNH)
+	qrCode, err := ct.awsservice.CreateAndSaveQrCodeInS3(c, &input.CNH)
 
 	if err != nil {
 		log.Printf("error to save qrcode: %s", err.Error())
@@ -53,7 +53,7 @@ func (ct *controller) CreateDriver(c *gin.Context) {
 
 	log.Print("mensagem enviada para fila -> ", msg)
 
-	err = ct.service.AddMessageInQueue(c, msg)
+	err = ct.kafkaservice.AddMessageInQueue(c, msg)
 	if err != nil {
 		log.Printf("error while adding message on queue")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
@@ -87,7 +87,7 @@ func (ct *controller) UpdateDriver(c *gin.Context) {
 
 func (ct *controller) DeleteDriver(c *gin.Context) {
 
-	cnhInterface, err := ct.service.ParserJwtDriver(c)
+	cnhInterface, err := ct.driverservice.ParserJwtDriver(c)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "cnh of cookie don't found"})
@@ -133,7 +133,7 @@ func (ct *controller) AuthDriver(c *gin.Context) {
 		return
 	}
 
-	jwt, err := ct.service.CreateTokenJWTDriver(c, driver)
+	jwt, err := ct.driverservice.CreateTokenJWTDriver(c, driver)
 
 	if err != nil {
 		log.Printf("error to create jwt token: %s", err.Error())
@@ -152,7 +152,7 @@ func (ct *controller) AuthDriver(c *gin.Context) {
 
 func (ct *controller) CurrentWorkplaces(c *gin.Context) {
 
-	cnhInterface, err := ct.service.ParserJwtDriver(c)
+	cnhInterface, err := ct.driverservice.ParserJwtDriver(c)
 
 	if err != nil {
 		log.Printf("error to read jwt: %s", err.Error())
@@ -185,7 +185,7 @@ func (ct *controller) CurrentStudents(c *gin.Context) {
 
 func (ct *controller) ReadAllInvites(c *gin.Context) {
 
-	cnhInterface, err := ct.service.ParserJwtDriver(c)
+	cnhInterface, err := ct.driverservice.ParserJwtDriver(c)
 
 	if err != nil {
 		log.Printf("error to read jwt: %s", err.Error())
@@ -239,7 +239,7 @@ func (ct *controller) UpdateInvite(c *gin.Context) {
 		return
 	}
 
-	err = ct.service.CreateEmployee(c, invite)
+	err = ct.driverservice.CreateEmployee(c, invite)
 	if err != nil {
 		log.Printf("error while creating record of bond: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error at creating record of bond"})
@@ -261,7 +261,7 @@ func (ct *controller) UpdateInvite(c *gin.Context) {
 
 	log.Print("mensagem enviada para fila -> ", msgSchool)
 
-	err = ct.service.AddMessageInQueue(c, msgSchool)
+	err = ct.kafkaservice.AddMessageInQueue(c, msgSchool)
 	if err != nil {
 		log.Printf("error while adding message on queue")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
@@ -281,7 +281,7 @@ func (ct *controller) UpdateInvite(c *gin.Context) {
 		return
 	}
 
-	err = ct.service.AddMessageInQueue(c, msgDriver)
+	err = ct.kafkaservice.AddMessageInQueue(c, msgDriver)
 	if err != nil {
 		log.Printf("error while adding message on queue")
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
