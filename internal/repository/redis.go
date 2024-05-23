@@ -7,6 +7,13 @@ import (
 	"github.com/go-redis/redis"
 )
 
+type RedisRepository interface {
+	SaveKeyAndValue(ctx context.Context)
+	FindKeyRedis(ctx context.Context)
+	IsSismember(ctx context.Context)
+	VerifyToken(ctx context.Context)
+}
+
 type Redis struct {
 	conn *redis.Client
 }
@@ -38,5 +45,9 @@ func (r *Redis) FindKeyRedis(ctx context.Context) {
 }
 
 func (r *Redis) IsSismember(ctx context.Context) {
+
+}
+
+func (r *Redis) VerifyToken(ctx context.Context) {
 
 }

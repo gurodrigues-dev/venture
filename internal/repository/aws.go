@@ -13,6 +13,10 @@ import (
 	"github.com/skip2/go-qrcode"
 )
 
+type AWSRepository interface {
+	CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string, error)
+}
+
 type AWS struct {
 	conn *session.Session
 }

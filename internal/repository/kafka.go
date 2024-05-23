@@ -9,6 +9,10 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+type KafkaRepository interface {
+	Producer(ctx context.Context, msg string) error
+}
+
 type Kafka struct {
 	producer *kafka.Writer
 }
