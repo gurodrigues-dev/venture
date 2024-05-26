@@ -74,6 +74,11 @@ func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
 	api.GET("/responsible", ct.ReadResponsible)
 	api.PATCH("/responsible", authMiddleware, ct.UpdateResponsible)
 	api.DELETE("/responsible", authMiddleware, ct.DeleteResponsible)
+	api.POST("/child", authMiddleware, ct.CreateChild)
+	api.GET("/child", authMiddleware, ct.ReadChildren)
+	api.PATCH("/child", authMiddleware, ct.UpdateChild)
+	api.DELETE("/child", authMiddleware, ct.DeleteChild)
+	api.POST("/sponsor", authMiddleware, ct.CreateSponsor)
 
 }
 
@@ -171,4 +176,100 @@ func (ct *ResponsibleController) AuthResponsible(c *gin.Context) {
 		"responsible": responsible,
 		"token":       jwt,
 	})
+}
+
+func (ct *ResponsibleController) CreateChild(c *gin.Context) {
+
+	var child types.Child
+	if err := c.ShouldBindJSON(&child); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	cpfInterface, err := ct.responsibleservice.ParserJwtResponsible(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "cpf of cookie don't found"})
+		return
+	}
+
+	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
+		return
+	}
+
+	child.Responsible.CPF = *cpf
+
+	err = ct.responsibleservice.CreateChild(c, &child)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "error at create child"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"child": &child})
+
+}
+
+func (ct *ResponsibleController) ReadChildren(c *gin.Context) {
+
+	cpfInterface, err := ct.responsibleservice.ParserJwtResponsible(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "cpf of cookie don't found"})
+		return
+	}
+
+	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
+		return
+	}
+
+	children, err := ct.responsibleservice.ReadChildren(c, cpf)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "children don't found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"children": children})
+
+}
+
+func (ct *ResponsibleController) UpdateChild(c *gin.Context) {
+
+	c.JSON(http.StatusOK, gin.H{"message": "updated w success"})
+
+}
+
+func (ct *ResponsibleController) DeleteChild(c *gin.Context) {
+
+	rg := c.Param("rg")
+
+	sponsor := ct.responsibleservice.IsSponsor(c, &rg)
+
+	if sponsor {
+		log.Print("this child is sponsor")
+		c.JSON(http.StatusNotModified, gin.H{"error": "error at deleting, this child is sponsor"})
+		return
+	}
+
+	err := ct.responsibleservice.DeleteChild(c, &rg)
+
+	if err != nil {
+		log.Printf("error while deleting responsible: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "child doesnt deleting"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "deleting w success"})
+
+}
+
+func (ct *ResponsibleController) CreateSponsor(c *gin.Context) {
+
 }
