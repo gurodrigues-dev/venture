@@ -19,6 +19,12 @@ import (
 )
 
 func main() {
+
+	gin.DisableConsoleColor()
+
+	// f, _ := os.Create("gin.log")
+	// gin.DefaultWriter = io.MultiWriter(f)
+
 	config, err := config.Load("config/config.yaml")
 	if err != nil {
 		log.Fatalf("failed to load config: %v", err)
