@@ -11,3 +11,12 @@ type Responsible struct {
 	Complement string `json:"complement"`
 	ZIP        string `json:"zip"`
 }
+
+// childrens of responsible
+type Child struct {
+	RG          string `json:"rg"`
+	Name        string `json:"name"`
+	School      string `json:"school"`
+	Driver      string `json:"driver"`
+	Responsible Responsible
+}
