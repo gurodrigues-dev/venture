@@ -1,8 +1,16 @@
 package repository
 
-import "database/sql"
+import (
+	"context"
+	"database/sql"
+	"gin/types"
+)
 
 type ChildRepositoryInterface interface {
+	CreateChild(ctx context.Context, child *types.Child) error
+	ReadChild(ctx context.Context, rg *string) (*types.Child, error)
+	UpdateChild(ctx context.Context) error
+	DeleteChild(ctx context.Context, rg *string) error
 }
 
 type ChildRepository struct {
