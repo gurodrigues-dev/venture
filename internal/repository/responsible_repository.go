@@ -5,11 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"gin/types"
-
-	_ "github.com/lib/pq"
 )
 
-type ResponsibleRepository interface {
+type ResponsibleRepositoryInterface interface {
 	CreateResponsible(ctx context.Context, responsible *types.Responsible) error
 	ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error)
 	UpdateResponsible(ctx context.Context) error
@@ -17,16 +15,26 @@ type ResponsibleRepository interface {
 	AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error)
 }
 
-func (p *Postgres) CreateResponsible(ctx context.Context, responsible *types.Responsible) error {
+type ResponsibleRepository struct {
+	db *sql.DB
+}
+
+func NewResponsibleRepository(db *sql.DB) *ResponsibleRepository {
+	return &ResponsibleRepository{
+		db: db,
+	}
+}
+
+func (r *ResponsibleRepository) CreateResponsible(ctx context.Context, responsible *types.Responsible) error {
 	sqlQuery := `INSERT INTO responsibles (name, cpf, email, password, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
-	_, err := p.conn.Exec(sqlQuery, responsible.Name, responsible.CPF, responsible.Email, responsible.Password, responsible.Street, responsible.Number, responsible.Complement, responsible.ZIP)
+	_, err := r.db.Exec(sqlQuery, responsible.Name, responsible.CPF, responsible.Email, responsible.Password, responsible.Street, responsible.Number, responsible.Complement, responsible.ZIP)
 	return err
 }
 
-func (p *Postgres) ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error) {
+func (r *ResponsibleRepository) ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error) {
 	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, complement FROM responsibles WHERE cnh = $1 LIMIT 1`
 	var responsbile types.Responsible
-	err := p.conn.QueryRow(sqlQuery, *cpf).Scan(
+	err := r.db.QueryRow(sqlQuery, *cpf).Scan(
 		&responsbile.ID,
 		&responsbile.Name,
 		&responsbile.CPF,
@@ -42,12 +50,12 @@ func (p *Postgres) ReadResponsible(ctx context.Context, cpf *string) (*types.Res
 	return &responsbile, nil
 }
 
-func (p *Postgres) UpdateResponsible(ctx context.Context) error {
+func (r *ResponsibleRepository) UpdateResponsible(ctx context.Context) error {
 	return nil
 }
 
-func (p *Postgres) DeleteResponsible(ctx context.Context, cpf *string) error {
-	tx, err := p.conn.Begin()
+func (r *ResponsibleRepository) DeleteResponsible(ctx context.Context, cpf *string) error {
+	tx, err := r.db.Begin()
 	if err != nil {
 		return err
 	}
@@ -65,10 +73,10 @@ func (p *Postgres) DeleteResponsible(ctx context.Context, cpf *string) error {
 	return err
 }
 
-func (p *Postgres) AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error) {
+func (r *ResponsibleRepository) AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error) {
 	sqlQuery := `SELECT id, name, cpf, email, password FROM responsibles WHERE email = $1 LIMIT 1`
 	var responsibleData types.Responsible
-	err := p.conn.QueryRow(sqlQuery, responsible.Email).Scan(
+	err := r.db.QueryRow(sqlQuery, responsible.Email).Scan(
 		&responsibleData.ID,
 		&responsibleData.Name,
 		&responsibleData.CPF,

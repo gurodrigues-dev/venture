@@ -1,16 +1,88 @@
 package controllers
 
 import (
-	"fmt"
+	"gin/config"
+	"gin/internal/service"
 	"gin/types"
+	"gin/utils"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
-func (ct *controller) CreateDriver(c *gin.Context) {
+type ClaimsDriver struct {
+	CNH string `json:"cnh"`
+	jwt.StandardClaims
+}
+
+type DriverController struct {
+	driverservice *service.DriverService
+}
+
+func NewDriverController(service *service.DriverService) *DriverController {
+	return &DriverController{driverservice: service}
+}
+
+func (ct *DriverController) RegisterRoutes(router *gin.Engine) {
+
+	conf := config.Get()
+
+	driverMiddleware := func(c *gin.Context) {
+
+		secret := []byte(conf.Server.Secret)
+
+		tokenString, err := c.Cookie("token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Sem cookie de sessão"})
+			c.Abort()
+			return
+		}
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+			c.Abort()
+			return
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsDriver{}, func(token *jwt.Token) (interface{}, error) {
+			return secret, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(*ClaimsDriver)
+		if !ok || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		c.Set("cnh", claims.CNH)
+		c.Set("isAuthenticated", true)
+		c.Next()
+
+	}
+
+	api := router.Group("api/v1")
+
+	api.POST("/driver", ct.CreateDriver)
+	api.GET("/driver/:cnh", ct.ReadDriver)
+	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
+	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
+	api.POST("/login/driver", ct.AuthDriver)
+	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
+	api.GET("/driver/sponsors", driverMiddleware) // yet doesnt deployed
+
+}
+
+func (ct *DriverController) CreateDriver(c *gin.Context) {
 
 	var input types.Driver
 
@@ -20,7 +92,7 @@ func (ct *controller) CreateDriver(c *gin.Context) {
 		return
 	}
 
-	qrCode, err := ct.awsservice.CreateAndSaveQrCodeInS3(c, &input.CNH)
+	qrCode, err := ct.driverservice.CreateAndSaveQrCodeInS3(c, &input.CNH)
 
 	if err != nil {
 		log.Printf("error to save qrcode: %s", err.Error())
@@ -38,32 +110,10 @@ func (ct *controller) CreateDriver(c *gin.Context) {
 		return
 	}
 
-	email := types.Email{
-		Recipient: input.Email,
-		Subject:   fmt.Sprintf("Verification Email - %s", input.Name),
-		Body:      fmt.Sprintf("Hello, my new driver %s! This email was registred in Venture. Our Apprechiated your choose, the choose of technology", input.Name),
-	}
-
-	msg, err := ct.service.EmailStructToJSON(&email)
-	if err != nil {
-		log.Printf("error while convert email to message")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
-		return
-	}
-
-	log.Print("mensagem enviada para fila -> ", msg)
-
-	err = ct.kafkaservice.AddMessageInQueue(c, msg)
-	if err != nil {
-		log.Printf("error while adding message on queue")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
-		return
-	}
-
 	c.JSON(http.StatusCreated, input)
 }
 
-func (ct *controller) ReadDriver(c *gin.Context) {
+func (ct *DriverController) ReadDriver(c *gin.Context) {
 
 	cnh := c.Param("cnh")
 
@@ -79,13 +129,13 @@ func (ct *controller) ReadDriver(c *gin.Context) {
 
 }
 
-func (ct *controller) UpdateDriver(c *gin.Context) {
+func (ct *DriverController) UpdateDriver(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "updated w successfully"})
 
 }
 
-func (ct *controller) DeleteDriver(c *gin.Context) {
+func (ct *DriverController) DeleteDriver(c *gin.Context) {
 
 	cnhInterface, err := ct.driverservice.ParserJwtDriver(c)
 
@@ -94,7 +144,7 @@ func (ct *controller) DeleteDriver(c *gin.Context) {
 		return
 	}
 
-	cnh, err := ct.service.InterfaceToString(cnhInterface)
+	cnh, err := utils.InterfaceToString(cnhInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the cnh value isn't string"})
@@ -115,7 +165,7 @@ func (ct *controller) DeleteDriver(c *gin.Context) {
 
 }
 
-func (ct *controller) AuthDriver(c *gin.Context) {
+func (ct *DriverController) AuthDriver(c *gin.Context) {
 
 	var input types.Driver
 
@@ -150,7 +200,7 @@ func (ct *controller) AuthDriver(c *gin.Context) {
 
 }
 
-func (ct *controller) CurrentWorkplaces(c *gin.Context) {
+func (ct *DriverController) CurrentWorkplaces(c *gin.Context) {
 
 	cnhInterface, err := ct.driverservice.ParserJwtDriver(c)
 
@@ -160,7 +210,7 @@ func (ct *controller) CurrentWorkplaces(c *gin.Context) {
 		return
 	}
 
-	cnh, err := ct.service.InterfaceToString(cnhInterface)
+	cnh, err := utils.InterfaceToString(cnhInterface)
 
 	if err != nil {
 		log.Printf("error to convert interface in string: %s", err.Error())
@@ -179,11 +229,11 @@ func (ct *controller) CurrentWorkplaces(c *gin.Context) {
 
 }
 
-func (ct *controller) CurrentStudents(c *gin.Context) {
+func (ct *DriverController) CurrentStudents(c *gin.Context) {
 
 }
 
-func (ct *controller) ReadAllInvites(c *gin.Context) {
+func (ct *DriverController) ReadAllInvites(c *gin.Context) {
 
 	cnhInterface, err := ct.driverservice.ParserJwtDriver(c)
 
@@ -193,7 +243,7 @@ func (ct *controller) ReadAllInvites(c *gin.Context) {
 		return
 	}
 
-	cnh, err := ct.service.InterfaceToString(cnhInterface)
+	cnh, err := utils.InterfaceToString(cnhInterface)
 
 	if err != nil {
 		log.Printf("error to convert interface in string: %s", err.Error())
@@ -213,7 +263,7 @@ func (ct *controller) ReadAllInvites(c *gin.Context) {
 
 }
 
-func (ct *controller) UpdateInvite(c *gin.Context) {
+func (ct *DriverController) UpdateInvite(c *gin.Context) {
 
 	idStr := c.Param("id")
 
@@ -246,55 +296,11 @@ func (ct *controller) UpdateInvite(c *gin.Context) {
 		return
 	}
 
-	emailSchool := types.Email{
-		Recipient: invite.School.Email,
-		Subject:   fmt.Sprintf("Invite accepted by - %s", invite.Driver.Name),
-		Body:      fmt.Sprintf("Hello, %s! your invite was accepted, happy employee! %s", invite.School.Email, invite.Driver.Name),
-	}
-
-	msgSchool, err := ct.service.EmailStructToJSON(&emailSchool)
-	if err != nil {
-		log.Printf("error while convert email to message")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
-		return
-	}
-
-	log.Print("mensagem enviada para fila -> ", msgSchool)
-
-	err = ct.kafkaservice.AddMessageInQueue(c, msgSchool)
-	if err != nil {
-		log.Printf("error while adding message on queue")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
-		return
-	}
-
-	emailDriver := types.Email{
-		Recipient: invite.Driver.Email,
-		Subject:   fmt.Sprintf("You accepted invite of %s", invite.School.Name),
-		Body:      fmt.Sprintf("Hello, %s! Congratulations, you created at new partner and a new workplace, cheers!", invite.Driver.Name),
-	}
-
-	msgDriver, err := ct.service.EmailStructToJSON(&emailDriver)
-	if err != nil {
-		log.Printf("error while convert email to message")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
-		return
-	}
-
-	err = ct.kafkaservice.AddMessageInQueue(c, msgDriver)
-	if err != nil {
-		log.Printf("error while adding message on queue")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
-		return
-	}
-
-	log.Print("mensagem enviada para fila -> ", msgDriver)
-
 	c.JSON(http.StatusCreated, invite)
 
 }
 
-func (ct *controller) DeleteInvite(c *gin.Context) {
+func (ct *DriverController) DeleteInvite(c *gin.Context) {
 
 	idStr := c.Param("id")
 

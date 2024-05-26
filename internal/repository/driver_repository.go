@@ -5,11 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 	"gin/types"
-
-	_ "github.com/lib/pq"
 )
 
-type DriverRepository interface {
+type DriverRepositoryInterface interface {
 	CreateDriver(ctx context.Context, driver *types.Driver) error
 	ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error)
 	UpdateDriver(ctx context.Context) error
@@ -23,16 +21,26 @@ type DriverRepository interface {
 	CreateEmployee(ctx context.Context, invite *types.Invite) error
 }
 
-func (p *Postgres) CreateDriver(ctx context.Context, driver *types.Driver) error {
+type DriverRepository struct {
+	db *sql.DB
+}
+
+func NewDriverRepository(db *sql.DB) *DriverRepository {
+	return &DriverRepository{
+		db: db,
+	}
+}
+
+func (d *DriverRepository) CreateDriver(ctx context.Context, driver *types.Driver) error {
 	sqlQuery := `INSERT INTO drivers (name, cpf, email, password, cnh, qrcode, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`
-	_, err := p.conn.Exec(sqlQuery, driver.Name, driver.CPF, driver.Email, driver.Password, driver.CNH, driver.QrCode, driver.Street, driver.Number, driver.Complement, driver.ZIP)
+	_, err := d.db.Exec(sqlQuery, driver.Name, driver.CPF, driver.Email, driver.Password, driver.CNH, driver.QrCode, driver.Street, driver.Number, driver.Complement, driver.ZIP)
 	return err
 }
 
-func (p *Postgres) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error) {
+func (d *DriverRepository) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, error) {
 	sqlQuery := `SELECT id, name, cpf, cnh, qrcode, email, street, number, zip, complement FROM drivers WHERE cnh = $1 LIMIT 1`
 	var driver types.Driver
-	err := p.conn.QueryRow(sqlQuery, *cnh).Scan(
+	err := d.db.QueryRow(sqlQuery, *cnh).Scan(
 		&driver.ID,
 		&driver.Name,
 		&driver.CPF,
@@ -50,12 +58,12 @@ func (p *Postgres) ReadDriver(ctx context.Context, cnh *string) (*types.Driver, 
 	return &driver, nil
 }
 
-func (p *Postgres) UpdateDriver(ctx context.Context) error {
+func (d *DriverRepository) UpdateDriver(ctx context.Context) error {
 	return nil
 }
 
-func (p *Postgres) DeleteDriver(ctx context.Context, cnh *string) error {
-	tx, err := p.conn.Begin()
+func (d *DriverRepository) DeleteDriver(ctx context.Context, cnh *string) error {
+	tx, err := d.db.Begin()
 	if err != nil {
 		return err
 	}
@@ -73,10 +81,10 @@ func (p *Postgres) DeleteDriver(ctx context.Context, cnh *string) error {
 	return err
 }
 
-func (p *Postgres) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
+func (d *DriverRepository) AuthDriver(ctx context.Context, driver *types.Driver) (*types.Driver, error) {
 	sqlQuery := `SELECT id, name, cpf, cnh, email, qrcode, password FROM drivers WHERE email = $1 LIMIT 1`
 	var driverData types.Driver
-	err := p.conn.QueryRow(sqlQuery, driver.Email).Scan(
+	err := d.db.QueryRow(sqlQuery, driver.Email).Scan(
 		&driverData.ID,
 		&driverData.Name,
 		&driverData.CPF,
@@ -96,10 +104,10 @@ func (p *Postgres) AuthDriver(ctx context.Context, driver *types.Driver) (*types
 	return &driverData, nil
 }
 
-func (p *Postgres) ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error) {
+func (d *DriverRepository) ReadInvite(ctx context.Context, invite_id *int) (*types.Invite, error) {
 	sqlQuery := `SELECT invite_id, requester, school, email_school, guest, driver, email_driver, status FROM invites WHERE invite_id = $1 LIMIT 1`
 	var invite types.Invite
-	err := p.conn.QueryRow(sqlQuery, *invite_id).Scan(
+	err := d.db.QueryRow(sqlQuery, *invite_id).Scan(
 		&invite.ID,
 		&invite.School.CNPJ,
 		&invite.School.Name,
@@ -115,10 +123,10 @@ func (p *Postgres) ReadInvite(ctx context.Context, invite_id *int) (*types.Invit
 	return &invite, nil
 }
 
-func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
+func (d *DriverRepository) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
 	sqlQuery := `SELECT invite_id, name_school, school, email_school, name_driver, driver, email_driver, status FROM invites WHERE status = 'pending' AND guest = $1`
 
-	rows, err := p.conn.Query(sqlQuery, *cnh)
+	rows, err := d.db.Query(sqlQuery, *cnh)
 	if err != nil {
 		return nil, err
 	}
@@ -142,15 +150,15 @@ func (p *Postgres) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Inv
 
 }
 
-func (p *Postgres) UpdateInvite(ctx context.Context, invite_id *int) error {
+func (d *DriverRepository) UpdateInvite(ctx context.Context, invite_id *int) error {
 	sqlQuery := `UPDATE invites SET status = 'accepted' WHERE invite_id = $1`
-	_, err := p.conn.Exec(sqlQuery, invite_id)
+	_, err := d.db.Exec(sqlQuery, invite_id)
 
 	return err
 }
 
-func (p *Postgres) DeleteInvite(ctx context.Context, invite_id *int) error {
-	tx, err := p.conn.Begin()
+func (d *DriverRepository) DeleteInvite(ctx context.Context, invite_id *int) error {
+	tx, err := d.db.Begin()
 	if err != nil {
 		return err
 	}
@@ -168,16 +176,16 @@ func (p *Postgres) DeleteInvite(ctx context.Context, invite_id *int) error {
 	return err
 }
 
-func (p *Postgres) CreateEmployee(ctx context.Context, invite *types.Invite) error {
+func (d *DriverRepository) CreateEmployee(ctx context.Context, invite *types.Invite) error {
 	sqlQuery := `INSERT INTO schools_drivers (name_school, school, email_school, name_driver, driver, email_driver) VALUES ($1, $2)`
-	_, err := p.conn.Exec(sqlQuery, &invite.ID, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email)
+	_, err := d.db.Exec(sqlQuery, &invite.ID, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email)
 	return err
 }
 
-func (p *Postgres) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
+func (d *DriverRepository) GetWorkplaces(ctx context.Context, cnh *string) ([]types.School, error) {
 	sqlQuery := `SELECT school_name, school, school_email FROM schools_drivers WHERE driver = $1`
 
-	rows, err := p.conn.Query(sqlQuery, *cnh)
+	rows, err := d.db.Query(sqlQuery, *cnh)
 	if err != nil {
 		return nil, err
 	}

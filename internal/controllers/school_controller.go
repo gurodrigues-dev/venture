@@ -1,16 +1,94 @@
 package controllers
 
 import (
-	"fmt"
+	"gin/config"
+	"gin/internal/service"
 	"gin/types"
+	"gin/utils"
 	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
-func (ct *controller) CreateSchool(c *gin.Context) {
+type ClaimsSchool struct {
+	CNPJ string `json:"cnpj"`
+	jwt.StandardClaims
+}
+
+type SchoolController struct {
+	schoolservice *service.SchoolService
+	driverservice *service.DriverService
+}
+
+func NewSchoolController(schoolservice *service.SchoolService, driverservice *service.DriverService) *SchoolController {
+	return &SchoolController{
+		schoolservice: schoolservice,
+		driverservice: driverservice,
+	}
+}
+
+func (ct *SchoolController) RegisterRoutes(router *gin.Engine) {
+
+	conf := config.Get()
+
+	schoolMiddleware := func(c *gin.Context) {
+
+		secret := []byte(conf.Server.Secret)
+
+		tokenString, err := c.Cookie("token")
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Sem cookie de sessão"})
+			c.Abort()
+			return
+		}
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+			c.Abort()
+			return
+		}
+
+		token, err := jwt.ParseWithClaims(tokenString, &ClaimsSchool{}, func(token *jwt.Token) (interface{}, error) {
+			return secret, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(*ClaimsSchool)
+		if !ok || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token inválido"})
+			c.Abort()
+			return
+		}
+
+		c.Set("cnpj", claims.CNPJ)
+		c.Set("isAuthenticated", true)
+		c.Next()
+
+	}
+
+	api := router.Group("api/v1")
+
+	api.POST("/school", ct.CreateSchool)
+	api.GET("/school/:cnpj", ct.ReadSchool)
+	api.GET("/school", ct.ReadAllSchools)
+	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
+	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
+	api.POST("/login/school", ct.AuthSchool)
+	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees)
+	api.GET("/school/sponsors", schoolMiddleware)
+	api.DELETE("/school/employees/:id", schoolMiddleware, ct.DeleteEmployee)
+
+}
+
+func (ct *SchoolController) CreateSchool(c *gin.Context) {
 
 	var input types.School
 
@@ -28,33 +106,11 @@ func (ct *controller) CreateSchool(c *gin.Context) {
 		return
 	}
 
-	email := types.Email{
-		Recipient: input.Email,
-		Subject:   fmt.Sprintf("Verification Email - %s", input.Name),
-		Body:      fmt.Sprintf("Hello, %s! This email was registred in Venture. Our Apprechiated your choose, the choose of technology", input.Name),
-	}
-
-	msg, err := ct.service.EmailStructToJSON(&email)
-	if err != nil {
-		log.Printf("error while convert email to message")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
-		return
-	}
-
-	log.Print("mensagem enviada para fila -> ", msg)
-
-	err = ct.kafkaservice.AddMessageInQueue(c, msg)
-	if err != nil {
-		log.Printf("error while adding message on queue")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
-		return
-	}
-
 	c.JSON(http.StatusCreated, input)
 
 }
 
-func (ct *controller) ReadSchool(c *gin.Context) {
+func (ct *SchoolController) ReadSchool(c *gin.Context) {
 
 	cnpj := c.Param("cnpj")
 
@@ -70,7 +126,7 @@ func (ct *controller) ReadSchool(c *gin.Context) {
 
 }
 
-func (ct *controller) ReadAllSchools(c *gin.Context) {
+func (ct *SchoolController) ReadAllSchools(c *gin.Context) {
 
 	cnpj, err := ct.schoolservice.ParserJwtSchool(c)
 
@@ -93,13 +149,13 @@ func (ct *controller) ReadAllSchools(c *gin.Context) {
 
 }
 
-func (ct *controller) UpdateSchool(c *gin.Context) {
+func (ct *SchoolController) UpdateSchool(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "updated w successfully"})
 
 }
 
-func (ct *controller) DeleteSchool(c *gin.Context) {
+func (ct *SchoolController) DeleteSchool(c *gin.Context) {
 
 	cnpjInterface, err := ct.schoolservice.ParserJwtSchool(c)
 
@@ -108,7 +164,7 @@ func (ct *controller) DeleteSchool(c *gin.Context) {
 		return
 	}
 
-	cnpj, err := ct.service.InterfaceToString(cnpjInterface)
+	cnpj, err := utils.InterfaceToString(cnpjInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the value isn't string"})
@@ -129,7 +185,7 @@ func (ct *controller) DeleteSchool(c *gin.Context) {
 
 }
 
-func (ct *controller) AuthSchool(c *gin.Context) {
+func (ct *SchoolController) AuthSchool(c *gin.Context) {
 
 	var input types.School
 
@@ -163,7 +219,7 @@ func (ct *controller) AuthSchool(c *gin.Context) {
 	})
 }
 
-func (ct *controller) GetEmployees(c *gin.Context) {
+func (ct *SchoolController) GetEmployees(c *gin.Context) {
 
 	cnpjInterface, err := ct.schoolservice.ParserJwtSchool(c)
 
@@ -172,7 +228,7 @@ func (ct *controller) GetEmployees(c *gin.Context) {
 		return
 	}
 
-	cnpj, err := ct.service.InterfaceToString(cnpjInterface)
+	cnpj, err := utils.InterfaceToString(cnpjInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the value isn't string"})
@@ -191,7 +247,7 @@ func (ct *controller) GetEmployees(c *gin.Context) {
 
 }
 
-func (ct *controller) DeleteEmployee(c *gin.Context) {
+func (ct *SchoolController) DeleteEmployee(c *gin.Context) {
 
 	record_idStr := c.Param("id")
 
@@ -215,7 +271,7 @@ func (ct *controller) DeleteEmployee(c *gin.Context) {
 
 }
 
-func (ct *controller) CreateInvite(c *gin.Context) {
+func (ct *SchoolController) CreateInvite(c *gin.Context) {
 
 	cnpjInterface, err := ct.schoolservice.ParserJwtSchool(c)
 
@@ -225,7 +281,7 @@ func (ct *controller) CreateInvite(c *gin.Context) {
 		return
 	}
 
-	cnpj, err := ct.service.InterfaceToString(cnpjInterface)
+	cnpj, err := utils.InterfaceToString(cnpjInterface)
 
 	if err != nil {
 		log.Printf("error to convert interface in string: %s", err.Error())
@@ -275,50 +331,6 @@ func (ct *controller) CreateInvite(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "internal server error at creating invite"})
 		return
 	}
-
-	emailSchool := types.Email{
-		Recipient: invite.School.Email,
-		Subject:   fmt.Sprintf("Invite sended to - %s", invite.Driver.Name),
-		Body:      fmt.Sprintf("Hello, %s! you just sent an invite to %s", invite.School.Email, invite.Driver.Name),
-	}
-
-	msgSchool, err := ct.service.EmailStructToJSON(&emailSchool)
-	if err != nil {
-		log.Printf("error while convert email to message")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
-		return
-	}
-
-	log.Print("mensagem enviada para fila -> ", msgSchool)
-
-	err = ct.kafkaservice.AddMessageInQueue(c, msgSchool)
-	if err != nil {
-		log.Printf("error while adding message on queue")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
-		return
-	}
-
-	emailDriver := types.Email{
-		Recipient: invite.Driver.Email,
-		Subject:   fmt.Sprintf("You received an invite of %s", invite.School.Name),
-		Body:      fmt.Sprintf("Hello, %s! This email was showing, who sended a invite for you, verify your invites on platform", invite.Driver.Name),
-	}
-
-	msgDriver, err := ct.service.EmailStructToJSON(&emailDriver)
-	if err != nil {
-		log.Printf("error while convert email to message")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to parse json email"})
-		return
-	}
-
-	err = ct.kafkaservice.AddMessageInQueue(c, msgDriver)
-	if err != nil {
-		log.Printf("error while adding message on queue")
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error to send queue"})
-		return
-	}
-
-	log.Print("mensagem enviada para fila -> ", msgDriver)
 
 	c.JSON(http.StatusOK, gin.H{"message": "invite sended was successfully"})
 

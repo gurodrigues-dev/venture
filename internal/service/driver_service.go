@@ -14,13 +14,12 @@ import (
 )
 
 type DriverService struct {
-	driverrepository repository.DriverRepository
+	driverrepository repository.DriverRepositoryInterface
+	awsrepository    repository.AWSRepository
 }
 
-func NewDriverService(repo repository.DriverRepository) *DriverService {
-	return &DriverService{
-		driverrepository: repo,
-	}
+func NewDriverService(repo repository.DriverRepositoryInterface, awsrepository repository.AWSRepository) *DriverService {
+	return &DriverService{driverrepository: repo, awsrepository: awsrepository}
 }
 
 func (ds *DriverService) CreateDriver(ctx context.Context, driver *types.Driver) error {
@@ -97,4 +96,8 @@ func (ds *DriverService) CreateTokenJWTDriver(ctx context.Context, driver *types
 	}
 
 	return jwt, nil
+}
+
+func (ds *DriverService) CreateAndSaveQrCodeInS3(ctx context.Context, cnh *string) (string, error) {
+	return ds.awsrepository.CreateAndSaveQrCodeInS3(ctx, cnh)
 }
