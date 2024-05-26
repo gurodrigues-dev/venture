@@ -2,8 +2,6 @@ package service
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"gin/config"
 	"gin/internal/repository"
@@ -39,7 +37,31 @@ func (s *ResponsibleService) DeleteResponsible(ctx context.Context, cpf *string)
 }
 
 func (s *ResponsibleService) AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error) {
-	return nil, nil
+	return s.responsiblerepository.AuthResponsible(ctx, responsible)
+}
+
+func (s *ResponsibleService) CreateChild(ctx context.Context, child *types.Child) error {
+	return s.responsiblerepository.CreateChild(ctx, child)
+}
+
+func (s *ResponsibleService) ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error) {
+	return s.responsiblerepository.ReadChildren(ctx, cpf)
+}
+
+func (s *ResponsibleService) UpdateChild(ctx context.Context) error {
+	return s.responsiblerepository.UpdateChild(ctx)
+}
+
+func (s *ResponsibleService) DeleteChild(ctx context.Context, rg *string) error {
+	return s.responsiblerepository.DeleteChild(ctx, rg)
+}
+
+func (s *ResponsibleService) CreateSponsor(ctx context.Context, rg, cnh *string) error {
+	return s.responsiblerepository.CreateSponsor(ctx, rg, cnh)
+}
+
+func (s *ResponsibleService) IsSponsor(ctx context.Context, rg *string) bool {
+	return s.responsiblerepository.IsSponsor(ctx, rg)
 }
 
 func (s *ResponsibleService) ParserJwtResponsible(ctx *gin.Context) (interface{}, error) {
@@ -79,10 +101,4 @@ func (s *ResponsibleService) InterfaceToString(value interface{}) (*string, erro
 	default:
 		return nil, fmt.Errorf("value isn't string")
 	}
-}
-
-func HashPassword(password string) string {
-	hasher := sha256.New()
-	hasher.Write([]byte(password))
-	return hex.EncodeToString(hasher.Sum(nil))
 }
