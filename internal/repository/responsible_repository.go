@@ -13,6 +13,12 @@ type ResponsibleRepositoryInterface interface {
 	UpdateResponsible(ctx context.Context) error
 	DeleteResponsible(ctx context.Context, cpf *string) error
 	AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error)
+	CreateChild(ctx context.Context, child *types.Child) error
+	ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error)
+	UpdateChild(ctx context.Context) error
+	DeleteChild(ctx context.Context, rg *string) error
+	CreateSponsor(ctx context.Context, rg, cnh *string) error
+	IsSponsor(ctx context.Context, rg *string) bool
 }
 
 type ResponsibleRepository struct {
@@ -92,4 +98,30 @@ func (r *ResponsibleRepository) AuthResponsible(ctx context.Context, responsible
 	}
 	responsibleData.Password = ""
 	return &responsibleData, nil
+}
+
+func (r *ResponsibleRepository) CreateChild(ctx context.Context, child *types.Child) error {
+	return nil
+}
+
+func (r *ResponsibleRepository) ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error) {
+	var children []types.Child
+
+	return children, nil
+}
+
+func (r *ResponsibleRepository) UpdateChild(ctx context.Context) error {
+	return nil
+}
+
+func (r *ResponsibleRepository) DeleteChild(ctx context.Context, rg *string) error {
+	return nil
+}
+
+func (r *ResponsibleRepository) CreateSponsor(ctx context.Context, rg, cnh *string) error {
+	return nil
+}
+
+func (r *ResponsibleRepository) IsSponsor(ctx context.Context, rg *string) bool {
+	return false
 }
