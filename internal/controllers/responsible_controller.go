@@ -71,9 +71,10 @@ func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
 	api := router.Group("api/v1")
 
 	api.POST("/responsible", ct.CreateResponsible)
-	api.GET("/responsible", ct.ReadResponsible)
+	api.GET("/responsible/:cpf", ct.ReadResponsible)
 	api.PATCH("/responsible", authMiddleware, ct.UpdateResponsible)
 	api.DELETE("/responsible", authMiddleware, ct.DeleteResponsible)
+	api.POST("/login/responsible", ct.AuthResponsible)
 	api.POST("/child", authMiddleware, ct.CreateChild)
 	api.GET("/child", authMiddleware, ct.ReadChildren)
 	api.PATCH("/child", authMiddleware, ct.UpdateChild)
@@ -135,14 +136,14 @@ func (ct *ResponsibleController) DeleteResponsible(c *gin.Context) {
 	err = ct.responsibleservice.DeleteResponsible(c, cpf)
 
 	if err != nil {
-		log.Printf("error whiling deleted driver: %s", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error to deleted driver"})
+		log.Printf("error whiling deleted responsible: %s", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error to deleted responsible"})
 		return
 	}
 
 	c.SetCookie("token", "", -1, "/", c.Request.Host, false, true)
 
-	c.JSON(http.StatusOK, gin.H{"message": "driver deleted w successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "responsible deleted w successfully"})
 }
 
 func (ct *ResponsibleController) AuthResponsible(c *gin.Context) {
