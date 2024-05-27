@@ -101,7 +101,24 @@ func (r *ResponsibleRepository) AuthResponsible(ctx context.Context, responsible
 }
 
 func (r *ResponsibleRepository) CreateChild(ctx context.Context, child *types.Child) error {
-	return nil
+	responsibleQuery := `SELECT id, name, cpf, email, street, number, zip, complement FROM responsibles WHERE cpf = $1 LIMIT 1`
+	var responsible types.Child
+	err := r.db.QueryRow(responsibleQuery, child.Responsible.CPF).Scan(
+		&responsible.Responsible.ID,
+		&responsible.Responsible.Name,
+		&responsible.Responsible.CPF,
+		&responsible.Responsible.Email,
+		&responsible.Responsible.Street,
+		&responsible.Responsible.Number,
+		&responsible.Responsible.ZIP,
+		&responsible.Responsible.Complement,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return err
+	}
+	sqlQuery := `INSERT INTO childrens (name, rg, responsibles, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	_, err = r.db.Exec(sqlQuery, child.Name, child.RG, responsible.Responsible.CPF, responsible.Responsible.Street, responsible.Responsible.Number, responsible.Responsible.Complement, responsible.Responsible.ZIP)
+	return err
 }
 
 func (r *ResponsibleRepository) ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error) {

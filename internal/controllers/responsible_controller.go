@@ -206,6 +206,7 @@ func (ct *ResponsibleController) CreateChild(c *gin.Context) {
 	err = ct.responsibleservice.CreateChild(c, &child)
 
 	if err != nil {
+		log.Printf("error to create child: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "error at create child"})
 		return
 	}
