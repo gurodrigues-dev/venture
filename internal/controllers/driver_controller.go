@@ -79,6 +79,9 @@ func (ct *DriverController) RegisterRoutes(router *gin.Engine) {
 	api.POST("/login/driver", ct.AuthDriver)
 	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
 	api.GET("/driver/sponsors", driverMiddleware) // yet doesnt deployed
+	api.GET("/invite", driverMiddleware, ct.ReadAllInvites)
+	api.PATCH("/invite/:id", driverMiddleware, ct.UpdateInvite)
+	api.DELETE("/invite/:id", driverMiddleware, ct.DeleteInvite)
 
 }
 

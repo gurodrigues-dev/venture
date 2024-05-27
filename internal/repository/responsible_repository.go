@@ -38,7 +38,7 @@ func (r *ResponsibleRepository) CreateResponsible(ctx context.Context, responsib
 }
 
 func (r *ResponsibleRepository) ReadResponsible(ctx context.Context, cpf *string) (*types.Responsible, error) {
-	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, complement FROM responsibles WHERE cnh = $1 LIMIT 1`
+	sqlQuery := `SELECT id, name, cpf, email, street, number, zip, complement FROM responsibles WHERE cpf = $1 LIMIT 1`
 	var responsbile types.Responsible
 	err := r.db.QueryRow(sqlQuery, *cpf).Scan(
 		&responsbile.ID,
@@ -75,7 +75,7 @@ func (r *ResponsibleRepository) DeleteResponsible(ctx context.Context, cpf *stri
 			err = tx.Commit()
 		}
 	}()
-	_, err = tx.Exec("DELETE FROM responsibles WHERE cnh = $1", *cpf)
+	_, err = tx.Exec("DELETE FROM responsibles WHERE cpf = $1", *cpf)
 	return err
 }
 

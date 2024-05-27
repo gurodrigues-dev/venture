@@ -85,6 +85,7 @@ func (ct *SchoolController) RegisterRoutes(router *gin.Engine) {
 	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees)
 	api.GET("/school/sponsors", schoolMiddleware)
 	api.DELETE("/school/employees/:id", schoolMiddleware, ct.DeleteEmployee)
+	api.POST("/invite", schoolMiddleware, ct.CreateInvite)
 
 }
 
