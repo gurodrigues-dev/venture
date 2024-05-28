@@ -116,13 +116,34 @@ func (r *ResponsibleRepository) CreateChild(ctx context.Context, child *types.Ch
 	if err != nil || err == sql.ErrNoRows {
 		return err
 	}
-	sqlQuery := `INSERT INTO childrens (name, rg, responsibles, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err = r.db.Exec(sqlQuery, child.Name, child.RG, responsible.Responsible.CPF, responsible.Responsible.Street, responsible.Responsible.Number, responsible.Responsible.Complement, responsible.Responsible.ZIP)
+	sqlQuery := `INSERT INTO children (name, rg, shift, responsibles, street, number, complement, zip) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err = r.db.Exec(sqlQuery, child.Name, child.RG, child.Shift, responsible.Responsible.CPF, responsible.Responsible.Street, responsible.Responsible.Number, responsible.Responsible.Complement, responsible.Responsible.ZIP)
 	return err
 }
 
 func (r *ResponsibleRepository) ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error) {
+
+	sqlQuery := `SELECT name, rg, shift, street, number, complement, zip FROM children WHERE responsibles = $1`
+
+	rows, err := r.db.Query(sqlQuery, *cpf)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
 	var children []types.Child
+
+	for rows.Next() {
+		var child types.Child
+		err := rows.Scan(&child.Name, &child.RG, &child.Shift, &child.Responsible.Street, &child.Responsible.Number, &child.Responsible.Complement, &child.Responsible.ZIP)
+		if err != nil {
+			return nil, err
+		}
+		children = append(children, child)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return children, nil
 }
@@ -132,7 +153,22 @@ func (r *ResponsibleRepository) UpdateChild(ctx context.Context) error {
 }
 
 func (r *ResponsibleRepository) DeleteChild(ctx context.Context, rg *string) error {
-	return nil
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		} else {
+			err = tx.Commit()
+		}
+	}()
+	_, err = tx.Exec("DELETE FROM children WHERE rg = $1", *rg)
+	return err
 }
 
 func (r *ResponsibleRepository) CreateSponsor(ctx context.Context, rg, cnh *string) error {
