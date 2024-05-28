@@ -82,6 +82,7 @@ func (ct *DriverController) RegisterRoutes(router *gin.Engine) {
 	api.GET("/invite", driverMiddleware, ct.ReadAllInvites)
 	api.PATCH("/invite/:id", driverMiddleware, ct.UpdateInvite)
 	api.DELETE("/invite/:id", driverMiddleware, ct.DeleteInvite)
+	api.GET("/sponsors/shift/:shift", driverMiddleware) // verificar todos os alunos de um horário
 
 }
 
