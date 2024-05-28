@@ -18,5 +18,6 @@ type Child struct {
 	Name        string `json:"child"`
 	School      string `json:"school"`
 	Driver      string `json:"driver"`
+	Shift       string `json:"shift"`
 	Responsible Responsible
 }
