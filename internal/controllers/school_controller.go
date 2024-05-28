@@ -82,8 +82,9 @@ func (ct *SchoolController) RegisterRoutes(router *gin.Engine) {
 	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
 	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
 	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees)
-	api.GET("/school/sponsors", schoolMiddleware)
+	api.GET("/school/drivers/:cnpj")                                // mar aberto -> verificar todos os motoristas de uma escola
+	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees) // verificar todos os motoristas
+	api.GET("/school/sponsors", schoolMiddleware)                   // verificar todos os alunos
 	api.DELETE("/school/employees/:id", schoolMiddleware, ct.DeleteEmployee)
 	api.POST("/invite", schoolMiddleware, ct.CreateInvite)
 

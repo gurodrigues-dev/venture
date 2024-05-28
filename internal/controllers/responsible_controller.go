@@ -78,7 +78,7 @@ func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
 	api.POST("/child", authMiddleware, ct.CreateChild)
 	api.GET("/child", authMiddleware, ct.ReadChildren)
 	api.PATCH("/child", authMiddleware, ct.UpdateChild)
-	api.DELETE("/child", authMiddleware, ct.DeleteChild)
+	api.DELETE("/child/:rg", authMiddleware, ct.DeleteChild)
 	api.POST("/sponsor", authMiddleware, ct.CreateSponsor)
 
 }
@@ -206,6 +206,7 @@ func (ct *ResponsibleController) CreateChild(c *gin.Context) {
 	err = ct.responsibleservice.CreateChild(c, &child)
 
 	if err != nil {
+		log.Printf("error to create child: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "error at create child"})
 		return
 	}
@@ -219,6 +220,7 @@ func (ct *ResponsibleController) ReadChildren(c *gin.Context) {
 	cpfInterface, err := ct.responsibleservice.ParserJwtResponsible(c)
 
 	if err != nil {
+		log.Printf("error to parse jwt: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "cpf of cookie don't found"})
 		return
 	}
@@ -226,6 +228,7 @@ func (ct *ResponsibleController) ReadChildren(c *gin.Context) {
 	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
 
 	if err != nil {
+		log.Printf("error to parse interface: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
 		return
 	}
@@ -233,6 +236,7 @@ func (ct *ResponsibleController) ReadChildren(c *gin.Context) {
 	children, err := ct.responsibleservice.ReadChildren(c, cpf)
 
 	if err != nil {
+		log.Printf("error to search children: %s", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "children don't found"})
 		return
 	}
@@ -268,6 +272,10 @@ func (ct *ResponsibleController) DeleteChild(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "deleting w success"})
+
+}
+
+func (ct *ResponsibleController) CreateStudent(c *gin.Context) {
 
 }
 

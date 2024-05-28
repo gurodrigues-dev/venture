@@ -15,8 +15,9 @@ type Responsible struct {
 // childrens of responsible
 type Child struct {
 	RG          string `json:"rg"`
-	Name        string `json:"name"`
+	Name        string `json:"child"`
 	School      string `json:"school"`
 	Driver      string `json:"driver"`
+	Shift       string `json:"shift"`
 	Responsible Responsible
 }
