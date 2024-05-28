@@ -27,10 +27,11 @@ CREATE TABLE IF NOT EXISTS drivers (
 );
 
 -- Tabela children
-CREATE TABLE IF NOT EXISTS childrens (
+CREATE TABLE IF NOT EXISTS children (
     id SERIAL,
     rg VARCHAR(20) PRIMARY KEY,
     responsibles VARCHAR(14),
+    shift VARCHAR(20) NOT NULL,
     name VARCHAR(100),
     school VARCHAR(100),
     driver VARCHAR(100),
