@@ -94,10 +94,10 @@ CREATE TABLE IF NOT EXISTS responsibles_schools (
 CREATE TABLE IF NOT EXISTS invites (
     invite_id SERIAL PRIMARY KEY,
     requester VARCHAR(14), -- school
-    school VARCHAR(100) NOT NULL,
+    school VARCHAR(100) NOT NULL, --name_school
     email_school VARCHAR(100) NOT NULL,
     guest VARCHAR(14), -- driver
-    driver VARCHAR(100) NOT NULL,
+    driver VARCHAR(100) NOT NULL, --name_driver
     email_driver VARCHAR(100) NOT NULL,
     status TEXT NOT NULL,
     FOREIGN KEY (requester) REFERENCES schools(cnpj),
