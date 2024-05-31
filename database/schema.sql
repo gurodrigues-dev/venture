@@ -70,20 +70,33 @@ CREATE TABLE IF NOT EXISTS schools_drivers (
 
 -- Tabela responsibles_drivers
 CREATE TABLE IF NOT EXISTS responsibles_drivers (
-    registration SERIAL PRIMARY KEY,
+    record SERIAL PRIMARY KEY,
+    name_driver VARCHAR(50),
     driver VARCHAR(14),
+    name_child VARCHAR(50),
     child VARCHAR(20),
     FOREIGN KEY (driver) REFERENCES drivers(cnh),
-    FOREIGN KEY (child) REFERENCES childrens(rg)
+    FOREIGN KEY (child) REFERENCES children(rg)
+);
+
+-- Tabela responsibles_schools
+CREATE TABLE IF NOT EXISTS responsibles_schools (
+    record SERIAL PRIMARY KEY,
+    name_school VARCHAR(100) NOT NULL,
+    school VARCHAR(14) NOT NULL,
+    name_child VARCHAR(50) NOT NULL,
+    child VARCHAR(10) NOT NULL,
+    FOREIGN KEY (school) REFERENCES schools(cnpj),
+    FOREIGN KEY (child) REFERENCES children(rg)
 );
 
 -- Tabela de Convites
 CREATE TABLE IF NOT EXISTS invites (
     invite_id SERIAL PRIMARY KEY,
-    requester VARCHAR(14),
+    requester VARCHAR(14), -- school
     school VARCHAR(100) NOT NULL,
     email_school VARCHAR(100) NOT NULL,
-    guest VARCHAR(14),
+    guest VARCHAR(14), -- driver
     driver VARCHAR(100) NOT NULL,
     email_driver VARCHAR(100) NOT NULL,
     status TEXT NOT NULL,
