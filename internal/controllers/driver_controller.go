@@ -72,17 +72,17 @@ func (ct *DriverController) RegisterRoutes(router *gin.Engine) {
 
 	api := router.Group("api/v1")
 
-	api.POST("/driver", ct.CreateDriver)
-	api.GET("/driver/:cnh", ct.ReadDriver)
-	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)
-	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)
-	api.POST("/login/driver", ct.AuthDriver)
-	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces)
-	api.GET("/driver/sponsors", driverMiddleware) // yet doesnt deployed
-	api.GET("/invite", driverMiddleware, ct.ReadAllInvites)
-	api.PATCH("/invite/:id", driverMiddleware, ct.UpdateInvite)
-	api.DELETE("/invite/:id", driverMiddleware, ct.DeleteInvite)
-	api.GET("/sponsors/shift/:shift", driverMiddleware) // verificar todos os alunos de um horário
+	api.POST("/driver", ct.CreateDriver)                                // criar motorista
+	api.GET("/driver/:cnh", ct.ReadDriver)                              // perfil de motorista
+	api.PATCH("/driver", driverMiddleware, ct.UpdateDriver)             // atualizar minha conta
+	api.DELETE("/driver", driverMiddleware, ct.DeleteDriver)            // deletar minha conta de motorista
+	api.POST("/login/driver", ct.AuthDriver)                            // login do motorista
+	api.GET("/driver/partners", driverMiddleware, ct.CurrentWorkplaces) // verificar todas as escolas que possuo vinculo
+	api.GET("/driver/sponsors", driverMiddleware)                       // verificar todos os meus alunos
+	api.GET("/invite", driverMiddleware, ct.ReadAllInvites)             // verificar todos os convites feitos por escolas
+	api.PATCH("/invite/:id", driverMiddleware, ct.UpdateInvite)         // aceitar um convite de escola
+	api.DELETE("/invite/:id", driverMiddleware, ct.DeleteInvite)        // recusar um convite de escola
+	api.GET("/sponsors/shift/:shift", driverMiddleware)                 // verificar todos os sponsors por turma
 
 }
 
