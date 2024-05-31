@@ -127,7 +127,7 @@ func (s *SchoolRepository) AuthSchool(ctx context.Context, school *types.School)
 
 func (s *SchoolRepository) CreateInvite(ctx context.Context, invite *types.Invite) error {
 	log.Print(invite)
-	sqlQuery := `INSERT INTO invites (requester, school, email_school, guest, driver, email_driver, status) VALUES ($1, $2, $3)`
+	sqlQuery := `INSERT INTO invites (requester, school, email_school, guest, driver, email_driver, status) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 	_, err := s.db.Exec(sqlQuery, invite.School.CNPJ, invite.School.Name, invite.School.Email, invite.Driver.CNH, invite.Driver.Name, invite.Driver.Email, "pending")
 	return err
 }
@@ -164,7 +164,7 @@ func (s *SchoolRepository) GetEmployees(ctx context.Context, cnpj *string) ([]ty
 
 	for rows.Next() {
 		var driver types.Driver
-		err := rows.Scan(&driver.ID, &driver.CNH)
+		err := rows.Scan(&driver.ID, &driver.Name, &driver.CNH, &driver.Email)
 		if err != nil {
 			return nil, err
 		}
@@ -186,12 +186,12 @@ func (s *SchoolRepository) IsEmployee(ctx context.Context, cnh *string) error {
 		&driver.CNH,
 	)
 
-	if err != nil && err != sql.ErrNoRows {
-		return err
-	}
-
 	if err == sql.ErrNoRows {
 		return nil
+	}
+
+	if err != nil && err != sql.ErrNoRows {
+		return err
 	}
 
 	return fmt.Errorf("school and driver have a connection")

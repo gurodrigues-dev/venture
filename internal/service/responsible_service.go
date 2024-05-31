@@ -48,16 +48,12 @@ func (s *ResponsibleService) ReadChildren(ctx context.Context, cpf *string) ([]t
 	return s.responsiblerepository.ReadChildren(ctx, cpf)
 }
 
-func (s *ResponsibleService) UpdateChild(ctx context.Context) error {
-	return s.responsiblerepository.UpdateChild(ctx)
+func (s *ResponsibleService) UpdateChild(ctx context.Context, child *types.Child) error {
+	return s.responsiblerepository.UpdateChild(ctx, child)
 }
 
 func (s *ResponsibleService) DeleteChild(ctx context.Context, rg *string) error {
 	return s.responsiblerepository.DeleteChild(ctx, rg)
-}
-
-func (s *ResponsibleService) CreateSponsor(ctx context.Context, rg, cnh *string) error {
-	return s.responsiblerepository.CreateSponsor(ctx, rg, cnh)
 }
 
 func (s *ResponsibleService) IsSponsor(ctx context.Context, rg *string) bool {

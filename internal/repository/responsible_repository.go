@@ -15,9 +15,8 @@ type ResponsibleRepositoryInterface interface {
 	AuthResponsible(ctx context.Context, responsible *types.Responsible) (*types.Responsible, error)
 	CreateChild(ctx context.Context, child *types.Child) error
 	ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error)
-	UpdateChild(ctx context.Context) error
+	UpdateChild(ctx context.Context, child *types.Child) error
 	DeleteChild(ctx context.Context, rg *string) error
-	CreateSponsor(ctx context.Context, rg, cnh *string) error
 	IsSponsor(ctx context.Context, rg *string) bool
 }
 
@@ -148,8 +147,48 @@ func (r *ResponsibleRepository) ReadChildren(ctx context.Context, cpf *string) (
 	return children, nil
 }
 
-func (r *ResponsibleRepository) UpdateChild(ctx context.Context) error {
-	return nil
+func (r *ResponsibleRepository) UpdateChild(ctx context.Context, child *types.Child) error {
+	sqlQuery := `SELECT name, shift, driver, school WHERE rg = $1 LIMIT 1`
+	var childFound types.Child
+	err := r.db.QueryRow(sqlQuery, child.RG).Scan(
+		&childFound.Name,
+		&childFound.Shift,
+		&childFound.Driver,
+		&childFound.School,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return err
+	}
+
+	if childFound.Name != child.Name {
+		_, err := r.db.Exec("UPDATE children SET name = $1 WHERE rg = $2", child.Name, child.RG)
+		if err != nil {
+			return err
+		}
+	}
+
+	if childFound.Shift != child.Shift {
+		_, err := r.db.Exec("UPDATE children SET shift = $1 WHERE rg = $2", child.Shift, child.RG)
+		if err != nil {
+			return err
+		}
+	}
+
+	if childFound.Driver != child.Driver {
+		_, err := r.db.Exec("UPDATE children SET driver = $1 WHERE rg = $2", child.Driver, child.RG)
+		if err != nil {
+			return err
+		}
+	}
+
+	if childFound.School != child.School {
+		_, err := r.db.Exec("UPDATE children SET school = $1 WHERE rg = $2", child.School, child.RG)
+		if err != nil {
+			return err
+		}
+	}
+
+	return err
 }
 
 func (r *ResponsibleRepository) DeleteChild(ctx context.Context, rg *string) error {
@@ -169,10 +208,6 @@ func (r *ResponsibleRepository) DeleteChild(ctx context.Context, rg *string) err
 	}()
 	_, err = tx.Exec("DELETE FROM children WHERE rg = $1", *rg)
 	return err
-}
-
-func (r *ResponsibleRepository) CreateSponsor(ctx context.Context, rg, cnh *string) error {
-	return nil
 }
 
 func (r *ResponsibleRepository) IsSponsor(ctx context.Context, rg *string) bool {

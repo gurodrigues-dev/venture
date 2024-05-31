@@ -70,16 +70,20 @@ func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
 
 	api := router.Group("api/v1")
 
-	api.POST("/responsible", ct.CreateResponsible)
-	api.GET("/responsible/:cpf", ct.ReadResponsible)
-	api.PATCH("/responsible", authMiddleware, ct.UpdateResponsible)
-	api.DELETE("/responsible", authMiddleware, ct.DeleteResponsible)
-	api.POST("/login/responsible", ct.AuthResponsible)
-	api.POST("/child", authMiddleware, ct.CreateChild)
-	api.GET("/child", authMiddleware, ct.ReadChildren)
-	api.PATCH("/child", authMiddleware, ct.UpdateChild)
-	api.DELETE("/child/:rg", authMiddleware, ct.DeleteChild)
-	api.POST("/sponsor", authMiddleware, ct.CreateSponsor)
+	api.POST("/responsible", ct.CreateResponsible)                   // criar conta
+	api.GET("/responsible/:cpf", ct.ReadResponsible)                 // entrar no perfil
+	api.PATCH("/responsible", authMiddleware, ct.UpdateResponsible)  // atualizar conta
+	api.DELETE("/responsible", authMiddleware, ct.DeleteResponsible) // deletar minha conta
+	api.POST("/login/responsible", ct.AuthResponsible)               // login de responsavel
+	api.POST("/child", authMiddleware, ct.CreateChild)               // registrar filho
+	api.GET("/child", authMiddleware, ct.ReadChildren)               // verificar todos os filhos
+	api.PATCH("/child", authMiddleware, ct.UpdateChild)              // atualizar infos sobre o filho
+	api.DELETE("/child/:rg", authMiddleware, ct.DeleteChild)         // deletar um filho
+	api.GET("/:rg/schools", authMiddleware)                          // verificar todas as escolas pára registrar meu filho
+	api.GET("/:rg/:cnpj/drivers", authMiddleware)                    // verificar todos os motoristas da escola para registrar meu filho
+	api.GET("/:rg/:cnpj/:cnh", authMiddleware)                       // verificando infos sobre um motorista pra continuar o registro
+	api.POST("/:rg/:cnpj/:cnh", authMiddleware)                      // criando uma matricula na escola e assinando contrato com motorista
+	api.DELETE("/sponsor/:id", authMiddleware)                       // deletar vinculo com motorista e escola
 
 }
 
@@ -275,10 +279,22 @@ func (ct *ResponsibleController) DeleteChild(c *gin.Context) {
 
 }
 
-func (ct *ResponsibleController) CreateStudent(c *gin.Context) {
+func (ct *ResponsibleController) GetSchools(c *gin.Context) {
+
+}
+
+func (ct *ResponsibleController) GetDriversInSchools(c *gin.Context) {
+
+}
+
+func (ct *ResponsibleController) GetDriver(c *gin.Context) {
 
 }
 
 func (ct *ResponsibleController) CreateSponsor(c *gin.Context) {
+
+}
+
+func (ct *ResponsibleController) DeleteSponsor(c *gin.Context) {
 
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gin/config"
 	"gin/internal/service"
 	"gin/types"
@@ -76,18 +77,16 @@ func (ct *SchoolController) RegisterRoutes(router *gin.Engine) {
 
 	api := router.Group("api/v1")
 
-	api.POST("/school", ct.CreateSchool)
-	api.GET("/school/:cnpj", ct.ReadSchool)
-	api.GET("/school", ct.ReadAllSchools)
-	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)
-	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)
-	api.POST("/login/school", ct.AuthSchool)
-	api.GET("/school/drivers/:cnpj")                                // mar aberto -> verificar todos os motoristas de uma escola
-	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees) // verificar todos os motoristas
-	api.GET("/school/sponsors", schoolMiddleware)                   // verificar todos os alunos
-	api.DELETE("/school/employees/:id", schoolMiddleware, ct.DeleteEmployee)
-	api.POST("/invite", schoolMiddleware, ct.CreateInvite)
-
+	api.POST("/school", ct.CreateSchool)                                     // criar uma escola
+	api.GET("/school/:cnpj", ct.ReadSchool)                                  // buscar uma escola em especifico
+	api.GET("/school", ct.ReadAllSchools)                                    // buscar todas as escolas
+	api.PATCH("/school", schoolMiddleware, ct.UpdateSchool)                  // atualizar algum dado especifico
+	api.DELETE("/school", schoolMiddleware, ct.DeleteSchool)                 // deletar propria conta
+	api.POST("/login/school", ct.AuthSchool)                                 // logar como escola
+	api.GET("/school/employees", schoolMiddleware, ct.GetEmployees)          // verificar todos os motoristas
+	api.GET("/school/sponsors", schoolMiddleware)                            // verificar todos os alunos
+	api.DELETE("/school/employees/:id", schoolMiddleware, ct.DeleteEmployee) // escola gerenciando e podendo excluir seus motoristas
+	api.POST("/invite", schoolMiddleware, ct.CreateInvite)                   // escola convidando motorista
 }
 
 func (ct *SchoolController) CreateSchool(c *gin.Context) {
@@ -129,15 +128,6 @@ func (ct *SchoolController) ReadSchool(c *gin.Context) {
 }
 
 func (ct *SchoolController) ReadAllSchools(c *gin.Context) {
-
-	cnpj, err := ct.schoolservice.ParserJwtSchool(c)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, "cnpj of cookie don't found")
-		return
-	}
-
-	log.Print("consulting page -->", cnpj)
 
 	schools, err := ct.schoolservice.ReadAllSchools(c)
 
@@ -336,4 +326,23 @@ func (ct *SchoolController) CreateInvite(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "invite sended was successfully"})
 
+}
+
+func (ct *SchoolController) GetSponsors(c *gin.Context) {
+
+	cnpjInterface, err := ct.schoolservice.ParserJwtSchool(c)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "cnpj of cookie don't found"})
+		return
+	}
+
+	cnpj, err := utils.InterfaceToString(cnpjInterface)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "the value isn't string"})
+		return
+	}
+
+	fmt.Println(cnpj)
 }
