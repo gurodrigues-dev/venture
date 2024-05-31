@@ -124,7 +124,7 @@ func (d *DriverRepository) ReadInvite(ctx context.Context, invite_id *int) (*typ
 }
 
 func (d *DriverRepository) ReadAllInvites(ctx context.Context, cnh *string) ([]types.Invite, error) {
-	sqlQuery := `SELECT invite_id, name_school, school, email_school, name_driver, driver, email_driver, status FROM invites WHERE status = 'pending' AND guest = $1`
+	sqlQuery := `SELECT invite_id, school, requester, email_school, driver, guest, email_driver, status FROM invites WHERE status = 'pending' AND guest = $1`
 
 	rows, err := d.db.Query(sqlQuery, *cnh)
 	if err != nil {
@@ -136,7 +136,7 @@ func (d *DriverRepository) ReadAllInvites(ctx context.Context, cnh *string) ([]t
 
 	for rows.Next() {
 		var invite types.Invite
-		err := rows.Scan(&invite.ID, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email, &invite.Status)
+		err := rows.Scan(&invite.ID, &invite.School.Name, &invite.School.CNPJ, &invite.School.Email, &invite.Driver.Name, &invite.Driver.CNH, &invite.Driver.Email, &invite.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -177,8 +177,8 @@ func (d *DriverRepository) DeleteInvite(ctx context.Context, invite_id *int) err
 }
 
 func (d *DriverRepository) CreateEmployee(ctx context.Context, invite *types.Invite) error {
-	sqlQuery := `INSERT INTO schools_drivers (name_school, school, email_school, name_driver, driver, email_driver) VALUES ($1, $2)`
-	_, err := d.db.Exec(sqlQuery, &invite.ID, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email)
+	sqlQuery := `INSERT INTO schools_drivers (name_school, school, email_school, name_driver, driver, email_driver) VALUES ($1, $2, $3, $4, $5, $6)`
+	_, err := d.db.Exec(sqlQuery, invite.School.Name, invite.School.CNPJ, invite.School.Email, invite.Driver.Name, invite.Driver.CNH, invite.Driver.Email)
 	return err
 }
 
