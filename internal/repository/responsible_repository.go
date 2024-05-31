@@ -17,7 +17,6 @@ type ResponsibleRepositoryInterface interface {
 	ReadChildren(ctx context.Context, cpf *string) ([]types.Child, error)
 	UpdateChild(ctx context.Context, child *types.Child) error
 	DeleteChild(ctx context.Context, rg *string) error
-	CreateStudentAndSponsor(ctx context.Context, sponsor *types.Sponsor) error
 	IsSponsor(ctx context.Context, rg *string) bool
 }
 
