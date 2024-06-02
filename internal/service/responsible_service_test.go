@@ -68,3 +68,47 @@ func TestCreateResponsible(t *testing.T) {
 		t.Errorf("Erro ao criar responsável: %v", err)
 	}
 }
+
+func TestReadResponsible(t *testing.T) {
+
+}
+
+func TestUpdateResponsible(t *testing.T) {
+
+}
+
+func TestDeleteResponsible(t *testing.T) {
+
+}
+
+func TestAuthResponsible(t *testing.T) {
+
+}
+
+func TestCreateChild(t *testing.T) {
+
+}
+
+func TestReadChildren(t *testing.T) {
+
+}
+
+func TestUpdateChild(t *testing.T) {
+
+}
+
+func TestDeleteChild(t *testing.T) {
+
+}
+
+func TestIsSponsor(t *testing.T) {
+
+}
+
+func TestParserJwtResponsible(t *testing.T) {
+
+}
+
+func TestCreateTokenJWTResponsible(t *testing.T) {
+
+}
