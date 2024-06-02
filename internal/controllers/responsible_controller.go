@@ -4,6 +4,7 @@ import (
 	"gin/config"
 	"gin/internal/service"
 	"gin/types"
+	"gin/utils"
 	"log"
 	"net/http"
 
@@ -130,7 +131,7 @@ func (ct *ResponsibleController) DeleteResponsible(c *gin.Context) {
 		return
 	}
 
-	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+	cpf, err := utils.InterfaceToString(cpfInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
@@ -198,7 +199,7 @@ func (ct *ResponsibleController) CreateChild(c *gin.Context) {
 		return
 	}
 
-	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+	cpf, err := utils.InterfaceToString(cpfInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
@@ -229,7 +230,7 @@ func (ct *ResponsibleController) ReadChildren(c *gin.Context) {
 		return
 	}
 
-	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+	cpf, err := utils.InterfaceToString(cpfInterface)
 
 	if err != nil {
 		log.Printf("error to parse interface: %s", err.Error())
