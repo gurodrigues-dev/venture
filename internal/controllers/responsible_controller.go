@@ -4,6 +4,7 @@ import (
 	"gin/config"
 	"gin/internal/service"
 	"gin/types"
+	"gin/utils"
 	"log"
 	"net/http"
 
@@ -70,20 +71,20 @@ func (ct *ResponsibleController) RegisterRoutes(router *gin.Engine) {
 
 	api := router.Group("api/v1")
 
-	api.POST("/responsible", ct.CreateResponsible)                   // criar conta
-	api.GET("/responsible/:cpf", ct.ReadResponsible)                 // entrar no perfil
-	api.PATCH("/responsible", authMiddleware, ct.UpdateResponsible)  // atualizar conta
-	api.DELETE("/responsible", authMiddleware, ct.DeleteResponsible) // deletar minha conta
-	api.POST("/login/responsible", ct.AuthResponsible)               // login de responsavel
-	api.POST("/child", authMiddleware, ct.CreateChild)               // registrar filho
-	api.GET("/child", authMiddleware, ct.ReadChildren)               // verificar todos os filhos
-	api.PATCH("/child", authMiddleware, ct.UpdateChild)              // atualizar infos sobre o filho
-	api.DELETE("/child/:rg", authMiddleware, ct.DeleteChild)         // deletar um filho
-	api.GET("/:rg/schools", authMiddleware)                          // verificar todas as escolas pára registrar meu filho
-	api.GET("/:rg/:cnpj/drivers", authMiddleware)                    // verificar todos os motoristas da escola para registrar meu filho
-	api.GET("/:rg/:cnpj/:cnh", authMiddleware)                       // verificando infos sobre um motorista pra continuar o registro
-	api.POST("/:rg/:cnpj/:cnh", authMiddleware)                      // criando uma matricula na escola e assinando contrato com motorista
-	api.DELETE("/sponsor/:id", authMiddleware)                       // deletar vinculo com motorista e escola
+	api.POST("/responsible", ct.CreateResponsible)                        // criar conta
+	api.GET("/responsible/:cpf", ct.ReadResponsible)                      // entrar no perfil
+	api.PATCH("/responsible", authMiddleware, ct.UpdateResponsible)       // atualizar conta
+	api.DELETE("/responsible", authMiddleware, ct.DeleteResponsible)      // deletar minha conta
+	api.POST("/login/responsible", ct.AuthResponsible)                    // login de responsavel
+	api.POST("/child", authMiddleware, ct.CreateChild)                    // registrar filho
+	api.GET("/child", authMiddleware, ct.ReadChildren)                    // verificar todos os filhos
+	api.PATCH("/child", authMiddleware, ct.UpdateChild)                   // atualizar infos sobre o filho
+	api.DELETE("/child/:rg", authMiddleware, ct.DeleteChild)              // deletar um filho
+	api.GET("/:rg/schools", authMiddleware, ct.GetSchools)                // verificar todas as escolas pára registrar meu filho
+	api.GET("/:rg/:cnpj/drivers", authMiddleware, ct.GetDriversInSchools) // verificar todos os motoristas da escola para registrar meu filho
+	api.GET("/:rg/:cnpj/:cnh", authMiddleware, ct.GetDriver)              // verificando infos sobre um motorista pra continuar o registro
+	api.POST("/:rg/:cnpj/:cnh", authMiddleware, ct.CreateSponsor)         // criando uma matricula na escola e assinando contrato com motorista
+	api.DELETE("/sponsor/:id", authMiddleware, ct.DeleteSponsor)          // deletar vinculo com motorista e escola
 
 }
 
@@ -130,7 +131,7 @@ func (ct *ResponsibleController) DeleteResponsible(c *gin.Context) {
 		return
 	}
 
-	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+	cpf, err := utils.InterfaceToString(cpfInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
@@ -198,7 +199,7 @@ func (ct *ResponsibleController) CreateChild(c *gin.Context) {
 		return
 	}
 
-	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+	cpf, err := utils.InterfaceToString(cpfInterface)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "the cpf value isn't string"})
@@ -229,7 +230,7 @@ func (ct *ResponsibleController) ReadChildren(c *gin.Context) {
 		return
 	}
 
-	cpf, err := ct.responsibleservice.InterfaceToString(cpfInterface)
+	cpf, err := utils.InterfaceToString(cpfInterface)
 
 	if err != nil {
 		log.Printf("error to parse interface: %s", err.Error())
