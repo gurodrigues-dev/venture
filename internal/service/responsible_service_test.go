@@ -52,6 +52,7 @@ func TestCreateResponsible(t *testing.T) {
 	defer db.Close()
 
 	responsibleRepository := repository.NewResponsibleRepository(db)
+
 	responsibleService := NewResponsibleService(responsibleRepository)
 
 	responsible := mockResponsible()
@@ -70,6 +71,37 @@ func TestCreateResponsible(t *testing.T) {
 }
 
 func TestReadResponsible(t *testing.T) {
+
+	config, err := config.Load("../../config/config.yaml")
+	if err != nil {
+		t.Fatalf("falha ao carregar a configuração: %v", err)
+	}
+
+	db, err := sql.Open("postgres", newPostgres(config.Database))
+	if err != nil {
+		t.Fatalf("falha ao conectar ao banco de dados: %v", err)
+	}
+	defer db.Close()
+
+	responsibleRepository := repository.NewResponsibleRepository(db)
+
+	responsibleService := NewResponsibleService(responsibleRepository)
+
+	responsibleMock := mockResponsible()
+
+	responsibleMock.Password = ""
+
+	responsibleDatabase, err := responsibleService.ReadResponsible(context.Background(), &responsibleMock.CPF)
+
+	if err != nil {
+		t.Errorf("Erro ao fazer leitura do responsible: %v", err.Error())
+	}
+
+	responsibleMock.ID = responsibleDatabase.ID
+
+	if *responsibleMock != *responsibleDatabase {
+		t.Error("Mock é diferente do user retornado do banco")
+	}
 
 }
 
