@@ -647,4 +647,4 @@ Recuse o convite de uma escola
 
 # Arquitetura
 
-![8137cb5a-3b22-4e0c-b6a0-c28f890e132e](https://github.com/gurodrigues-dev/venture/assets/83222330/fa2c214a-88dd-41a1-ba43-1b41bb564e61)
+![8137cb5a-3b22-4e0c-b6a0-c28f890e132e](https://i.ibb.co/bF8Q99M/arquitetura-venture.png)
