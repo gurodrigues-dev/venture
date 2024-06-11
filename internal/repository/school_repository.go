@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"gin/types"
+	"gin/utils"
 	"log"
 )
 
@@ -12,7 +13,7 @@ type SchoolRepositoryInterface interface {
 	CreateSchool(ctx context.Context, school *types.School) error
 	ReadSchool(ctx context.Context, cnpj *string) (*types.School, error)
 	ReadAllSchools(ctx context.Context) ([]types.School, error)
-	UpdateSchool(ctx context.Context) error
+	UpdateSchool(ctx context.Context, school *types.School) error
 	DeleteSchool(ctx context.Context, cnpj *string) error
 	AuthSchool(ctx context.Context, school *types.School) (*types.School, error)
 	CreateInvite(ctx context.Context, invite *types.Invite) error
@@ -81,8 +82,46 @@ func (s *SchoolRepository) ReadAllSchools(ctx context.Context) ([]types.School, 
 	return schools, nil
 }
 
-func (s *SchoolRepository) UpdateSchool(ctx context.Context) error {
-	return nil
+func (s *SchoolRepository) UpdateSchool(ctx context.Context, school *types.School) error {
+	sqlQuery := `SELECT name, email, password, street, number, zip FROM schools WHERE cnpj = $1 LIMIT 1`
+
+	var currentSchool types.School
+	err := s.db.QueryRow(sqlQuery, &school.CNPJ).Scan(
+		&currentSchool.Name,
+		&currentSchool.Email,
+		&currentSchool.Password,
+		&currentSchool.Street,
+		&currentSchool.Number,
+		&currentSchool.ZIP,
+	)
+	if err != nil || err == sql.ErrNoRows {
+		return err
+	}
+
+	if school.Name != "" && school.Name != currentSchool.Name {
+		currentSchool.Name = school.Name
+	}
+	if school.Email != "" && school.Email != currentSchool.Email {
+		currentSchool.Email = school.Email
+	}
+	if school.Password != "" && school.Password != currentSchool.Password {
+		school.Password = utils.HashPassword(school.Password)
+		currentSchool.Password = school.Password
+	}
+	if school.Street != "" && school.Street != currentSchool.Street {
+		currentSchool.Street = school.Street
+	}
+	if school.Number != "" && school.Number != currentSchool.Number {
+		currentSchool.Number = school.Number
+	}
+	if school.ZIP != "" && school.ZIP != currentSchool.ZIP {
+		currentSchool.ZIP = school.ZIP
+	}
+
+	sqlQueryUpdate := `UPDATE schools SET name = $1, email = $2, password = $3, street = $4, number = $5, zip = $6 WHERE cnpj = $7`
+	_, err = s.db.ExecContext(ctx, sqlQueryUpdate, currentSchool.Name, currentSchool.Email, currentSchool.Password, currentSchool.Street, currentSchool.Number, currentSchool.ZIP, &school.CNPJ)
+	return err
+
 }
 
 func (s *SchoolRepository) DeleteSchool(ctx context.Context, cnpj *string) error {

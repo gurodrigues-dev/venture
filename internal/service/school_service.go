@@ -34,8 +34,8 @@ func (s *SchoolService) ReadAllSchools(ctx context.Context) ([]types.School, err
 	return s.schoolrepository.ReadAllSchools(ctx)
 }
 
-func (s *SchoolService) UpdateCreateSchool(ctx context.Context) error {
-	return s.schoolrepository.UpdateSchool(ctx)
+func (s *SchoolService) UpdateSchool(ctx context.Context, school *types.School) error {
+	return s.schoolrepository.UpdateSchool(ctx, school)
 }
 
 func (s *SchoolService) DeleteSchool(ctx context.Context, cnpj *string) error {
