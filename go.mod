@@ -10,14 +10,15 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/lib/pq v1.10.9
+	github.com/stripe/stripe-go/v79 v79.4.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/klauspost/compress v1.15.9 // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
-	github.com/segmentio/kafka-go v0.4.47 
-	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e 
+	github.com/segmentio/kafka-go v0.4.47
+	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
 )
 
 require (
@@ -60,4 +61,3 @@ require (
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
