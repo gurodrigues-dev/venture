@@ -1,4 +1,7 @@
 
+> Atualmente este repositório está desatualizado. Visto que criamos uma organização para mânte-lo e dar continuidade. Qual você pode encontrar aqui: [Venture](https://github.com/venture-technology/venture)
+ 
+
 <h1 align="center"> 🌬️ Venture </h1>
 
 <h1 align="center"> Somos segurança, velocidade e tecnologia. Somos Venture </h1>
